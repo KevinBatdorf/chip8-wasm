@@ -1,0 +1,33 @@
+{
+	"name": "chip8-wasm-webgpu",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"preview": "vite preview",
+		"lint": "biome lint --write",
+		"format": "biome format --write",
+		"test": "vitest",
+		"debug:wat": "tsx scripts/debug-wat.ts"
+	},
+	"dependencies": {
+		"@tailwindcss/vite": "^4.1.10",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
+		"tailwindcss": "^4.1.10"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "^24.0.7",
+		"@types/react": "^19.1.2",
+		"@types/react-dom": "^19.1.2",
+		"@vitejs/plugin-react": "^4.4.1",
+		"@vitest/coverage-v8": "^3.2.3",
+		"tsx": "^4.20.3",
+		"typescript": "~5.8.3",
+		"vite": "^6.3.5",
+		"vitest": "^3.2.3"
+	}
+}
