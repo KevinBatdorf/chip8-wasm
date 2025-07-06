@@ -162,7 +162,6 @@ const initBody = new Uint8Array([
 
 	...fn.end(),
 ]);
-console.log("initBody", initBody);
 const loadRomBody = new Uint8Array([
 	...local.declare(),
 	...misc.nop(),

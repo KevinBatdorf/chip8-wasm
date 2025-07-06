@@ -36,7 +36,7 @@ export default function App() {
 
 	useEffect(() => {
 		if (!chip8) return;
-		console.log("CHIP-8 Engine initialized", chip8);
+		// console.log("CHIP-8 Engine initialized", chip8);
 	}, [chip8]);
 
 	return (
