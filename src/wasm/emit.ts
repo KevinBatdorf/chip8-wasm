@@ -68,3 +68,29 @@ export const emitSection = (
 	const size = unsignedLEB(payload.length);
 	return new Uint8Array([sectionId, ...size, ...payload]);
 };
+
+export const emitFunctionType = (type: {
+	params: number[];
+	results: number[];
+}): Uint8Array => {
+	const params = type.params.map((p) => p & 0x7f);
+	const results = type.results.map((r) => r & 0x7f);
+	return new Uint8Array([
+		0x60, // function type
+		...unsignedLEB(params.length),
+		...params,
+		...unsignedLEB(results.length),
+		...results,
+	]);
+};
+
+export const emitFunction = (body: Uint8Array): Uint8Array =>
+	new Uint8Array([...unsignedLEB(body.length), ...body]);
+
+export const emitExportEntry = (
+	name: string,
+	index: number,
+	kind: number,
+): number[] => {
+	return [...encodeString(name), kind, ...unsignedLEB(index)];
+};

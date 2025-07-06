@@ -26,12 +26,14 @@ type Chip8Exports = {
 };
 
 export const createChip8Engine = async (
-	wasmBinary: WebAssembly.Module,
+	wasmBinary: Uint8Array,
 ): Promise<Chip8Engine> => {
 	const memory = new WebAssembly.Memory({ initial: 1 });
-	const instance = await WebAssembly.instantiate(wasmBinary, {
+	const { instance } = await WebAssembly.instantiate(wasmBinary, {
 		env: { memory },
 	});
+	console.log("WASM byte length:", wasmBinary.byteLength);
+
 	const exports = instance.exports as Chip8Exports;
 	let frameCallback: ((frame: Uint8Array) => void) | null = null;
 	let running = false;

@@ -1,4 +1,11 @@
 import { emitSection, encodeString, unsignedLEB } from "./emit";
+import {
+	addFunction,
+	getCodeSection,
+	getExportSection,
+	getFunctionSection,
+	getFunctionTypesSection,
+} from "./functions";
 
 export const generate = (): Uint8Array => {
 	// WASM magic + version
@@ -19,5 +26,12 @@ export const generate = (): Uint8Array => {
 		]),
 	);
 
-	return new Uint8Array([...header, ...importSection]);
+	return new Uint8Array([
+		...header,
+		...getFunctionTypesSection(),
+		...importSection,
+		...getFunctionSection(),
+		...getExportSection(),
+		...getCodeSection(),
+	]);
 };
