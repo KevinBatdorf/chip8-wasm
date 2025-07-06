@@ -13,6 +13,7 @@ export default defineConfig({
 			enforce: "pre",
 			buildStart() {
 				try {
+					execSync("npm run build:wasm", { stdio: "inherit" });
 					execSync("npm run debug:wat", { stdio: "inherit" });
 				} catch (err) {
 					console.error(
