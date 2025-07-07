@@ -1,7 +1,13 @@
 import {
+	DELAY_TIMER_OFFSET,
 	DISPLAY_OFFSET,
+	I_OFFSET,
 	KEY_BUFFER_OFFSET,
+	PC_OFFSET,
+	REGISTERS_OFFSET,
 	ROM_LOAD_ADDRESS,
+	SOUND_TIMER_OFFSET,
+	STACK_PTR_OFFSET,
 	TICKS_PER_FRAME,
 	TIMER_INTERVAL,
 } from "../core/constants";
@@ -9,6 +15,7 @@ import {
 export type Chip8Engine = {
 	start(): void;
 	stop(): void;
+	step(): void;
 	pause(): void;
 	reset(): void;
 	isRunning(): boolean;
@@ -16,6 +23,16 @@ export type Chip8Engine = {
 	onFrame(callback: (frame: Uint8Array) => void): void;
 	setKey(index: number, isDown: boolean): void;
 	getMemory(): WebAssembly.Memory;
+	getDebug(): Chip8Debug;
+};
+
+export type Chip8Debug = {
+	getPC(): number;
+	getI(): number;
+	getRegisters(): Uint8Array; // 16 bytes
+	getStackPointer(): number;
+	getDelayTimer(): number;
+	getSoundTimer(): number;
 };
 
 type Chip8Exports = {
@@ -75,6 +92,19 @@ export const createChip8Engine = async (
 	const stop = () => {
 		running = false;
 	};
+	const step = () => {
+		exports.tick();
+		exports.update_timers();
+		if (frameCallback) {
+			const displayBuffer = new Uint8Array(
+				memory.buffer,
+				DISPLAY_OFFSET,
+				64 * 32,
+			);
+			frameCallback(displayBuffer);
+		}
+	};
+
 	const loadROM = (bytes: Uint8Array) => {
 		stop();
 		exports.init(); // Reset CHIP-8 state before loading ROM
@@ -83,7 +113,6 @@ export const createChip8Engine = async (
 		}
 		const memoryBuffer = new Uint8Array(memory.buffer);
 		memoryBuffer.set(bytes, ROM_LOAD_ADDRESS);
-		exports.load_rom(ROM_LOAD_ADDRESS, bytes.length);
 	};
 	const onFrame = (callback: (frame: Uint8Array) => void) => {
 		if (typeof callback !== "function") {
@@ -98,15 +127,29 @@ export const createChip8Engine = async (
 		const memoryBuffer = new Uint8Array(memory.buffer);
 		memoryBuffer[KEY_BUFFER_OFFSET + index] = isDown ? 1 : 0;
 	};
+	const debug: Chip8Debug = {
+		getPC: () => new DataView(memory.buffer).getUint16(PC_OFFSET, true),
+		getI: () => new DataView(memory.buffer).getUint16(I_OFFSET, true),
+		getRegisters: () => new Uint8Array(memory.buffer, REGISTERS_OFFSET, 16),
+		getStackPointer: () =>
+			new DataView(memory.buffer).getUint8(STACK_PTR_OFFSET),
+		getDelayTimer: () =>
+			new DataView(memory.buffer).getUint8(DELAY_TIMER_OFFSET),
+		getSoundTimer: () =>
+			new DataView(memory.buffer).getUint8(SOUND_TIMER_OFFSET),
+	};
+
 	return {
 		start,
 		stop,
 		pause: stop,
+		step,
 		isRunning: () => running,
 		reset: () => exports.init(),
 		loadROM,
 		onFrame,
 		setKey,
 		getMemory: () => memory,
+		getDebug: () => debug,
 	};
 };

@@ -162,11 +162,6 @@ const initBody = new Uint8Array([
 
 	...fn.end(),
 ]);
-const loadRomBody = new Uint8Array([
-	...local.declare(),
-	...misc.nop(),
-	...fn.end(),
-]);
 const tickBody = new Uint8Array([
 	...local.declare(),
 	...misc.nop(),
@@ -179,6 +174,5 @@ const updateTimersBody = new Uint8Array([
 ]);
 
 addFunction("init", [], [], initBody, { export: true });
-addFunction("load_rom", [], [], loadRomBody, { export: true });
 addFunction("tick", [], [], tickBody, { export: true });
 addFunction("update_timers", [], [], updateTimersBody, { export: true });
