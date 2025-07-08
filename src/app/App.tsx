@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { type Chip8Engine, createChip8Engine } from "..";
-import { MemoryDump } from "./components/MemoryDump";
+import { DebugScreen } from "./components/DebugScreen";
 import { RomSelect } from "./components/RomSelect";
 import { getRom, getWasm } from "./helpers";
 
@@ -26,22 +26,28 @@ export default function App() {
 	}, [chip8, rom]);
 
 	return (
-		<div className="flex gap-2">
-			<aside className="">
+		<div className="flex">
+			<aside className="flex-shrink-0 p-0 text-sm">
 				<RomSelect currentRom={rom?.file ?? null} onSelect={setRom} />
 			</aside>
-			<div className="font-mono">
-				<h1>CHIP-8 Emulator</h1>
-				<p>{rom?.name ? `Loaded ROM: ${rom.name}` : "No ROM loaded"}</p>
-
-				{buffer && (
-					<MemoryDump
-						memory={buffer.slice(0x000, 0x1400)}
-						romData={romData}
-						debug={chip8?.getDebug()}
-					/>
-				)}
-			</div>
+			<main className="font-mono flex-1 text-sm">
+				<div className="sticky top-0 z-10 bg-stone-200 text-black flex-grow flex justify-center items-center min-h-screen w-full">
+					<div className="flex items-center justify-center gap-2 p-2 flex-grow">
+						<h1>CHIP-8 Emulator</h1>
+						<p>{rom?.name ? `Loaded ROM: ${rom.name}` : "No ROM loaded"}</p>
+					</div>
+					<div className="flex items-center gap-2 p-2 w-96">
+						<div>Controls</div>
+					</div>
+				</div>
+			</main>
+			{buffer && (
+				<DebugScreen
+					memory={buffer.slice(0x000, 0x1400)}
+					romData={romData}
+					debug={chip8?.getDebug()}
+				/>
+			)}
 		</div>
 	);
 }

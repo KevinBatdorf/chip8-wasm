@@ -11,13 +11,13 @@ export const RomSelect = ({
 	onSelect: (rom: { name: string; file: string }) => void;
 }) => {
 	return (
-		<ul className="flex flex-col gap-4 p-1 text-sm max-h-screen overflow-y-auto pr-4">
+		<ul className="flex flex-col">
 			{Object.entries(roms).map(([category, romFiles]) => (
 				<li key={category} className="">
-					<div className="uppercase font-bold bg-stone-200 mb-1">
+					<div className="uppercase font-bold bg-stone-200 px-1 pt-4">
 						{category}
 					</div>
-					<ul className="flex flex-col gap-2">
+					<ul className="flex flex-col">
 						{romFiles
 							.filter((rom) => rom.endsWith(".ch8"))
 							.filter((rom) => !denyList.includes(rom))
@@ -59,14 +59,14 @@ const RomButton = ({
 	const name = romName.replace(/\[.*?\]/g, "").replace(/\s+\.ch8$/, ".ch8");
 	const author = romName.match(/\[([^\]]*)\]/)?.[1] || "Unknown";
 	return (
-		<li key={rom} className="max-w-40 w-full">
+		<li key={rom} className="max-w-40 w-full group p-1">
 			<button
 				type="button"
-				className={`w-full text-left hover:bg-stone-100 ${current ? "bg-stone-100" : ""}`}
+				className={`w-full text-left ring-stone-900 group-hover:bg-stone-900 group-hover:text-stone-50 group-hover:ring-5 ${current ? "bg-stone-900 ring-5 text-stone-50" : ""}`}
 				onClick={() => onSelect({ name, file: `${category}/${rom}` })}
 			>
 				<div className="text-xs">{name}</div>
-				<div className="text-xs text-gray-500 italic">by {author}</div>
+				<div className="text-xs text-stone-400 italic">by {author}</div>
 			</button>
 		</li>
 	);

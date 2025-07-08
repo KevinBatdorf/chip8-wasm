@@ -12,7 +12,7 @@ type DebugState = {
 	setPosition: (x: number, y: number) => void;
 };
 
-const defaultPos = { open: false, x: 10, y: 10, width: 310, height: 600 };
+const defaultPos = { open: false, x: 10, y: 10, width: 522, height: 600 };
 export const useDebugStore = create<DebugState>()(
 	persist(
 		devtools(
