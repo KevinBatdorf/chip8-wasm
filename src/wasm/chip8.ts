@@ -1,6 +1,5 @@
 import { emitSection, encodeString, unsignedLEB } from "./emit";
 import {
-	addFunction,
 	getCodeSection,
 	getExportSection,
 	getFunctionSection,

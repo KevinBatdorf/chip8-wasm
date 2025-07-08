@@ -26,11 +26,11 @@ export default function App() {
 	}, [chip8, rom]);
 
 	return (
-		<div className="flex gap-2 p-4">
+		<div className="flex gap-2">
 			<aside className="">
 				<RomSelect currentRom={rom?.file ?? null} onSelect={setRom} />
 			</aside>
-			<div className="p-8 font-mono">
+			<div className="font-mono">
 				<h1>CHIP-8 Emulator</h1>
 				<p>{rom?.name ? `Loaded ROM: ${rom.name}` : "No ROM loaded"}</p>
 
