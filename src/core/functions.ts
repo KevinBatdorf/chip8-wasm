@@ -1,6 +1,6 @@
 import { init, tick, updateTimers } from "./cpu";
 import { emitFunctionType, unsignedLEB } from "./emit";
-import { fn, local, misc } from "./helpers";
+import { fn, i32, local, misc, valType } from "./helpers";
 
 type FuncSignature = {
 	name: string;
@@ -16,18 +16,11 @@ type OpFuncSignature = {
 
 const functions: FuncSignature[] = [];
 export const getFunctions = (): FuncSignature[] => functions;
+
 const opFunctions: OpFuncSignature[] = [];
 export const getOpFunctions = (): OpFuncSignature[] => opFunctions;
 const opFunctionMap = new Map<string, number>();
-export const op = {
-	getIndex: (name: string): number => {
-		const index = opFunctionMap.get(name);
-		if (index === undefined) {
-			throw new Error(`Opcode handler "${name}" not found`);
-		}
-		return index;
-	},
-};
+
 const addFunction = (
 	name: string,
 	params: number[],
@@ -94,25 +87,41 @@ export const getFunctionIndices = (): number[][] => {
 // opcode function groups
 const notImplemented = new Uint8Array([
 	...local.declare(),
+	...local.get(0),
+	...misc.drop(),
 	...misc.unreachable(),
 	...fn.end(),
 ]);
-addOpFunction(0x0, [], [], notImplemented);
-addOpFunction(0x1, [], [], notImplemented);
-addOpFunction(0x2, [], [], notImplemented);
-addOpFunction(0x3, [], [], notImplemented);
-addOpFunction(0x4, [], [], notImplemented);
-addOpFunction(0x5, [], [], notImplemented);
-addOpFunction(0x6, [], [], notImplemented);
-addOpFunction(0x7, [], [], notImplemented);
-addOpFunction(0x8, [], [], notImplemented);
-addOpFunction(0x9, [], [], notImplemented);
-addOpFunction(0xa, [], [], notImplemented);
-addOpFunction(0xb, [], [], notImplemented);
-addOpFunction(0xc, [], [], notImplemented);
-addOpFunction(0xd, [], [], notImplemented);
-addOpFunction(0xe, [], [], notImplemented);
-addOpFunction(0xf, [], [], notImplemented);
+addOpFunction(
+	0x0,
+	[valType("i32")],
+	[],
+	// just a test dummy function
+	new Uint8Array([
+		...local.declare(),
+		...local.get(0), // opcode
+		...misc.drop(),
+		...i32.const(0), // write to memory[1]
+		...i32.const(0xab),
+		...i32.store8(),
+		...fn.end(),
+	]),
+);
+addOpFunction(0x1, [valType("i32")], [], notImplemented);
+addOpFunction(0x2, [valType("i32")], [], notImplemented);
+addOpFunction(0x3, [valType("i32")], [], notImplemented);
+addOpFunction(0x4, [valType("i32")], [], notImplemented);
+addOpFunction(0x5, [valType("i32")], [], notImplemented);
+addOpFunction(0x6, [valType("i32")], [], notImplemented);
+addOpFunction(0x7, [valType("i32")], [], notImplemented);
+addOpFunction(0x8, [valType("i32")], [], notImplemented);
+addOpFunction(0x9, [valType("i32")], [], notImplemented);
+addOpFunction(0xa, [valType("i32")], [], notImplemented);
+addOpFunction(0xb, [valType("i32")], [], notImplemented);
+addOpFunction(0xc, [valType("i32")], [], notImplemented);
+addOpFunction(0xd, [valType("i32")], [], notImplemented);
+addOpFunction(0xe, [valType("i32")], [], notImplemented);
+addOpFunction(0xf, [valType("i32")], [], notImplemented);
 
 // internal functions
 addFunction("init", [], [], init, { export: true });

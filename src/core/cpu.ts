@@ -91,19 +91,12 @@ export const tick = new Uint8Array([
 	...i32.add(),
 	...i32.store16(),
 
-	...i32.const(0x0000), // address
-	...i32.const(0xab), // value
-	...i32.store8(), // store 8-bit value at address
-
 	// Call the opcode handler
+	...local.get(1), // get it to pass in
 	...local.get(1),
 	...i32.const(12),
 	...i32.shr_u(), // extract the first nibble
-	...fn.call_indirect(0),
-
-	...i32.const(0x0001),
-	...i32.const(0xcd),
-	...i32.store8(),
+	...fn.call_indirect(0), // hard coded to 0, since we only have one function type
 
 	...fn.end(),
 ]);
