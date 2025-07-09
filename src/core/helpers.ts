@@ -1,4 +1,4 @@
-import { signedLEB, unsignedLEB } from "./emit";
+import { signedLEB, unsignedLEB } from "../core/emit";
 
 export const valType = (t: "i32" | "f64" | "void"): number => {
 	switch (t) {
@@ -51,6 +51,7 @@ export const i32 = {
 	shr_u: (): number[] => [0x76], // unsigned shift right
 	load: (offset = 0): number[] => [0x28, 0x02, ...unsignedLEB(offset)],
 	load8_u: (offset = 0): number[] => [0x2d, 0x00, ...unsignedLEB(offset)],
+	load16_u: (offset = 0): number[] => [0x2f, 0x00, ...unsignedLEB(offset)],
 	store: (offset = 0): number[] => [0x36, 0x00, ...unsignedLEB(offset)],
 	store8: (offset = 0): number[] => [0x3a, 0x00, ...unsignedLEB(offset)],
 	store16: (offset = 0): number[] => [0x3b, 0x00, ...unsignedLEB(offset)],
@@ -68,6 +69,11 @@ export const misc = {
 
 export const fn = {
 	call: (index: number): number[] => [0x10, ...unsignedLEB(index)],
+	call_indirect: (index: number): number[] => [
+		0x11,
+		...unsignedLEB(index),
+		0x00,
+	],
 	return: (): number[] => [0x0f],
 	end: (): number[] => control.end(),
 };

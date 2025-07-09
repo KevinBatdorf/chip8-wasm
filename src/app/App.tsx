@@ -18,11 +18,16 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
-		if (!chip8 || !rom) return;
-		getRom(`/roms/${rom.file}`).then((bytes) => {
-			setRomData(bytes);
-			chip8.loadROM(bytes);
-		});
+		// if (!chip8 || !rom) return;
+		if (!chip8) return;
+		setRomData(new Uint8Array([0x00, 0xe0]));
+		chip8.loadROM(new Uint8Array([0x00, 0xe0]));
+		chip8.start();
+		// getRom(`/roms/${rom.file}`).then((bytes) => {
+		// 	setRomData(bytes);
+		// 	chip8.loadROM(bytes);
+		// 	chip8.start();
+		// });
 	}, [chip8, rom]);
 
 	return (

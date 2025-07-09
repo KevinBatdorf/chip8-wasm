@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type Chip8Debug, ROM_LOAD_ADDRESS } from "../..";
 import { useDraggable } from "../hooks/useDraggable";
 import { usePortal } from "../hooks/usePortal";
@@ -14,6 +14,7 @@ type Props = {
 };
 
 export const DebugScreen = ({ memory, romData, debug }: Props) => {
+	const [PC, setPC] = useState<ReturnType<Chip8Debug["getPC"]> | null>(null);
 	const {
 		x: top,
 		y: left,
@@ -43,13 +44,19 @@ export const DebugScreen = ({ memory, romData, debug }: Props) => {
 		},
 	});
 
+	const pc = debug?.getPC() ?? null;
+	useEffect(() => {
+		if (!debug) return;
+		setPC(pc);
+	}, [debug, pc]);
+
 	if (!mountNode) return null;
 
 	return (
 		<>
 			<button
 				type="button"
-				className="text-lg fixed z-40 bottom-2 right-2 leading-none hidden lg:block"
+				className="text-lg fixed z-40 bottom-2 right-2 leading-none hidden lg:block select-none"
 				aria-label="Open Debug Screen"
 				onClick={() => setOpen(!open)}
 			>
@@ -71,7 +78,7 @@ export const DebugScreen = ({ memory, romData, debug }: Props) => {
 						<div className="p-2">controls</div>
 						<div className="flex flex-col overflow-hidden flex-grow">
 							<div className="px-2">Memory Layout</div>
-							<MemoryLayout memory={memory} romData={romData} debug={debug} />
+							<MemoryLayout memory={memory} romData={romData} PC={PC} />
 						</div>
 					</div>
 				</FloatingWindow>
@@ -83,9 +90,9 @@ export const DebugScreen = ({ memory, romData, debug }: Props) => {
 type MemoryLayoutProps = {
 	memory: Uint8Array;
 	romData?: Uint8Array | null;
-	debug?: Chip8Debug;
+	PC: ReturnType<Chip8Debug["getPC"]> | null;
 };
-const MemoryLayout = ({ memory, romData, debug }: MemoryLayoutProps) => {
+const MemoryLayout = ({ memory, romData, PC }: MemoryLayoutProps) => {
 	return (
 		<div className="font-mono text-xs flex flex-wrap gap-px overflow-x-hidden overflow-y-auto px-2 pb-6">
 			{[...memory].map((byte, i) => {
@@ -93,7 +100,7 @@ const MemoryLayout = ({ memory, romData, debug }: MemoryLayoutProps) => {
 				const byteStr = byte.toString(16).padStart(2, "0");
 				const defaultStyles =
 					"rounded-sm p-0.5 leading-none cursor-default select-none";
-				if (!romData || !debug) {
+				if (!romData) {
 					return (
 						<span
 							key={loc}
@@ -106,7 +113,6 @@ const MemoryLayout = ({ memory, romData, debug }: MemoryLayoutProps) => {
 
 				const isRomByte =
 					i >= ROM_LOAD_ADDRESS && i < ROM_LOAD_ADDRESS + romData.length;
-				const isPC = i === debug.getPC();
 
 				return (
 					<span
@@ -115,7 +121,7 @@ const MemoryLayout = ({ memory, romData, debug }: MemoryLayoutProps) => {
 						className={clsx(defaultStyles, {
 							"bg-stone-200 text-stone-800": !isRomByte,
 							"bg-blue-200 text-stone-900": isRomByte,
-							"bg-yellow-500 text-stone-900": isPC,
+							"bg-yellow-500 text-stone-900": i === PC,
 						})}
 					>
 						{byteStr}

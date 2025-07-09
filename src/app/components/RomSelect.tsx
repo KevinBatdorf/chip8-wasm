@@ -59,10 +59,10 @@ const RomButton = ({
 	const name = romName.replace(/\[.*?\]/g, "").replace(/\s+\.ch8$/, ".ch8");
 	const author = romName.match(/\[([^\]]*)\]/)?.[1] || "Unknown";
 	return (
-		<li key={rom} className="max-w-40 w-full group p-1">
+		<li key={rom} className="max-w-46 w-full group p-1">
 			<button
 				type="button"
-				className={`w-full text-left ring-stone-900 group-hover:bg-stone-900 group-hover:text-stone-50 group-hover:ring-5 ${current ? "bg-stone-900 ring-5 text-stone-50" : ""}`}
+				className={`w-full pr-3 text-left ring-stone-900 group-hover:bg-stone-900 group-hover:text-stone-50 group-hover:ring-5 ${current ? "bg-stone-900 ring-5 text-stone-50" : ""}`}
 				onClick={() => onSelect({ name, file: `${category}/${rom}` })}
 			>
 				<div className="text-xs">{name}</div>
