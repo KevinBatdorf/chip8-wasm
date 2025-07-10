@@ -8,20 +8,51 @@ type FloatingWindowProps = {
 	left: number;
 	width: number;
 	height: number;
+	open: boolean;
 	setOpen: (open: boolean) => void;
 	children: React.ReactNode;
 	mountNode: HTMLElement;
 };
 
+const lockScroll = () => {
+	document.body.style.overflow = "hidden";
+};
+const unlockScroll = () => {
+	document.body.style.overflow = "";
+};
+
 export const FloatingWindow = forwardRef<HTMLDivElement, FloatingWindowProps>(
-	({ label, top, left, width, height, setOpen, children, mountNode }, ref) => {
+	(
+		{ label, top, left, width, height, setOpen, open, children, mountNode },
+		ref,
+	) => {
 		useLayoutEffect(() => {
+			if (!open) return;
 			const el = (ref as RefObject<HTMLDivElement>).current;
 			if (!el) return;
 			// Increase the z index to be highest of all windows
 			const highestZIndex = getHighestZIndex();
 			el.style.setProperty("z-index", `${highestZIndex + 1}`, "important");
-		}, [ref]);
+		}, [ref, open]);
+
+		useLayoutEffect(() => {
+			if (!open) return unlockScroll();
+			const el = (ref as RefObject<HTMLDivElement>).current;
+			if (!el) return;
+			lockScroll();
+			const handlePointerMove = (e: PointerEvent) => {
+				if (!el) return;
+				const inside = el.contains(e.target as Node);
+				inside ? lockScroll() : unlockScroll();
+			};
+			window.addEventListener("pointermove", handlePointerMove);
+			return () => {
+				window.removeEventListener("pointermove", handlePointerMove);
+				unlockScroll();
+			};
+		}, [open, ref]);
+
+		if (!open) return null;
 
 		return createPortal(
 			<div>

@@ -7,9 +7,6 @@ import { getRom, getWasm } from "./helpers";
 export default function App() {
 	const [chip8, setChip8] = useState<Chip8Engine | null>(null);
 	const [rom, setRom] = useState<{ name: string; file: string } | null>(null);
-	const [romData, setRomData] = useState<Uint8Array | null>(null);
-	const memory = chip8?.getMemory();
-	const buffer = new Uint8Array(memory?.buffer ?? new ArrayBuffer(0));
 
 	useEffect(() => {
 		getWasm("/chip8.wasm").then((wasmBinary) => {
@@ -20,11 +17,13 @@ export default function App() {
 	useEffect(() => {
 		// if (!chip8 || !rom) return;
 		if (!chip8) return;
-		setRomData(new Uint8Array([0x00, 0xe0]));
-		chip8.loadROM(new Uint8Array([0x00, 0xe0]));
-		chip8.start();
+		chip8.loadROM(new Uint8Array([0x6a, 0x12, 0x7a, 0x34]));
+		if (!rom) {
+			setRom({ name: "Test", file: "test.ch8" });
+			return;
+		}
+		// Load a
 		// getRom(`/roms/${rom.file}`).then((bytes) => {
-		// 	setRomData(bytes);
 		// 	chip8.loadROM(bytes);
 		// 	chip8.start();
 		// });
@@ -46,13 +45,7 @@ export default function App() {
 					</div>
 				</div>
 			</main>
-			{buffer && (
-				<DebugScreen
-					memory={buffer.slice(0x000, 0x1400)}
-					romData={romData}
-					debug={chip8?.getDebug()}
-				/>
-			)}
+			<DebugScreen debug={chip8?.getDebug() ?? null} chip8={chip8} />
 		</div>
 	);
 }

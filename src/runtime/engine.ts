@@ -33,10 +33,10 @@ export type Chip8Debug = {
 	getStackPointer(): number;
 	getDelayTimer(): number;
 	getSoundTimer(): number;
+	getROM(): Uint8Array | null;
 };
 
 type Chip8Exports = {
-	load_rom: (address: number, length: number) => void;
 	init: () => void;
 	tick: () => void;
 	update_timers: () => void;
@@ -52,6 +52,7 @@ export const createChip8Engine = async (
 	const exports = instance.exports as Chip8Exports;
 	let frameCallback: ((frame: Uint8Array) => void) | null = null;
 	let running = false;
+	let rom: Uint8Array | null = null;
 	let lastUpdate = performance.now();
 	let timerAccumulator = 0;
 
@@ -111,6 +112,7 @@ export const createChip8Engine = async (
 		if (bytes.length > 4096) {
 			throw new Error("ROM too large for CHIP-8 memory");
 		}
+		rom = bytes;
 		const memoryBuffer = new Uint8Array(memory.buffer);
 		memoryBuffer.set(bytes, ROM_LOAD_ADDRESS);
 	};
@@ -137,6 +139,7 @@ export const createChip8Engine = async (
 			new DataView(memory.buffer).getUint8(DELAY_TIMER_OFFSET),
 		getSoundTimer: () =>
 			new DataView(memory.buffer).getUint8(SOUND_TIMER_OFFSET),
+		getROM: () => (rom ? new Uint8Array(rom) : null),
 	};
 
 	return {
@@ -145,7 +148,10 @@ export const createChip8Engine = async (
 		pause: stop,
 		step,
 		isRunning: () => running,
-		reset: () => exports.init(),
+		reset: () => {
+			exports.init();
+			loadROM(rom || new Uint8Array());
+		},
 		loadROM,
 		onFrame,
 		setKey,

@@ -10,3 +10,38 @@
 @theme {
 	--font-mono: "JetBrainsMono", monospace;
 }
+
+.cell {
+	@apply w-4.5 h-4 leading-none flex items-center justify-center text-stone-900 bg-gray-700;
+}
+.rom {
+	@apply bg-lime-500 text-stone-900 rounded;
+}
+.register {
+	@apply bg-blue-500 text-stone-100 rounded;
+}
+.pcRegister,
+.pc {
+	@apply bg-amber-500 text-stone-900 rounded;
+}
+.display {
+	@apply bg-violet-300 text-stone-100 rounded;
+}
+.keyBuffer {
+	@apply bg-purple-500 text-stone-100 rounded;
+}
+.stack {
+	@apply bg-emerald-500 text-stone-100 rounded;
+}
+.stackPtr {
+	@apply bg-lime-700 text-stone-900 rounded;
+}
+.delayTimer {
+	@apply bg-yellow-500 text-stone-900 rounded;
+}
+.soundTimer {
+	@apply bg-orange-500 text-stone-900 rounded;
+}
+.iRegister {
+	@apply bg-cyan-500 text-stone-100 rounded;
+}

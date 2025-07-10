@@ -1,20 +1,22 @@
-import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
-import { type Chip8Debug, ROM_LOAD_ADDRESS } from "../..";
+import { useRef } from "react";
+import type { Chip8Debug, Chip8Engine } from "../..";
 import { useDraggable } from "../hooks/useDraggable";
 import { usePortal } from "../hooks/usePortal";
 import { useResizable } from "../hooks/useResizable";
 import { useDebugStore } from "../state/debug";
 import { FloatingWindow } from "./FloatingWindow";
+import { Controls } from "./debug/Controls";
+import { FullMemoryLayout } from "./debug/FullMemoryLayout";
+import { PC } from "./debug/PC";
+import { Registers } from "./debug/Registers";
+import { RomData } from "./debug/RomData";
 
 type Props = {
-	memory: Uint8Array;
-	debug?: Chip8Debug;
-	romData?: Uint8Array | null;
+	debug: Chip8Debug | null;
+	chip8: Chip8Engine | null;
 };
 
-export const DebugScreen = ({ memory, romData, debug }: Props) => {
-	const [PC, setPC] = useState<ReturnType<Chip8Debug["getPC"]> | null>(null);
+export const DebugScreen = ({ debug, chip8 }: Props) => {
 	const {
 		x: top,
 		y: left,
@@ -44,12 +46,6 @@ export const DebugScreen = ({ memory, romData, debug }: Props) => {
 		},
 	});
 
-	const pc = debug?.getPC() ?? null;
-	useEffect(() => {
-		if (!debug) return;
-		setPC(pc);
-	}, [debug, pc]);
-
 	if (!mountNode) return null;
 
 	return (
@@ -63,71 +59,41 @@ export const DebugScreen = ({ memory, romData, debug }: Props) => {
 				π
 			</button>
 
-			{open ? (
-				<FloatingWindow
-					label="Debug Screen"
-					top={top}
-					left={left}
-					width={width}
-					height={height}
-					setOpen={setOpen}
-					mountNode={mountNode}
-					ref={ref}
-				>
-					<div className="flex flex-col h-full text-sm">
-						<div className="p-2">controls</div>
-						<div className="flex flex-col overflow-hidden flex-grow">
+			<FloatingWindow
+				open={open}
+				label="Secret Debug Screen"
+				top={top}
+				left={left}
+				width={width}
+				height={height}
+				setOpen={setOpen}
+				mountNode={mountNode}
+				ref={ref}
+			>
+				<div className="flex flex-col text-sm overflow-hidden h-full">
+					<div className="p-2">
+						<Controls chip8={chip8} />
+					</div>
+					<div className="flex flex-col gap-4 overflow-y-auto overflow-x-scroll h-full pb-4 cursor-default">
+						<div className="flex-shrink-0 flex flex-col min-h-9">
+							<div className="px-2">Registers</div>
+							<Registers chip8={chip8} debug={debug} />
+						</div>
+						<div className="flex-shrink-0 flex flex-col min-h-9">
+							<div className="px-2">Program Counter</div>
+							<PC chip8={chip8} debug={debug} />
+						</div>
+						<div className="flex-shrink-0 flex flex-col min-h-9">
+							<div className="px-2">Rom Data</div>
+							<RomData chip8={chip8} debug={debug} />
+						</div>
+						<div className="flex-shrink-0 flex flex-col">
 							<div className="px-2">Memory Layout</div>
-							<MemoryLayout memory={memory} romData={romData} PC={PC} />
+							<FullMemoryLayout chip8={chip8} debug={debug} />
 						</div>
 					</div>
-				</FloatingWindow>
-			) : null}
+				</div>
+			</FloatingWindow>
 		</>
-	);
-};
-
-type MemoryLayoutProps = {
-	memory: Uint8Array;
-	romData?: Uint8Array | null;
-	PC: ReturnType<Chip8Debug["getPC"]> | null;
-};
-const MemoryLayout = ({ memory, romData, PC }: MemoryLayoutProps) => {
-	return (
-		<div className="font-mono text-xs flex flex-wrap gap-px overflow-x-hidden overflow-y-auto px-2 pb-6">
-			{[...memory].map((byte, i) => {
-				const loc = `0x${i.toString(16).padStart(4, "0")}`;
-				const byteStr = byte.toString(16).padStart(2, "0");
-				const defaultStyles =
-					"rounded-sm p-0.5 leading-none cursor-default select-none";
-				if (!romData) {
-					return (
-						<span
-							key={loc}
-							className={`${defaultStyles} bg-stone-200 text-stone-800`}
-						>
-							{byteStr}
-						</span>
-					);
-				}
-
-				const isRomByte =
-					i >= ROM_LOAD_ADDRESS && i < ROM_LOAD_ADDRESS + romData.length;
-
-				return (
-					<span
-						key={loc}
-						title={loc}
-						className={clsx(defaultStyles, {
-							"bg-stone-200 text-stone-800": !isRomByte,
-							"bg-blue-200 text-stone-900": isRomByte,
-							"bg-yellow-500 text-stone-900": i === PC,
-						})}
-					>
-						{byteStr}
-					</span>
-				);
-			})}
-		</div>
 	);
 };

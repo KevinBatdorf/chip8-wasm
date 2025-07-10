@@ -10,4 +10,4 @@ export const DELAY_TIMER_OFFSET = 0x1301;
 export const SOUND_TIMER_OFFSET = 0x1302;
 export const PC_OFFSET = 0x1303;
 export const I_OFFSET = 0x1305;
-export const REGISTERS_OFFSET = 0x1307;
+export const REGISTERS_OFFSET = 0x1307; // V0 to VF (16 bytes)
