@@ -70,25 +70,27 @@ export const DebugScreen = ({ debug, chip8 }: Props) => {
 				mountNode={mountNode}
 				ref={ref}
 			>
-				<div className="flex flex-col text-sm overflow-hidden h-full">
-					<div className="p-2">
+				<div className="flex flex-col gap-4 text-sm overflow-hidden h-full">
+					<div className="px-2.5 mt-4">
 						<Controls chip8={chip8} />
 					</div>
-					<div className="flex flex-col gap-4 overflow-y-auto overflow-x-scroll h-full pb-4 cursor-default">
-						<div className="flex-shrink-0 flex flex-col min-h-9">
-							<div className="px-2">Registers</div>
-							<Registers chip8={chip8} debug={debug} />
+					<div className="flex flex-col gap-4 overflow-y-auto overflow-x-scroll h-full cursor-default">
+						<div className="flex flex-wrap gap-4 px-2.5">
+							<div className="flex-shrink-0 flex flex-col min-h-9">
+								<div className="">Registers</div>
+								<Registers chip8={chip8} debug={debug} />
+							</div>
+							<div className="flex-shrink-0 flex flex-col min-h-9">
+								<div className="">PC</div>
+								<PC chip8={chip8} debug={debug} />
+							</div>
 						</div>
-						<div className="flex-shrink-0 flex flex-col min-h-9">
-							<div className="px-2">Program Counter</div>
-							<PC chip8={chip8} debug={debug} />
-						</div>
-						<div className="flex-shrink-0 flex flex-col min-h-9">
-							<div className="px-2">Rom Data</div>
+						<div className="flex-shrink-0 flex flex-col min-h-9 px-2.5">
+							<div className="">Rom Data</div>
 							<RomData chip8={chip8} debug={debug} />
 						</div>
-						<div className="flex-shrink-0 flex flex-col">
-							<div className="px-2">Memory Layout</div>
+						<div className="flex-shrink-0 flex flex-col px-2.5">
+							<div className="">Memory Layout</div>
 							<FullMemoryLayout chip8={chip8} debug={debug} />
 						</div>
 					</div>

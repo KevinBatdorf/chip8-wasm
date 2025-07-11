@@ -44,7 +44,7 @@ export const PC = ({ chip8, debug }: Props) => {
 	}
 
 	return (
-		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px px-2">
+		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
 			{Array.from({ length: 2 }).map((_, i) => {
 				const loc = `V${i.toString(16).toUpperCase()}`;
 				const value = buffer[i].toString(16).padStart(2, "0").toUpperCase();

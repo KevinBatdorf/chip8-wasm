@@ -71,7 +71,7 @@ export const FullMemoryLayout = ({ chip8, debug }: Props) => {
 	}
 
 	return (
-		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px px-2">
+		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
 			{Array.from({ length: 0x1400 }).map((_, i) => {
 				const loc = `0x${i.toString(16).padStart(4, "0")}`;
 				const isReg = i >= REGISTERS_OFFSET && i < REGISTERS_OFFSET + 16;

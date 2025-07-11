@@ -55,7 +55,7 @@ export const RomData = ({ chip8, debug }: Props) => {
 	}, [chip8, debug]);
 
 	return (
-		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px px-2">
+		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
 			{Array.from({ length: buffer.length }).map((_, i) => {
 				const loc = `0x${(ROM_LOAD_ADDRESS + i).toString(16).padStart(4, "0")}`;
 				const value = buffer[i].toString(16).padStart(2, "0").toUpperCase();
