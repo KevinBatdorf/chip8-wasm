@@ -11,7 +11,7 @@ import {
 	getFunctions,
 	getOpFunctions,
 } from "./functions";
-import { i32 } from "./helpers";
+import { i32 } from "./wasm";
 
 export const generate = (): Uint8Array => {
 	// WASM magic + version

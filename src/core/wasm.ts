@@ -1,4 +1,4 @@
-import { signedLEB, unsignedLEB } from "../core/emit";
+import { signedLEB, unsignedLEB } from "./emit";
 
 export const valType = (t: "i32" | "f64" | "void"): number => {
 	switch (t) {
@@ -47,6 +47,7 @@ export const i32 = {
 	mul: (): number[] => [0x6c],
 	and: (): number[] => [0x71], // bitwise AND
 	or: (): number[] => [0x72], // bitwise OR
+	xor: (): number[] => [0x73], // bitwise XOR
 	shl: (): number[] => [0x74], // shift left
 	shr_u: (): number[] => [0x76], // unsigned shift right
 	load: (offset = 0): number[] => [0x28, 0x02, ...unsignedLEB(offset)],
@@ -59,6 +60,17 @@ export const i32 = {
 
 export const control = {
 	end: (): number[] => [0x0b],
+};
+
+export const block = {
+	start: (type = valType("void")): number[] => [0x02, ...unsignedLEB(type)],
+	end: (): number[] => control.end(),
+};
+
+export const if_ = {
+	start: (type = valType("void")): number[] => [0x04, ...unsignedLEB(type)],
+	else: (): number[] => [0x05],
+	end: (): number[] => control.end(),
 };
 
 export const misc = {

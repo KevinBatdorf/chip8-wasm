@@ -10,7 +10,7 @@ import {
 	STACK_OFFSET,
 	STACK_PTR_OFFSET,
 } from "./constants";
-import { fn, i32, local, memory, misc } from "./helpers";
+import { fn, i32, local, memory, misc } from "./wasm";
 
 export const init = new Uint8Array([
 	...local.declare(),
@@ -65,7 +65,7 @@ export const init = new Uint8Array([
 ]);
 
 export const tick = new Uint8Array([
-	...local.declare("i32", "i32"), // PC, opcode
+	...local.declare("i32", "i32", "i32"), // PC, high byte, low byte
 
 	// Load PC
 	...i32.const(PC_OFFSET),
@@ -75,14 +75,13 @@ export const tick = new Uint8Array([
 	// Load opcode
 	...local.get(0), // PC
 	...i32.load8_u(), // load high byte
-	...i32.const(8),
-	...i32.shl(), // shift left 8 bits
+	...local.set(1), // store high byte in local 1
+
 	...local.get(0), // PC again
 	...i32.const(1),
 	...i32.add(),
 	...i32.load8_u(), // load low byte
-	...i32.or(), // combine into full opcode
-	...local.set(1), // store opcode in local 1
+	...local.set(2), // store low byte in local 2
 
 	// increment PC
 	...i32.const(PC_OFFSET),
@@ -91,11 +90,14 @@ export const tick = new Uint8Array([
 	...i32.add(),
 	...i32.store16(),
 
+	// function params
+	...local.get(1), // high
+	...local.get(2), // low
+
 	// Call the opcode handler
-	...local.get(1), // get it to pass in
 	...local.get(1),
-	...i32.const(12),
-	...i32.shr_u(), // extract the first nibble
+	...i32.const(4),
+	...i32.shr_u(), // extract the first nibble of high byte
 	...fn.call_indirect(0), // hard coded to 0, since we only have one function type
 
 	...fn.end(),
