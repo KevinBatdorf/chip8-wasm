@@ -42,6 +42,7 @@ export const i32 = {
 	ge_u: (): number[] => [0x4f], // unsigned greater than or equal
 	ne: (): number[] => [0x47],
 	lt_s: (): number[] => [0x48], // signed less than
+	lt_u: (): number[] => [0x49], // unsigned less than
 	add: (): number[] => [0x6a],
 	sub: (): number[] => [0x6b],
 	mul: (): number[] => [0x6c],

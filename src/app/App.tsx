@@ -17,7 +17,7 @@ export default function App() {
 	useEffect(() => {
 		// if (!chip8 || !rom) return;
 		if (!chip8) return;
-		chip8.loadROM(new Uint8Array([0x6a, 0x81, 0x8a, 0xae]));
+		chip8.loadROM(new Uint8Array([0x1f, 0xff]));
 		if (!rom) {
 			setRom({ name: "Test", file: "test.ch8" });
 			return;

@@ -1,6 +1,7 @@
 import { init, tick, updateTimers } from "./cpu";
 import { emitFunctionType, unsignedLEB } from "./emit";
 import { eight, seven, six } from "./opcodes";
+import { one } from "./opcodes/1xxx";
 import { fn, misc, valType } from "./wasm";
 
 type FuncSignature = {
@@ -88,7 +89,7 @@ export const getFunctionIndices = (): number[][] => {
 // opcode function groups
 const notImplemented = new Uint8Array([...misc.unreachable(), ...fn.end()]);
 addOpFunction(0x0, [valType("i32"), valType("i32")], [], notImplemented);
-addOpFunction(0x1, [valType("i32"), valType("i32")], [], notImplemented);
+addOpFunction(0x1, [valType("i32"), valType("i32")], [], one);
 addOpFunction(0x2, [valType("i32"), valType("i32")], [], notImplemented);
 addOpFunction(0x3, [valType("i32"), valType("i32")], [], notImplemented);
 addOpFunction(0x4, [valType("i32"), valType("i32")], [], notImplemented);

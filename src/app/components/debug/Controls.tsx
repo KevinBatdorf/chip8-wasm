@@ -21,7 +21,6 @@ export const Controls = ({ chip8 }: Props) => {
 	const handleStep = () => {
 		chip8?.step();
 	};
-	console.log({ running });
 	return (
 		<div className="flex flex-wrap gap-2">
 			<button

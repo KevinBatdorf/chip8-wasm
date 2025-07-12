@@ -72,7 +72,6 @@ export const tick = new Uint8Array([
 	...i32.load16_u(),
 	...local.set(0),
 
-	// Load opcode
 	...local.get(0), // PC
 	...i32.load8_u(), // load high byte
 	...local.set(1), // store high byte in local 1
