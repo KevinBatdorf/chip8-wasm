@@ -21,12 +21,12 @@ export const Registers = ({ chip8, debug }: Props) => {
 				const mem = new Uint8Array(chip8.getMemory().buffer);
 				for (let i = 0; i < 16; i++) {
 					if (!cellRefs.current[i]) continue;
-					let value = mem[REGISTERS_OFFSET + i]
+					const value = mem[REGISTERS_OFFSET + i]
 						.toString(16)
 						.padStart(2, "0")
 						.toUpperCase();
-					value = value !== "00" ? value : "";
-					if (cellRefs.current[i].textContent === value) continue;
+					const curr = cellRefs.current[i].textContent;
+					if (curr === value) continue;
 					cellRefs.current[i].textContent = value;
 				}
 			}
@@ -36,21 +36,10 @@ export const Registers = ({ chip8, debug }: Props) => {
 		return () => cancelAnimationFrame(rafId);
 	}, [chip8, debug]);
 
-	const memory = chip8?.getMemory();
-	if (!memory) return null;
-	const buffer = new Uint8Array(memory.buffer).slice(
-		REGISTERS_OFFSET,
-		REGISTERS_OFFSET + 16,
-	);
-	if (cellRefs.current.length !== 16) {
-		cellRefs.current = Array(16).fill(null);
-	}
-
 	return (
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
 			{Array.from({ length: 16 }).map((_, i) => {
 				const loc = `V${i.toString(16).toUpperCase()}`;
-				const value = buffer[i].toString(16).padStart(2, "0").toUpperCase();
 				return (
 					<span
 						key={loc}
@@ -61,9 +50,7 @@ export const Registers = ({ chip8, debug }: Props) => {
 							cellRefs.current[i] = el;
 						}}
 						className="cell register"
-					>
-						{value !== "00" ? value : ""}
-					</span>
+					/>
 				);
 			})}
 		</div>

@@ -109,7 +109,7 @@ export const createChip8Engine = async (
 	const loadROM = (bytes: Uint8Array) => {
 		stop();
 		exports.init(); // Reset CHIP-8 state before loading ROM
-		if (bytes.length > 4096) {
+		if (bytes.length > 3584) {
 			throw new Error("ROM too large for CHIP-8 memory");
 		}
 		rom = bytes;

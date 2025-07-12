@@ -15,18 +15,26 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
-		// if (!chip8 || !rom) return;
 		if (!chip8) return;
-		chip8.loadROM(new Uint8Array([0x1f, 0xff]));
 		if (!rom) {
-			setRom({ name: "Test", file: "test.ch8" });
+			setRom({ name: "Test", file: "test.ch8" }); // for testing
 			return;
 		}
-		// Load a
-		// getRom(`/roms/${rom.file}`).then((bytes) => {
-		// 	chip8.loadROM(bytes);
-		// 	chip8.start();
-		// });
+		if (rom.file === "test.ch8") {
+			const romD = new Uint8Array([
+				0x23,
+				0x00, // Call subroutine at 0x300
+				...new Uint8Array(0x300 - 0x202).fill(0), // Fill up to 0x300
+				0x00,
+				0xee, // Return from subroutine
+			]);
+			chip8.loadROM(romD);
+			return;
+		}
+		getRom(`/roms/${rom.file}`).then((bytes) => {
+			chip8.loadROM(bytes);
+			chip8.start();
+		});
 	}, [chip8, rom]);
 
 	return (
@@ -45,7 +53,7 @@ export default function App() {
 					</div>
 				</div>
 			</main>
-			<DebugScreen debug={chip8?.getDebug() ?? null} chip8={chip8} />
+			<DebugScreen rom={rom} debug={chip8?.getDebug() ?? null} chip8={chip8} />
 		</div>
 	);
 }

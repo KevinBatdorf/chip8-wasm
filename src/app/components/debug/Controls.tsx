@@ -1,11 +1,14 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Chip8Engine } from "../../../runtime/engine";
 
-type Props = { chip8: Chip8Engine | null };
+type Props = {
+	chip8: Chip8Engine | null;
+	rom?: { name: string; file: string } | null;
+};
 
-export const Controls = ({ chip8 }: Props) => {
-	const [running, setRunning] = useState(chip8?.isRunning() ?? false);
+export const Controls = ({ chip8, rom }: Props) => {
+	const [running, setRunning] = useState(false);
 	const handleReset = () => {
 		chip8?.reset();
 	};
@@ -21,6 +24,13 @@ export const Controls = ({ chip8 }: Props) => {
 	const handleStep = () => {
 		chip8?.step();
 	};
+	useEffect(() => {
+		const id = setTimeout(() => {
+			setRunning((rom && chip8?.isRunning()) ?? false);
+		}, 32);
+		return () => clearTimeout(id);
+	}, [chip8, rom]);
+
 	return (
 		<div className="flex flex-wrap gap-2">
 			<button

@@ -14,10 +14,17 @@ import { fn, i32, local, memory, misc } from "./wasm";
 
 export const init = new Uint8Array([
 	...local.declare(),
-	// Clear rom and display
+
+	// Clear rom
 	...i32.const(ROM_LOAD_ADDRESS),
 	...i32.const(0),
 	...i32.const(DISPLAY_OFFSET - ROM_LOAD_ADDRESS),
+	...memory.fill(),
+
+	// Clear display
+	...i32.const(DISPLAY_OFFSET),
+	...i32.const(0),
+	...i32.const(STACK_OFFSET - DISPLAY_OFFSET), // usually 64×32 = 2048 bytes
 	...memory.fill(),
 
 	// Clear key buffer

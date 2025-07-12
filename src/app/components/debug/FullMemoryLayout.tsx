@@ -19,6 +19,9 @@ type Props = {
 	chip8?: Chip8Engine | null;
 	debug: Chip8Debug | null;
 };
+
+const END_OF_MEMORY = REGISTERS_OFFSET + 0x0f;
+
 export const FullMemoryLayout = ({ chip8, debug }: Props) => {
 	const cellRefs = useRef<HTMLSpanElement[]>([]);
 	const gridRef = useRef<HTMLDivElement>(null);
@@ -34,7 +37,7 @@ export const FullMemoryLayout = ({ chip8, debug }: Props) => {
 				// remove pc class
 				const rom = debug?.getROM();
 				const pc = debug.getPC();
-				for (let i = 0x000; i < 0x1400; i++) {
+				for (let i = 0x000; i < END_OF_MEMORY; i++) {
 					if (!cellRefs.current[i]) continue;
 					// Check for rom
 					const isRom =
@@ -51,9 +54,9 @@ export const FullMemoryLayout = ({ chip8, debug }: Props) => {
 					else if (![pc, pc + 1].includes(i) && hasPCClass)
 						cellRefs.current[i].classList.remove("pc");
 
-					let value = mem[i].toString(16).padStart(2, "0").toUpperCase();
-					value = value !== "00" ? value : "";
-					if (cellRefs.current[i].textContent === value) continue;
+					const value = mem[i].toString(16).padStart(2, "0").toUpperCase();
+					const curr = cellRefs.current[i].textContent;
+					if (curr === value) continue;
 					cellRefs.current[i].textContent = value;
 				}
 			}
@@ -63,53 +66,45 @@ export const FullMemoryLayout = ({ chip8, debug }: Props) => {
 		return () => cancelAnimationFrame(rafId);
 	}, [chip8, debug]);
 
-	const memory = chip8?.getMemory();
-	if (!memory) return null;
-	const buffer = new Uint8Array(memory.buffer).slice(0x000, 0x1400);
-	if (cellRefs.current.length !== 0x1400) {
-		cellRefs.current = Array(0x1400).fill(null);
-	}
-
 	return (
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
-			{Array.from({ length: 0x1400 }).map((_, i) => {
-				const loc = `0x${i.toString(16).padStart(4, "0")}`;
-				const isReg = i >= REGISTERS_OFFSET && i < REGISTERS_OFFSET + 16;
-				const isDisplay = i >= DISPLAY_OFFSET && i < DISPLAY_OFFSET + 256;
-				const isKeyBuffer =
-					i >= KEY_BUFFER_OFFSET && i < KEY_BUFFER_OFFSET + 16;
-				const isStack = i >= STACK_OFFSET && i < STACK_OFFSET + 32;
-				const isStackPtr = i === STACK_PTR_OFFSET;
-				const isDelayTimer = i === DELAY_TIMER_OFFSET;
-				const isSoundTimer = i === SOUND_TIMER_OFFSET;
-				const isPC = i >= PC_OFFSET && i < PC_OFFSET + 2;
-				const isI = i >= I_OFFSET && i < I_OFFSET + 2;
-				const value = buffer[i].toString(16).padStart(2, "0").toUpperCase();
-				return (
-					<span
-						key={loc}
-						title={loc}
-						data-index={i}
-						ref={(el) => {
-							if (!el) return;
-							cellRefs.current[i] = el;
-						}}
-						className={clsx("cell", {
-							register: isReg,
-							display: isDisplay,
-							keyBuffer: isKeyBuffer,
-							stack: isStack,
-							stackPtr: isStackPtr,
-							delayTimer: isDelayTimer,
-							soundTimer: isSoundTimer,
-							pcRegister: isPC,
-							iRegister: isI,
-						})}
-					>
-						{value !== "00" ? value : ""}
-					</span>
-				);
-			})}
+			{Array.from({ length: END_OF_MEMORY })
+				.map((_, i) => {
+					const loc = `0x${i.toString(16).padStart(4, "0").toUpperCase()}`;
+					const isReg = i >= REGISTERS_OFFSET && i < END_OF_MEMORY;
+					const isDisplay = i >= DISPLAY_OFFSET && i < DISPLAY_OFFSET + 256;
+					const isKeyBuffer =
+						i >= KEY_BUFFER_OFFSET && i < KEY_BUFFER_OFFSET + 16;
+					const isStack = i >= STACK_OFFSET && i < STACK_OFFSET + 32;
+					const isStackPtr = i === STACK_PTR_OFFSET;
+					const isDelayTimer = i === DELAY_TIMER_OFFSET;
+					const isSoundTimer = i === SOUND_TIMER_OFFSET;
+					const isPC = i >= PC_OFFSET && i < PC_OFFSET + 2;
+					const isI = i >= I_OFFSET && i < I_OFFSET + 2;
+					return (
+						<span
+							key={loc}
+							title={loc}
+							data-index={i}
+							ref={(el) => {
+								if (!el) return;
+								cellRefs.current[i] = el;
+							}}
+							className={clsx("cell", {
+								register: isReg,
+								display: isDisplay,
+								keyBuffer: isKeyBuffer,
+								stack: isStack,
+								stackPtr: isStackPtr,
+								delayTimer: isDelayTimer,
+								soundTimer: isSoundTimer,
+								pcRegister: isPC,
+								iRegister: isI,
+							})}
+						/>
+					);
+				})
+				.slice(ROM_LOAD_ADDRESS, END_OF_MEMORY)}
 		</div>
 	);
 };

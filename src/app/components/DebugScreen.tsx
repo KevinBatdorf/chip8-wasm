@@ -9,14 +9,15 @@ import { Controls } from "./debug/Controls";
 import { FullMemoryLayout } from "./debug/FullMemoryLayout";
 import { PC } from "./debug/PC";
 import { Registers } from "./debug/Registers";
-import { RomData } from "./debug/RomData";
+import { Stack } from "./debug/Stack";
 
 type Props = {
+	rom?: { name: string; file: string } | null;
 	debug: Chip8Debug | null;
 	chip8: Chip8Engine | null;
 };
 
-export const DebugScreen = ({ debug, chip8 }: Props) => {
+export const DebugScreen = ({ debug, chip8, rom }: Props) => {
 	const {
 		x: top,
 		y: left,
@@ -72,24 +73,24 @@ export const DebugScreen = ({ debug, chip8 }: Props) => {
 			>
 				<div className="flex flex-col gap-4 text-sm overflow-hidden h-full">
 					<div className="px-2.5 mt-4">
-						<Controls chip8={chip8} />
+						<Controls rom={rom} chip8={chip8} />
 					</div>
 					<div className="flex flex-col gap-4 overflow-y-auto overflow-x-scroll h-full cursor-default">
 						<div className="flex flex-wrap gap-4 px-2.5">
-							<div className="flex-shrink-0 flex flex-col min-h-9">
+							<div className="flex flex-col">
 								<div className="">Registers</div>
 								<Registers chip8={chip8} debug={debug} />
 							</div>
-							<div className="flex-shrink-0 flex flex-col min-h-9">
+							<div className="flex flex-col">
 								<div className="">PC</div>
 								<PC chip8={chip8} debug={debug} />
 							</div>
 						</div>
-						<div className="flex-shrink-0 flex flex-col min-h-9 px-2.5">
-							<div className="">Rom Data</div>
-							<RomData chip8={chip8} debug={debug} />
+						<div className="flex flex-col px-2.5">
+							<div className="">Stack</div>
+							<Stack chip8={chip8} debug={debug} />
 						</div>
-						<div className="flex-shrink-0 flex flex-col px-2.5">
+						<div className="flex flex-col px-2.5 pb-6">
 							<div className="">Memory Layout</div>
 							<FullMemoryLayout chip8={chip8} debug={debug} />
 						</div>
