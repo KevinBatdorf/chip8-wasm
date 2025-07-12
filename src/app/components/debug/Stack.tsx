@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { STACK_OFFSET, TIMER_INTERVAL } from "../../../core/constants";
+import { useEffect, useRef } from "react";
+import { STACK_OFFSET } from "../../../core/constants";
 import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
 
 type Props = {
@@ -13,27 +13,23 @@ export const Stack = ({ chip8, debug }: Props) => {
 
 	useEffect(() => {
 		if (!chip8 || !debug) return;
-		let lastUpdate = performance.now();
 		let rafId: number;
-		const frame = (now: number) => {
-			if (now - lastUpdate >= TIMER_INTERVAL) {
-				lastUpdate = now;
-				const mem = new Uint8Array(chip8.getMemory().buffer);
-				const stackPtr = debug.getStackPointer();
-				for (let i = 0; i < 32; i++) {
-					const el = cellRefs.current[i];
-					if (!el) continue;
-					const addr = STACK_OFFSET + i;
-					const hasSPtrCls = el.classList.contains("stackPtr");
-					if ([stackPtr, stackPtr + 1].includes(i) && !hasSPtrCls)
-						el.classList.add("stackPtr");
-					else if (![stackPtr, stackPtr + 1].includes(i) && hasSPtrCls)
-						el.classList.remove("stackPtr");
-					const value = mem[addr].toString(16).padStart(2, "0").toUpperCase();
-					const curr = el.textContent;
-					if (curr === value) continue;
-					el.textContent = value;
-				}
+		const frame = () => {
+			const mem = new Uint8Array(chip8.getMemory().buffer);
+			const stackPtr = debug.getStackPointer();
+			for (let i = 0; i < 32; i++) {
+				const el = cellRefs.current[i];
+				if (!el) continue;
+				const addr = STACK_OFFSET + i;
+				const hasSPtrCls = el.classList.contains("stackPtr");
+				if ([stackPtr, stackPtr + 1].includes(i) && !hasSPtrCls)
+					el.classList.add("stackPtr");
+				else if (![stackPtr, stackPtr + 1].includes(i) && hasSPtrCls)
+					el.classList.remove("stackPtr");
+				const value = mem[addr].toString(16).padStart(2, "0").toUpperCase();
+				const curr = el.textContent;
+				if (curr === value) continue;
+				el.textContent = value;
 			}
 			rafId = requestAnimationFrame(frame);
 		};

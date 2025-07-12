@@ -19,26 +19,29 @@
 		@apply bg-lime-500 text-stone-900 rounded;
 	}
 	.register {
-		@apply bg-blue-500 text-stone-900 rounded;
+		@apply bg-blue-300 text-stone-900 rounded;
 	}
 	.pcRegister,
 	.pc {
 		@apply bg-amber-500 text-stone-900 rounded;
 	}
 	.display {
-		@apply bg-rose-300 text-stone-900 rounded;
+		@apply bg-emerald-500 text-stone-900 rounded;
 	}
 	.keyBuffer {
 		@apply bg-zinc-500 text-stone-900 rounded;
 	}
 	.stack {
-		@apply bg-emerald-500 text-stone-900 rounded;
+		@apply bg-pink-400 text-stone-900 rounded;
 	}
 	.stackPtr {
-		@apply bg-lime-700 text-stone-900 rounded;
+		@apply bg-rose-300 text-stone-900 rounded;
 	}
 	.delayTimer {
 		@apply bg-yellow-500 text-stone-900 rounded;
+	}
+	.keyWait {
+		@apply bg-orange-500 text-stone-900 rounded;
 	}
 	.soundTimer {
 		@apply bg-fuchsia-500 text-stone-900 rounded;

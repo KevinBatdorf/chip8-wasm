@@ -9,6 +9,7 @@ import { four } from "./opcodes/4xxx";
 import { five } from "./opcodes/5xxx";
 import { nine } from "./opcodes/9xxx";
 import { b } from "./opcodes/Bxxx";
+import { f } from "./opcodes/Fxxx";
 import { fn, misc, valType } from "./wasm";
 
 type FuncSignature = {
@@ -110,7 +111,7 @@ addOpFunction(0xb, [valType("i32"), valType("i32")], [], b);
 addOpFunction(0xc, [valType("i32"), valType("i32")], [], notImplemented);
 addOpFunction(0xd, [valType("i32"), valType("i32")], [], notImplemented);
 addOpFunction(0xe, [valType("i32"), valType("i32")], [], notImplemented);
-addOpFunction(0xf, [valType("i32"), valType("i32")], [], notImplemented);
+addOpFunction(0xf, [valType("i32"), valType("i32")], [], f);
 
 // internal functions
 addFunction("init", [], [], init, { export: true });

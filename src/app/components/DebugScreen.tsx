@@ -6,9 +6,15 @@ import { useResizable } from "../hooks/useResizable";
 import { useDebugStore } from "../state/debug";
 import { FloatingWindow } from "./FloatingWindow";
 import { Controls } from "./debug/Controls";
+import { DelayTimer } from "./debug/DelayTimer";
+import { DisplayBuffer } from "./debug/DisplayBuffer";
 import { FullMemoryLayout } from "./debug/FullMemoryLayout";
+import { I } from "./debug/I";
+import { KeyBuffer } from "./debug/KeyBuffer";
+import { KeyWait } from "./debug/KeyWait";
 import { PC } from "./debug/PC";
 import { Registers } from "./debug/Registers";
+import { SoundTimer } from "./debug/SoundTimer";
 import { Stack } from "./debug/Stack";
 
 type Props = {
@@ -85,10 +91,36 @@ export const DebugScreen = ({ debug, chip8, rom }: Props) => {
 								<div className="">PC</div>
 								<PC chip8={chip8} debug={debug} />
 							</div>
+							<div className="flex flex-col">
+								<div className="">I</div>
+								<I chip8={chip8} debug={debug} />
+							</div>
+						</div>
+						<div className="flex flex-wrap gap-4 px-2.5">
+							<div className="flex flex-col">
+								<div className="">Keyboard</div>
+								<KeyBuffer chip8={chip8} debug={debug} />
+							</div>
+							<div className="flex flex-col">
+								<div className="">Wait</div>
+								<KeyWait chip8={chip8} debug={debug} />
+							</div>
+							<div className="flex flex-col">
+								<div className="">Delay</div>
+								<DelayTimer chip8={chip8} debug={debug} />
+							</div>
+							<div className="flex flex-col">
+								<div className="">Sound</div>
+								<SoundTimer chip8={chip8} debug={debug} />
+							</div>
 						</div>
 						<div className="flex flex-col px-2.5">
 							<div className="">Stack</div>
 							<Stack chip8={chip8} debug={debug} />
+						</div>
+						<div className="flex flex-col px-2.5">
+							<div className="">Display</div>
+							<DisplayBuffer chip8={chip8} debug={debug} />
 						</div>
 						<div className="flex flex-col px-2.5 pb-6">
 							<div className="">Memory Layout</div>

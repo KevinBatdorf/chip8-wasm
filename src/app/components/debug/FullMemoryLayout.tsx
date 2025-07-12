@@ -11,7 +11,6 @@ import {
 	SOUND_TIMER_OFFSET,
 	STACK_OFFSET,
 	STACK_PTR_OFFSET,
-	TIMER_INTERVAL,
 } from "../../../core/constants";
 import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
 
@@ -28,37 +27,33 @@ export const FullMemoryLayout = ({ chip8, debug }: Props) => {
 
 	useEffect(() => {
 		if (!chip8 || !debug) return;
-		let lastUpdate = performance.now();
 		let rafId: number;
-		const frame = (now: number) => {
-			if (now - lastUpdate >= TIMER_INTERVAL) {
-				lastUpdate = now;
-				const mem = new Uint8Array(chip8.getMemory().buffer);
-				// remove pc class
-				const rom = debug?.getROM();
-				const pc = debug.getPC();
-				for (let i = 0x000; i < END_OF_MEMORY; i++) {
-					if (!cellRefs.current[i]) continue;
-					// Check for rom
-					const isRom =
-						i >= ROM_LOAD_ADDRESS && i < ROM_LOAD_ADDRESS + (rom?.length ?? 0);
-					const hasRomClass = cellRefs.current[i].classList.contains("rom");
-					if (isRom && !hasRomClass) cellRefs.current[i].classList.add("rom");
-					else if (!isRom && hasRomClass)
-						cellRefs.current[i].classList.remove("rom");
+		const frame = () => {
+			const mem = new Uint8Array(chip8.getMemory().buffer);
+			// remove pc class
+			const rom = debug?.getROM();
+			const pc = debug.getPC();
+			for (let i = 0x000; i < END_OF_MEMORY; i++) {
+				if (!cellRefs.current[i]) continue;
+				// Check for rom
+				const isRom =
+					i >= ROM_LOAD_ADDRESS && i < ROM_LOAD_ADDRESS + (rom?.length ?? 0);
+				const hasRomClass = cellRefs.current[i].classList.contains("rom");
+				if (isRom && !hasRomClass) cellRefs.current[i].classList.add("rom");
+				else if (!isRom && hasRomClass)
+					cellRefs.current[i].classList.remove("rom");
 
-					// Check for PC
-					const hasPCClass = cellRefs.current[i].classList.contains("pc");
-					if ([pc, pc + 1].includes(i) && !hasPCClass)
-						cellRefs.current[i].classList.add("pc");
-					else if (![pc, pc + 1].includes(i) && hasPCClass)
-						cellRefs.current[i].classList.remove("pc");
+				// Check for PC
+				const hasPCClass = cellRefs.current[i].classList.contains("pc");
+				if ([pc, pc + 1].includes(i) && !hasPCClass)
+					cellRefs.current[i].classList.add("pc");
+				else if (![pc, pc + 1].includes(i) && hasPCClass)
+					cellRefs.current[i].classList.remove("pc");
 
-					const value = mem[i].toString(16).padStart(2, "0").toUpperCase();
-					const curr = cellRefs.current[i].textContent;
-					if (curr === value) continue;
-					cellRefs.current[i].textContent = value;
-				}
+				const value = mem[i].toString(16).padStart(2, "0").toUpperCase();
+				const curr = cellRefs.current[i].textContent;
+				if (curr === value) continue;
+				cellRefs.current[i].textContent = value;
 			}
 			rafId = requestAnimationFrame(frame);
 		};

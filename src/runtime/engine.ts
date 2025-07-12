@@ -1,6 +1,7 @@
 import {
 	DELAY_TIMER_OFFSET,
 	DISPLAY_OFFSET,
+	FX0A_VX_OFFSET,
 	I_OFFSET,
 	KEY_BUFFER_OFFSET,
 	PC_OFFSET,
@@ -52,18 +53,28 @@ export const createChip8Engine = async (
 	const exports = instance.exports as Chip8Exports;
 	let frameCallback: ((frame: Uint8Array) => void) | null = null;
 	let running = false;
+	let waitingForKey = false;
 	let rom: Uint8Array | null = null;
 	let lastUpdate = performance.now();
 	let timerAccumulator = 0;
 
 	const frame = (now: number) => {
 		if (!running) return;
+
+		// Calculate time delta
 		const delta = now - lastUpdate;
 		lastUpdate = now;
 		timerAccumulator += delta;
 
 		// Run the CHIP-8 tick
-		for (let i = 0; i < TICKS_PER_FRAME; i++) exports.tick();
+		for (let i = 0; i < TICKS_PER_FRAME; i++) {
+			const mem = new Uint8Array(memory.buffer);
+			waitingForKey = mem[FX0A_VX_OFFSET] !== 0;
+			if (waitingForKey) {
+				return requestAnimationFrame(frame);
+			}
+			exports.tick();
+		}
 
 		// Handle timers
 		while (timerAccumulator >= TIMER_INTERVAL) {
@@ -86,16 +97,20 @@ export const createChip8Engine = async (
 	const start = () => {
 		if (running) return;
 		running = true;
+		waitingForKey = false;
 		lastUpdate = performance.now();
 		timerAccumulator = 0;
 		requestAnimationFrame(frame);
 	};
 	const stop = () => {
 		running = false;
+		waitingForKey = false;
 	};
 	const step = () => {
+		if (waitingForKey) return;
 		exports.tick();
-		exports.update_timers();
+		const mem = new Uint8Array(memory.buffer);
+		waitingForKey = mem[FX0A_VX_OFFSET] !== 0;
 		if (frameCallback) {
 			const displayBuffer = new Uint8Array(
 				memory.buffer,
@@ -127,6 +142,15 @@ export const createChip8Engine = async (
 			throw new Error("Key index must be between 0 and 15");
 		}
 		const memoryBuffer = new Uint8Array(memory.buffer);
+		if (waitingForKey && isDown) {
+			// If waiting for a key press, set the FX0A_VX_OFFSET to 0
+			const VX = memoryBuffer[FX0A_VX_OFFSET];
+			// Put the key index in VX
+			memoryBuffer[REGISTERS_OFFSET + VX] = index;
+			// Clear the waiting state
+			memoryBuffer[FX0A_VX_OFFSET] = 0;
+			waitingForKey = false;
+		}
 		memoryBuffer[KEY_BUFFER_OFFSET + index] = isDown ? 1 : 0;
 	};
 	const debug: Chip8Debug = {

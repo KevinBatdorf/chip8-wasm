@@ -1,6 +1,7 @@
 import {
 	DELAY_TIMER_OFFSET,
 	DISPLAY_OFFSET,
+	FX0A_VX_OFFSET,
 	I_OFFSET,
 	KEY_BUFFER_OFFSET,
 	PC_OFFSET,
@@ -10,7 +11,7 @@ import {
 	STACK_OFFSET,
 	STACK_PTR_OFFSET,
 } from "./constants";
-import { fn, i32, local, memory, misc } from "./wasm";
+import { fn, i32, if_, local, memory } from "./wasm";
 
 export const init = new Uint8Array([
 	...local.declare(),
@@ -68,6 +69,11 @@ export const init = new Uint8Array([
 	...i32.const(0),
 	...i32.store16(),
 
+	// Set FX0A_VX_OFFSET to 0
+	...i32.const(FX0A_VX_OFFSET),
+	...i32.const(0),
+	...i32.store8(),
+
 	...fn.end(),
 ]);
 
@@ -109,8 +115,36 @@ export const tick = new Uint8Array([
 	...fn.end(),
 ]);
 
+// biome-ignore format: keep if structure
 export const updateTimers = new Uint8Array([
 	...local.declare(),
-	...misc.nop(),
+	// Delay timer
+	...i32.const(DELAY_TIMER_OFFSET),
+	...i32.load8_u(), // load delay timer value
+	...i32.const(0),
+    ...i32.gt_u(), // is it greater than 0?
+    ...if_.start(),
+        ...i32.const(DELAY_TIMER_OFFSET),
+        ...i32.const(DELAY_TIMER_OFFSET),
+        ...i32.load8_u(), // load delay timer value again
+        ...i32.const(1),
+        ...i32.sub(), // decrement delay timer
+        ...i32.store8(),
+    ...if_.end(),
+
+    // Sound timer
+    ...i32.const(SOUND_TIMER_OFFSET),
+    ...i32.load8_u(), // load sound timer value
+    ...i32.const(0),
+    ...i32.gt_u(), // is it greater than 0?
+    ...if_.start(),
+        ...i32.const(SOUND_TIMER_OFFSET),
+        ...i32.const(SOUND_TIMER_OFFSET),
+        ...i32.load8_u(), // load sound timer value again
+        ...i32.const(1),
+        ...i32.sub(), // decrement sound timer
+        ...i32.store8(),
+    ...if_.end(),
+
 	...fn.end(),
 ]);

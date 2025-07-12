@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { PC_OFFSET } from "../../../core/constants";
+import { KEY_BUFFER_OFFSET } from "../../../core/constants";
 import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 	debug: Chip8Debug | null;
 };
 
-export const PC = ({ chip8, debug }: Props) => {
+export const KeyBuffer = ({ chip8, debug }: Props) => {
 	const cellRefs = useRef<HTMLSpanElement[]>([]);
 	const gridRef = useRef<HTMLDivElement>(null);
 
@@ -16,9 +16,9 @@ export const PC = ({ chip8, debug }: Props) => {
 		let rafId: number;
 		const frame = () => {
 			const mem = new Uint8Array(chip8.getMemory().buffer);
-			for (let i = 0; i < 2; i++) {
+			for (let i = 0; i < 16; i++) {
 				if (!cellRefs.current[i]) continue;
-				const value = mem[PC_OFFSET + i]
+				const value = mem[KEY_BUFFER_OFFSET + i]
 					.toString(16)
 					.padStart(2, "0")
 					.toUpperCase();
@@ -34,26 +34,21 @@ export const PC = ({ chip8, debug }: Props) => {
 
 	return (
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
-			{Array.from({ length: 2 })
-				.map((_, i) => {
-					const loc = (PC_OFFSET + i)
-						.toString(16)
-						.padStart(4, "0")
-						.toUpperCase();
-					return (
-						<span
-							key={loc}
-							title={`0x${loc}`}
-							data-index={i}
-							ref={(el) => {
-								if (!el) return;
-								cellRefs.current[i] = el;
-							}}
-							className="cell pcRegister"
-						/>
-					);
-				})
-				.toReversed()}
+			{Array.from({ length: 16 }).map((_, i) => {
+				const loc = (KEY_BUFFER_OFFSET + i).toString(16).toUpperCase();
+				return (
+					<span
+						key={loc}
+						title={`0x${loc}`}
+						data-index={i}
+						ref={(el) => {
+							if (!el) return;
+							cellRefs.current[i] = el;
+						}}
+						className="cell keyBuffer"
+					/>
+				);
+			})}
 		</div>
 	);
 };

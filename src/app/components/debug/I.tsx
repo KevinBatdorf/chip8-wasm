@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { PC_OFFSET } from "../../../core/constants";
+import { I_OFFSET } from "../../../core/constants";
 import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 	debug: Chip8Debug | null;
 };
 
-export const PC = ({ chip8, debug }: Props) => {
+export const I = ({ chip8, debug }: Props) => {
 	const cellRefs = useRef<HTMLSpanElement[]>([]);
 	const gridRef = useRef<HTMLDivElement>(null);
 
@@ -18,7 +18,7 @@ export const PC = ({ chip8, debug }: Props) => {
 			const mem = new Uint8Array(chip8.getMemory().buffer);
 			for (let i = 0; i < 2; i++) {
 				if (!cellRefs.current[i]) continue;
-				const value = mem[PC_OFFSET + i]
+				const value = mem[I_OFFSET + i]
 					.toString(16)
 					.padStart(2, "0")
 					.toUpperCase();
@@ -36,7 +36,7 @@ export const PC = ({ chip8, debug }: Props) => {
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
 			{Array.from({ length: 2 })
 				.map((_, i) => {
-					const loc = (PC_OFFSET + i)
+					const loc = (I_OFFSET + i)
 						.toString(16)
 						.padStart(4, "0")
 						.toUpperCase();
@@ -49,7 +49,7 @@ export const PC = ({ chip8, debug }: Props) => {
 								if (!el) return;
 								cellRefs.current[i] = el;
 							}}
-							className="cell pcRegister"
+							className="cell iRegister"
 						/>
 					);
 				})
