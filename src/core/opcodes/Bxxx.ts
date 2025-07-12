@@ -1,9 +1,14 @@
-import { DISPLAY_OFFSET, PC_OFFSET, ROM_LOAD_ADDRESS } from "../constants";
+import {
+	DISPLAY_OFFSET,
+	PC_OFFSET,
+	REGISTERS_OFFSET,
+	ROM_LOAD_ADDRESS,
+} from "../constants";
 import { fn, i32, if_, local, misc } from "../wasm";
 
-// Jump to address NNN
+// Jump to address NNN + V0
 // biome-ignore format: keep if structure
-export const one = new Uint8Array([
+export const b = new Uint8Array([
 	// params: high byte of opcode, low byte of opcode
 	...local.declare("i32"), // NNN
 	...local.get(0), // high
@@ -13,6 +18,9 @@ export const one = new Uint8Array([
 	...i32.or(), // combine high and low bytes into opcode
 	...i32.const(0x0fff), // mask to get the address
 	...i32.and(),
+    ...i32.const(REGISTERS_OFFSET), // V0
+    ...i32.load16_u(), // load V0
+    ...i32.add(), // NNN + V0
 	...local.tee(0), // store NNN in local 0
 
 	// Are we out of bounds?

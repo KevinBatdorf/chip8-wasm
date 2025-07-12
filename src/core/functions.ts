@@ -2,6 +2,7 @@ import { init, tick, updateTimers } from "./cpu";
 import { emitFunctionType, unsignedLEB } from "./emit";
 import { eight, seven, six } from "./opcodes";
 import { one } from "./opcodes/1xxx";
+import { b } from "./opcodes/Bxxx";
 import { fn, misc, valType } from "./wasm";
 
 type FuncSignature = {
@@ -99,7 +100,7 @@ addOpFunction(0x7, [valType("i32"), valType("i32")], [], seven);
 addOpFunction(0x8, [valType("i32"), valType("i32")], [], eight);
 addOpFunction(0x9, [valType("i32"), valType("i32")], [], notImplemented);
 addOpFunction(0xa, [valType("i32"), valType("i32")], [], notImplemented);
-addOpFunction(0xb, [valType("i32"), valType("i32")], [], notImplemented);
+addOpFunction(0xb, [valType("i32"), valType("i32")], [], b);
 addOpFunction(0xc, [valType("i32"), valType("i32")], [], notImplemented);
 addOpFunction(0xd, [valType("i32"), valType("i32")], [], notImplemented);
 addOpFunction(0xe, [valType("i32"), valType("i32")], [], notImplemented);
