@@ -18,7 +18,7 @@ export const two = new Uint8Array([
 	...i32.or(), // combine high and low bytes into opcode
 	...i32.const(0x0fff), // mask to get the address
 	...i32.and(),
-	...local.tee(0), // store NNN in local 0
+	...local.tee(2), // store NNN in local 2
 
 	// Are we out of bounds?
 	...i32.const(ROM_LOAD_ADDRESS),
@@ -26,7 +26,7 @@ export const two = new Uint8Array([
 	...if_.start(),
 	...misc.unreachable(),
 	...fn.end(),
-	...local.get(0), // NNN
+	...local.get(2), // NNN
 	...i32.const(DISPLAY_OFFSET - 2), // max safe address
 	...i32.gt_u(),
 	...if_.start(),
@@ -52,7 +52,7 @@ export const two = new Uint8Array([
 
 	// Move PC to NNN
 	...i32.const(PC_OFFSET),
-	...local.get(0),
+	...local.get(2),
 	...i32.store16(),
 	...fn.end(),
 ]);

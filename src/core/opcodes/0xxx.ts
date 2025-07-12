@@ -1,11 +1,10 @@
 import {
 	DISPLAY_OFFSET,
 	PC_OFFSET,
-	ROM_LOAD_ADDRESS,
 	STACK_OFFSET,
 	STACK_PTR_OFFSET,
 } from "../constants";
-import { fn, i32, if_, local, memory, misc } from "../wasm";
+import { fn, i32, if_, local, memory } from "../wasm";
 
 // Return from a subroutine
 const ee = new Uint8Array([

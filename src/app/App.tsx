@@ -22,11 +22,16 @@ export default function App() {
 		}
 		if (rom.file === "test.ch8") {
 			const romD = new Uint8Array([
-				0x23,
-				0x00, // Call subroutine at 0x300
-				...new Uint8Array(0x300 - 0x202).fill(0), // Fill up to 0x300
-				0x00,
-				0xee, // Return from subroutine
+				0x6a,
+				0x12, // 6A12: V[A] = 0x12
+				0x6b,
+				0x12, // 6B12: V[B] = 0x12
+				0x5a,
+				0xb0, // 5AB0: if V[A] === V[B], skip next
+				0x6c,
+				0x99, // 6C99: V[C] = 0x99 (should be skipped)
+				0x6c,
+				0x34, // 6C34: V[C] = 0x34 (should execute)
 			]);
 			chip8.loadROM(romD);
 			return;
