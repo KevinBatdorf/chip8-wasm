@@ -46,6 +46,7 @@ export const i32 = {
 	add: (): number[] => [0x6a],
 	sub: (): number[] => [0x6b],
 	mul: (): number[] => [0x6c],
+	div_u: (): number[] => [0x6e], // unsigned division
 	rem_u: (): number[] => [0x70], // unsigned remainder
 	and: (): number[] => [0x71], // bitwise AND
 	or: (): number[] => [0x72], // bitwise OR

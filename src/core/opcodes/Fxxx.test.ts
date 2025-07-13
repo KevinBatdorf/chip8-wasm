@@ -98,3 +98,67 @@ test("FX29 sets I to location of font sprite for digit VX", async () => {
 
 	expect(debug.getI()).toBe(25);
 });
+
+test("FX33 stores BCD of V0 at I", () => {
+	chip8.loadROM(
+		// biome-ignore format: keep structure
+		new Uint8Array([
+			0x60, 0x7B, // V0 = 123
+			0xA3, 0x00, // I = 0x300
+			0xF0, 0x33, // Store BCD of V0 at I
+		]),
+	);
+
+	const mem = new Uint8Array(chip8.getMemory().buffer);
+
+	chip8.step(); // V0 = 123
+	chip8.step(); // I = 0x300
+	chip8.step(); // FX33
+
+	expect(mem[0x300]).toBe(1); // Hundreds
+	expect(mem[0x301]).toBe(2); // Tens
+	expect(mem[0x302]).toBe(3); // Ones
+});
+
+test("FX55 stores V0 to VX in memory starting at I", () => {
+	chip8.loadROM(
+		// biome-ignore format: keep structure
+		new Uint8Array([
+			0x60, 0x01, // V0 = 1
+			0x61, 0x02, // V1 = 2
+			0x62, 0x03, // V2 = 3
+			0xA3, 0x00, // I = 0x300
+			0xF2, 0x55, // Store V0–V2 into memory at I
+		]),
+	);
+
+	const mem = new Uint8Array(chip8.getMemory().buffer);
+	chip8.step(); // V0
+	chip8.step(); // V1
+	chip8.step(); // V2
+	chip8.step(); // I
+	chip8.step(); // FX55
+
+	expect(mem[0x300]).toBe(0x01); // V0
+	expect(mem[0x301]).toBe(0x02); // V1
+	expect(mem[0x302]).toBe(0x03); // V2
+});
+
+test("FX65 loads program bytes into V0–V2 from itself", () => {
+	chip8.loadROM(
+		// biome-ignore format: keep structure
+		new Uint8Array([
+            0xA2, 0x00, // I = 0x200
+            0xF2, 0x65, // FX65 — Load V0–V2 from memory[I]
+        ]),
+	);
+
+	const mem = new Uint8Array(chip8.getMemory().buffer);
+
+	chip8.step(); // A2 00
+	chip8.step(); // F2 65
+
+	expect(mem[REGISTERS_OFFSET + 0]).toBe(0xa2); // V0 = first byte of ROM
+	expect(mem[REGISTERS_OFFSET + 1]).toBe(0x00); // V1 = second byte
+	expect(mem[REGISTERS_OFFSET + 2]).toBe(0xf2); // V2 = third byte
+});
