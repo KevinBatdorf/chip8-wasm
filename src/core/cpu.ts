@@ -25,7 +25,7 @@ export const init = new Uint8Array([
 	// Clear display
 	...i32.const(DISPLAY_OFFSET),
 	...i32.const(0),
-	...i32.const(STACK_OFFSET - DISPLAY_OFFSET), // usually 64×32 = 2048 bytes
+	...i32.const(STACK_OFFSET - DISPLAY_OFFSET), // 256 bytes for display (64x32 = 2048 bits = 256 bytes)
 	...memory.fill(),
 
 	// Clear key buffer

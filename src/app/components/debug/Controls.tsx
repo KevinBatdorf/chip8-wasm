@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import type { Chip8Engine } from "../../../runtime/engine";
+import { useDebugStore } from "../../state/debug";
 
 type Props = {
 	chip8: Chip8Engine | null;
@@ -9,8 +10,12 @@ type Props = {
 
 export const Controls = ({ chip8, rom }: Props) => {
 	const [running, setRunning] = useState(false);
+	const { hideZeros, setHideZeros } = useDebugStore();
+
 	const handleReset = () => {
+		if (!chip8 || !rom) return;
 		chip8?.reset();
+		setRunning(false);
 	};
 	const togglePlay = () => {
 		if (chip8?.isRunning()) {
@@ -22,7 +27,9 @@ export const Controls = ({ chip8, rom }: Props) => {
 		setRunning(true);
 	};
 	const handleStep = () => {
+		if (!chip8 || !rom) return;
 		chip8?.step();
+		setRunning(chip8.isRunning());
 	};
 	useEffect(() => {
 		const id = setTimeout(() => {
@@ -118,6 +125,18 @@ export const Controls = ({ chip8, rom }: Props) => {
 						d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
 					/>
 				</svg>
+			</button>
+			<button
+				type="button"
+				className={clsx(
+					"px-2 py-1 text-stone-300 ring ring-stone-500 rounded hover:bg-stone-700",
+					{
+						"bg-stone-700": !hideZeros,
+					},
+				)}
+				onClick={() => setHideZeros(!hideZeros)}
+			>
+				0x00
 			</button>
 		</div>
 	);

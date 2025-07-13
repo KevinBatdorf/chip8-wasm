@@ -24,9 +24,15 @@ export default function App() {
 		if (rom.file === "test.ch8") {
 			const romD = new Uint8Array([
 				0x60,
-				0x05, // 6005 => Set V0 = 0x05 (digit 5)
-				0xf0,
-				0x29, // F029 => Set I = location of sprite for V0
+				0x00, // V0 = 0 (X)
+				0x61,
+				0x00, // V1 = 0 (Y)
+				0x6a,
+				0x0a, // VA = 0xA (digit)
+				0xfa,
+				0x29, // I = address of sprite for digit in VA
+				0xd0,
+				0x05, // draw sprite at (V0, V1), 5 bytes tall
 			]);
 			chip8.loadROM(romD);
 			return;

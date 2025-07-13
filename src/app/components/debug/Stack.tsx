@@ -5,9 +5,10 @@ import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
 type Props = {
 	chip8?: Chip8Engine | null;
 	debug: Chip8Debug | null;
+	hideZeros: boolean;
 };
 
-export const Stack = ({ chip8, debug }: Props) => {
+export const Stack = ({ chip8, debug, hideZeros }: Props) => {
 	const cellRefs = useRef<HTMLSpanElement[]>([]);
 	const gridRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +27,8 @@ export const Stack = ({ chip8, debug }: Props) => {
 					el.classList.add("stackPtr");
 				else if (![stackPtr, stackPtr + 1].includes(i) && hasSPtrCls)
 					el.classList.remove("stackPtr");
-				const value = mem[addr].toString(16).padStart(2, "0").toUpperCase();
+				let value = mem[addr].toString(16).padStart(2, "0").toUpperCase();
+				value = hideZeros && value === "00" ? "" : value;
 				const curr = el.textContent;
 				if (curr === value) continue;
 				el.textContent = value;
@@ -35,7 +37,7 @@ export const Stack = ({ chip8, debug }: Props) => {
 		};
 		rafId = requestAnimationFrame(frame);
 		return () => cancelAnimationFrame(rafId);
-	}, [chip8, debug]);
+	}, [chip8, debug, hideZeros]);
 
 	return (
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">

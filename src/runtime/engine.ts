@@ -85,11 +85,7 @@ export const createChip8Engine = async (
 
 		// Notify callback renderer
 		if (frameCallback) {
-			const displayBuffer = new Uint8Array(
-				memory.buffer,
-				DISPLAY_OFFSET,
-				64 * 32,
-			);
+			const displayBuffer = new Uint8Array(memory.buffer, DISPLAY_OFFSET, 256);
 			frameCallback(displayBuffer);
 		}
 		requestAnimationFrame(frame);
@@ -116,7 +112,7 @@ export const createChip8Engine = async (
 			const displayBuffer = new Uint8Array(
 				memory.buffer,
 				DISPLAY_OFFSET,
-				64 * 32,
+				256, // 64x32 display = 256 bytes
 			);
 			frameCallback(displayBuffer);
 		}

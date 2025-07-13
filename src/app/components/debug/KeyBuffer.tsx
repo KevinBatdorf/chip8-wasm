@@ -5,9 +5,10 @@ import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
 type Props = {
 	chip8?: Chip8Engine | null;
 	debug: Chip8Debug | null;
+	hideZeros?: boolean;
 };
 
-export const KeyBuffer = ({ chip8, debug }: Props) => {
+export const KeyBuffer = ({ chip8, debug, hideZeros }: Props) => {
 	const cellRefs = useRef<HTMLSpanElement[]>([]);
 	const gridRef = useRef<HTMLDivElement>(null);
 
@@ -18,10 +19,11 @@ export const KeyBuffer = ({ chip8, debug }: Props) => {
 			const mem = new Uint8Array(chip8.getMemory().buffer);
 			for (let i = 0; i < 16; i++) {
 				if (!cellRefs.current[i]) continue;
-				const value = mem[KEY_BUFFER_OFFSET + i]
+				let value = mem[KEY_BUFFER_OFFSET + i]
 					.toString(16)
 					.padStart(2, "0")
 					.toUpperCase();
+				value = hideZeros && value === "00" ? "" : value;
 				const curr = cellRefs.current[i].textContent;
 				if (curr === value) continue;
 				cellRefs.current[i].textContent = value;
@@ -30,7 +32,7 @@ export const KeyBuffer = ({ chip8, debug }: Props) => {
 		};
 		rafId = requestAnimationFrame(frame);
 		return () => cancelAnimationFrame(rafId);
-	}, [chip8, debug]);
+	}, [chip8, debug, hideZeros]);
 
 	return (
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">

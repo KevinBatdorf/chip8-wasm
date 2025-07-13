@@ -46,6 +46,7 @@ export const i32 = {
 	add: (): number[] => [0x6a],
 	sub: (): number[] => [0x6b],
 	mul: (): number[] => [0x6c],
+	rem_u: (): number[] => [0x70], // unsigned remainder
 	and: (): number[] => [0x71], // bitwise AND
 	or: (): number[] => [0x72], // bitwise OR
 	xor: (): number[] => [0x73], // bitwise XOR
@@ -65,6 +66,13 @@ export const control = {
 
 export const block = {
 	start: (type = valType("void")): number[] => [0x02, ...unsignedLEB(type)],
+	end: (): number[] => control.end(),
+};
+
+export const loop = {
+	start: (type = valType("void")): number[] => [0x03, ...unsignedLEB(type)],
+	br: (labelIndex: number): number[] => [0x0c, ...unsignedLEB(labelIndex)],
+	br_if: (labelIndex: number): number[] => [0x0d, ...unsignedLEB(labelIndex)],
 	end: (): number[] => control.end(),
 };
 

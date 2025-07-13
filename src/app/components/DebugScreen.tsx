@@ -30,6 +30,7 @@ export const DebugScreen = ({ debug, chip8, rom }: Props) => {
 		width,
 		height,
 		open,
+		hideZeros,
 		setOpen,
 		setPosition,
 		setSize,
@@ -85,46 +86,54 @@ export const DebugScreen = ({ debug, chip8, rom }: Props) => {
 						<div className="flex flex-wrap gap-4 px-2.5">
 							<div className="flex flex-col">
 								<div className="">Registers</div>
-								<Registers chip8={chip8} debug={debug} />
+								<Registers chip8={chip8} debug={debug} hideZeros={hideZeros} />
 							</div>
 							<div className="flex flex-col">
 								<div className="">PC</div>
-								<PC chip8={chip8} debug={debug} />
+								<PC chip8={chip8} debug={debug} hideZeros={hideZeros} />
 							</div>
 							<div className="flex flex-col">
 								<div className="">I</div>
-								<I chip8={chip8} debug={debug} />
+								<I chip8={chip8} debug={debug} hideZeros={hideZeros} />
 							</div>
 						</div>
 						<div className="flex flex-wrap gap-4 px-2.5">
 							<div className="flex flex-col">
 								<div className="">Keyboard</div>
-								<KeyBuffer chip8={chip8} debug={debug} />
+								<KeyBuffer chip8={chip8} debug={debug} hideZeros={hideZeros} />
 							</div>
 							<div className="flex flex-col">
 								<div className="">Wait</div>
-								<KeyWait chip8={chip8} debug={debug} />
+								<KeyWait chip8={chip8} debug={debug} hideZeros={hideZeros} />
 							</div>
 							<div className="flex flex-col">
 								<div className="">Delay</div>
-								<DelayTimer chip8={chip8} debug={debug} />
+								<DelayTimer chip8={chip8} debug={debug} hideZeros={hideZeros} />
 							</div>
 							<div className="flex flex-col">
 								<div className="">Sound</div>
-								<SoundTimer chip8={chip8} debug={debug} />
+								<SoundTimer chip8={chip8} debug={debug} hideZeros={hideZeros} />
 							</div>
 						</div>
 						<div className="flex flex-col px-2.5">
 							<div className="">Stack</div>
-							<Stack chip8={chip8} debug={debug} />
+							<Stack chip8={chip8} debug={debug} hideZeros={hideZeros} />
 						</div>
 						<div className="flex flex-col px-2.5">
-							<div className="">Display</div>
-							<DisplayBuffer chip8={chip8} debug={debug} />
+							Display
+							<DisplayBuffer
+								chip8={chip8}
+								debug={debug}
+								hideZeros={hideZeros}
+							/>
 						</div>
 						<div className="flex flex-col px-2.5 pb-6">
 							<div className="">Memory Layout</div>
-							<FullMemoryLayout chip8={chip8} debug={debug} />
+							<FullMemoryLayout
+								chip8={chip8}
+								debug={debug}
+								hideZeros={hideZeros}
+							/>
 						</div>
 					</div>
 				</div>

@@ -17,11 +17,12 @@ import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
 type Props = {
 	chip8?: Chip8Engine | null;
 	debug: Chip8Debug | null;
+	hideZeros: boolean;
 };
 
 const END_OF_MEMORY = REGISTERS_OFFSET + 0x0f;
 
-export const FullMemoryLayout = ({ chip8, debug }: Props) => {
+export const FullMemoryLayout = ({ chip8, debug, hideZeros }: Props) => {
 	const cellRefs = useRef<HTMLSpanElement[]>([]);
 	const gridRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +51,8 @@ export const FullMemoryLayout = ({ chip8, debug }: Props) => {
 				else if (![pc, pc + 1].includes(i) && hasPCClass)
 					cellRefs.current[i].classList.remove("pc");
 
-				const value = mem[i].toString(16).padStart(2, "0").toUpperCase();
+				let value = mem[i].toString(16).padStart(2, "0").toUpperCase();
+				value = hideZeros && value === "00" ? "" : value;
 				const curr = cellRefs.current[i].textContent;
 				if (curr === value) continue;
 				cellRefs.current[i].textContent = value;
@@ -59,7 +61,7 @@ export const FullMemoryLayout = ({ chip8, debug }: Props) => {
 		};
 		rafId = requestAnimationFrame(frame);
 		return () => cancelAnimationFrame(rafId);
-	}, [chip8, debug]);
+	}, [chip8, debug, hideZeros]);
 
 	return (
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
