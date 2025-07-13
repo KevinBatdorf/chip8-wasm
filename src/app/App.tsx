@@ -22,7 +22,12 @@ export default function App() {
 			return;
 		}
 		if (rom.file === "test.ch8") {
-			const romD = new Uint8Array([0xf1, 0x0a]);
+			const romD = new Uint8Array([
+				0x60,
+				0x05, // 6005 => Set V0 = 0x05 (digit 5)
+				0xf0,
+				0x29, // F029 => Set I = location of sprite for V0
+			]);
 			chip8.loadROM(romD);
 			return;
 		}

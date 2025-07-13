@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { beforeEach, expect, test } from "vitest";
 import {
 	DELAY_TIMER_OFFSET,
+	I_OFFSET,
 	REGISTERS_OFFSET,
 	SOUND_TIMER_OFFSET,
 	createChip8Engine,
@@ -64,4 +65,36 @@ test("FX0A waits for key and sets VX to key index (via setKey)", () => {
 	// Next step should store the key index (0x5) into V1
 	chip8.step();
 	expect(mem[REGISTERS_OFFSET + 0x1]).toBe(0x5);
+});
+
+test("FX1E adds VX to I", () => {
+	chip8.loadROM(
+		// biome-ignore format: keep structure
+		new Uint8Array([
+			0x60, 0x05, // 6005: V0 = 5
+			0xA2, 0x00, // A200: I = 0x200
+			0xF0, 0x1E, // F01E: I += V0
+		]),
+	);
+
+	chip8.step(); // V0 = 5
+	chip8.step(); // I = 0x200
+	chip8.step(); // I += V0 (5)
+
+	const view = new DataView(chip8.getMemory().buffer);
+	expect(view.getUint16(I_OFFSET, true)).toBe(0x205);
+});
+
+test("FX29 sets I to location of font sprite for digit VX", async () => {
+	// biome-ignore format: keep structure
+	const rom = new Uint8Array([
+		0x60, 0x05, // 6005 => Set V0 = 0x05 (digit 5)
+		0xF0, 0x29, // F029 => Set I = location of sprite for V0
+	]);
+	await chip8.loadROM(rom);
+	chip8.step(); // V0 = 0x05
+	chip8.step(); // F029 sets I to sprite address for V0
+	const debug = chip8.getDebug();
+
+	expect(debug.getI()).toBe(25);
 });

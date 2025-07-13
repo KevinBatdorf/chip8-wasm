@@ -83,14 +83,3 @@ export const emitFunctionType = (type: {
 		...results,
 	]);
 };
-
-export const emitFunction = (body: Uint8Array): Uint8Array =>
-	new Uint8Array([...unsignedLEB(body.length), ...body]);
-
-export const emitExportEntry = (
-	name: string,
-	index: number,
-	kind: number,
-): number[] => {
-	return [...encodeString(name), kind, ...unsignedLEB(index)];
-};

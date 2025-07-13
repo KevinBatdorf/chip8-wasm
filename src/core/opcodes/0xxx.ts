@@ -35,25 +35,26 @@ const clearDisplay = new Uint8Array([
 ]);
 
 // Execute subroutine starting at address NNN
-export const zero = new Uint8Array([
-	// params: high byte of opcode, low byte of opcode
-	...local.declare(),
+export const zero = () =>
+	new Uint8Array([
+		// params: high byte of opcode, low byte of opcode
+		...local.declare(),
 
-	// Return from a subroutine
-	...local.get(1), // low byte
-	...i32.const(0xee),
-	...i32.eq(),
-	...if_.start(),
-	...ee,
-	...if_.end(),
+		// Return from a subroutine
+		...local.get(1), // low byte
+		...i32.const(0xee),
+		...i32.eq(),
+		...if_.start(),
+		...ee,
+		...if_.end(),
 
-	// Clear the display
-	...local.get(1), // low byte
-	...i32.const(0xe0),
-	...i32.eq(),
-	...if_.start(),
-	...clearDisplay,
-	...if_.end(),
+		// Clear the display
+		...local.get(1), // low byte
+		...i32.const(0xe0),
+		...i32.eq(),
+		...if_.start(),
+		...clearDisplay,
+		...if_.end(),
 
-	...fn.end(),
-]);
+		...fn.end(),
+	]);

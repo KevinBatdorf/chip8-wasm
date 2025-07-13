@@ -47,8 +47,9 @@ export const createChip8Engine = async (
 	wasmBinary: Uint8Array,
 ): Promise<Chip8Engine> => {
 	const memory = new WebAssembly.Memory({ initial: 1 });
+	const random = () => Math.floor(Math.random() * 256);
 	const { instance } = await WebAssembly.instantiate(wasmBinary, {
-		env: { memory },
+		env: { memory, random },
 	});
 	const exports = instance.exports as Chip8Exports;
 	let frameCallback: ((frame: Uint8Array) => void) | null = null;

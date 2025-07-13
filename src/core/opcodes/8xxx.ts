@@ -146,103 +146,105 @@ export const eightE = new Uint8Array([
 	...fn.return(),
 ]);
 
-export const eight = new Uint8Array([
-	// params: high, low byte of opcode
-	// [2] = high byte, [3] = low byte, [4] = second nibble of low byte
-	// [5] = scratch value, [6] = scratch value
-	...local.declare("i32", "i32", "i32", "i32", "i32"),
+// biome-ignore format: keep if structure
+export const eight = () =>
+	new Uint8Array([
+		// params: high, low byte of opcode
+		// [2] = high byte, [3] = low byte, [4] = second nibble of low byte
+		// [5] = scratch value, [6] = scratch value
+		...local.declare("i32", "i32", "i32", "i32", "i32"),
 
-	...local.get(0), // high byte of opcode
-	...i32.const(0x0f),
-	...i32.and(), // isolate the second nibble (0x0X)
-	...i32.const(REGISTERS_OFFSET),
-	...i32.add(), // address of VX
-	...local.set(2),
+		...local.get(0), // high byte of opcode
+		...i32.const(0x0f),
+		...i32.and(), // isolate the second nibble (0x0X)
+		...i32.const(REGISTERS_OFFSET),
+		...i32.add(), // address of VX
+		...local.set(2),
 
-	...local.get(1), // low byte of opcode
-	...i32.const(0xf0),
-	...i32.and(), // isolate the first nibble (0xX0)
-	...i32.const(4),
-	...i32.shr_u(), // shift right to get the first nibble
-	...i32.const(REGISTERS_OFFSET),
-	...i32.add(), // address of VY
-	...local.set(3),
+		...local.get(1), // low byte of opcode
+		...i32.const(0xf0),
+		...i32.and(), // isolate the first nibble (0xX0)
+		...i32.const(4),
+		...i32.shr_u(), // shift right to get the first nibble
+		...i32.const(REGISTERS_OFFSET),
+		...i32.add(), // address of VY
+		...local.set(3),
 
-	...local.get(1), // low byte
-	...i32.const(0x0f),
-	...i32.and(), // isolate the lower nibble
-	...local.set(4),
+		...local.get(1), // low byte
+		...i32.const(0x0f),
+		...i32.and(), // isolate the lower nibble
+		...local.set(4),
 
-	// 0: VX = VY
-	...local.get(4),
-	...i32.const(0),
-	...i32.eq(),
-	...if_.start(),
-	...eight0,
-	...if_.end(),
+		// 0: VX = VY
+		...local.get(4),
+		...i32.const(0),
+		...i32.eq(),
+		...if_.start(),
+		    ...eight0,
+		...if_.end(),
 
-	// 1: VX = VX OR VY
-	...local.get(4),
-	...i32.const(1),
-	...i32.eq(),
-	...if_.start(),
-	...eight1,
-	...if_.end(),
+		// 1: VX = VX OR VY
+		...local.get(4),
+		...i32.const(1),
+		...i32.eq(),
+		...if_.start(),
+		    ...eight1,
+		...if_.end(),
 
-	// 2: VX = VX AND VY
-	...local.get(4),
-	...i32.const(2),
-	...i32.eq(),
-	...if_.start(),
-	...eight2,
-	...if_.end(),
+		// 2: VX = VX AND VY
+		...local.get(4),
+		...i32.const(2),
+		...i32.eq(),
+		...if_.start(),
+		    ...eight2,
+		...if_.end(),
 
-	// 3: VX = VX XOR VY
-	...local.get(4),
-	...i32.const(3),
-	...i32.eq(),
-	...if_.start(),
-	...eight3,
-	...if_.end(),
+		// 3: VX = VX XOR VY
+		...local.get(4),
+		...i32.const(3),
+		...i32.eq(),
+		...if_.start(),
+		    ...eight3,
+		...if_.end(),
 
-	// 4: VX += VY, VF = carry
-	...local.get(4),
-	...i32.const(4),
-	...i32.eq(),
-	...if_.start(),
-	...eight4,
-	...if_.end(),
+		// 4: VX += VY, VF = carry
+		...local.get(4),
+		...i32.const(4),
+		...i32.eq(),
+		...if_.start(),
+		    ...eight4,
+		...if_.end(),
 
-	// 5: VX -= VY, VF = NOT borrow
-	...local.get(4),
-	...i32.const(5),
-	...i32.eq(),
-	...if_.start(),
-	...eight5,
-	...if_.end(),
+		// 5: VX -= VY, VF = NOT borrow
+		...local.get(4),
+		...i32.const(5),
+		...i32.eq(),
+		...if_.start(),
+		    ...eight5,
+		...if_.end(),
 
-	// 6: VX >>= 1, VF = LSB
-	...local.get(4),
-	...i32.const(6),
-	...i32.eq(),
-	...if_.start(),
-	...eight6,
-	...if_.end(),
+		// 6: VX >>= 1, VF = LSB
+		...local.get(4),
+		...i32.const(6),
+		...i32.eq(),
+		...if_.start(),
+		    ...eight6,
+		...if_.end(),
 
-	// 7: VX = VY - VX, VF = NOT borrow
-	...local.get(4),
-	...i32.const(7),
-	...i32.eq(),
-	...if_.start(),
-	...eight7,
-	...if_.end(),
+		// 7: VX = VY - VX, VF = NOT borrow
+		...local.get(4),
+		...i32.const(7),
+		...i32.eq(),
+		...if_.start(),
+		    ...eight7,
+		...if_.end(),
 
-	// E: VX <<= 1, VF = MSB
-	...local.get(4),
-	...i32.const(0xe),
-	...i32.eq(),
-	...if_.start(),
-	...eightE,
-	...if_.end(),
-	...fn.end(),
-]);
+		// E: VX <<= 1, VF = MSB
+		...local.get(4),
+		...i32.const(0xe),
+		...i32.eq(),
+		...if_.start(),
+		    ...eightE,
+		...if_.end(),
+		...fn.end(),
+	]);
