@@ -78,8 +78,8 @@ export const DebugScreen = ({ debug, chip8, rom }: Props) => {
 				mountNode={mountNode}
 				ref={ref}
 			>
-				<div className="flex flex-col gap-4 text-sm overflow-hidden h-full">
-					<div className="px-2.5 mt-4">
+				<div className="flex flex-col gap-4 text-sm overflow-hidden h-full select-none">
+					<div className="px-2.5 pt-px">
 						<Controls rom={rom} chip8={chip8} />
 					</div>
 					<div className="flex flex-col gap-4 overflow-y-auto overflow-x-scroll h-full cursor-default">

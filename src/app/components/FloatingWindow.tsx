@@ -66,7 +66,7 @@ export const FloatingWindow = forwardRef<HTMLDivElement, FloatingWindowProps>(
 							<div
 								data-handle
 								draggable
-								className="flex flex-grow cursor-grab items-center justify-between gap-1 p-0"
+								className="flex flex-grow cursor-grab items-center justify-between gap-1 p-0 pb-3"
 							>
 								<DragButton />
 								<h2 className="m-0 h-full flex-grow p-0 text-sm font-medium text-stone-50">
@@ -75,7 +75,7 @@ export const FloatingWindow = forwardRef<HTMLDivElement, FloatingWindowProps>(
 							</div>
 							<button
 								type="button"
-								className="relative z-10 border-0"
+								className="relative z-10 border-0 pb-3"
 								onClick={() => setOpen(false)}
 								aria-label="Close Debug Menu"
 							>

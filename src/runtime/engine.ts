@@ -118,6 +118,15 @@ export const createChip8Engine = async (
 		}
 	};
 
+	const reset = () => {
+		exports.init();
+		loadROM(rom || new Uint8Array());
+		if (frameCallback) {
+			const displayBuffer = new Uint8Array(memory.buffer, DISPLAY_OFFSET, 256);
+			frameCallback(displayBuffer);
+		}
+	};
+
 	const loadROM = (bytes: Uint8Array) => {
 		stop();
 		exports.init(); // Reset CHIP-8 state before loading ROM
@@ -128,12 +137,14 @@ export const createChip8Engine = async (
 		const memoryBuffer = new Uint8Array(memory.buffer);
 		memoryBuffer.set(bytes, ROM_LOAD_ADDRESS);
 	};
+
 	const onFrame = (callback: (frame: Uint8Array) => void) => {
 		if (typeof callback !== "function") {
 			throw new Error("Frame callback must be a function");
 		}
 		frameCallback = callback;
 	};
+
 	const setKey = (index: number, isDown: boolean) => {
 		if (index < 0 || index > 15) {
 			throw new Error("Key index must be between 0 and 15");
@@ -150,6 +161,7 @@ export const createChip8Engine = async (
 		}
 		memoryBuffer[KEY_BUFFER_OFFSET + index] = isDown ? 1 : 0;
 	};
+
 	const debug: Chip8Debug = {
 		getPC: () => new DataView(memory.buffer).getUint16(PC_OFFSET, true),
 		getI: () => new DataView(memory.buffer).getUint16(I_OFFSET, true),
@@ -169,10 +181,7 @@ export const createChip8Engine = async (
 		pause: stop,
 		step,
 		isRunning: () => running,
-		reset: () => {
-			exports.init();
-			loadROM(rom || new Uint8Array());
-		},
+		reset,
 		loadROM,
 		onFrame,
 		setKey,

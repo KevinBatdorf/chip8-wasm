@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { type Chip8Engine, createChip8Engine } from "..";
 import { DebugScreen } from "./components/DebugScreen";
+import { Display } from "./components/Display";
 import { RomSelect } from "./components/RomSelect";
 import { getRom, getWasm } from "./helpers";
 import { keyMap } from "./lib/keys";
@@ -23,16 +24,16 @@ export default function App() {
 		}
 		if (rom.file === "test.ch8") {
 			const romD = new Uint8Array([
+				0x62,
+				0x01, // V2 = 1 (digit)
+				0xf2,
+				0x29, // I = location of sprite for V2
 				0x60,
-				0x00, // V0 = 0 (X)
+				0x08, // V0 = 8 (X)
 				0x61,
-				0x00, // V1 = 0 (Y)
-				0x6a,
-				0x0a, // VA = 0xA (digit)
-				0xfa,
-				0x29, // I = address of sprite for digit in VA
+				0x01, // V1 = 1 (Y)
 				0xd0,
-				0x05, // draw sprite at (V0, V1), 5 bytes tall
+				0x15, // Draw at (V0,V1), height = 5
 			]);
 			chip8.loadROM(romD);
 			return;
@@ -74,11 +75,11 @@ export default function App() {
 			<aside className="flex-shrink-0 p-0 text-sm">
 				<RomSelect currentRom={rom?.file ?? null} onSelect={setRom} />
 			</aside>
-			<main className="font-mono flex-1 text-sm">
-				<div className="sticky top-0 z-10 bg-stone-200 text-black flex-grow min-h-screen w-full">
-					<div className="flex items-center justify-center gap-2 p-2 flex-grow">
-						<h1>CHIP-8 Emulator</h1>
-						<p>{rom?.name ? `Loaded ROM: ${rom.name}` : "No ROM loaded"}</p>
+			<main className="font-mono flex-1 text-sm bg-stone-200 text-black">
+				<div className="sticky top-0 z-10 flex-grow min-h-screen w-full flex flex-col gap-16">
+					<h1 className="text-center mt-3">CHIP-8 Emulator</h1>
+					<div className="flex justify-center p-2 flex-grow">
+						<Display onFrame={chip8?.onFrame} />
 					</div>
 				</div>
 			</main>
