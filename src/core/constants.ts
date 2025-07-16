@@ -1,5 +1,5 @@
 export const TIMER_INTERVAL = 1000 / 60; // 1000Hz @ 60 FPS
-export const TICKS_PER_FRAME = 16; // 60 FPS
+export const TICKS_PER_FRAME = 8; // 30 FPS
 
 export const FONT_OFFSET = 0x000;
 // ROM (3584 bytes)

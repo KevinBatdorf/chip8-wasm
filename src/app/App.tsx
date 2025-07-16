@@ -24,16 +24,25 @@ export default function App() {
 		}
 		if (rom.file === "test.ch8") {
 			const romD = new Uint8Array([
-				0x62,
-				0x01, // V2 = 1 (digit)
-				0xf2,
-				0x29, // I = location of sprite for V2
 				0x60,
-				0x08, // V0 = 8 (X)
+				0x00, // V0 = 0
 				0x61,
-				0x01, // V1 = 1 (Y)
+				0x00, // V1 = 0
+				0x6a,
+				0x02, // VA = 2 (digit 2)
+				0xfa,
+				0x29, // I = sprite for 2
 				0xd0,
-				0x15, // Draw at (V0,V1), height = 5
+				0x05, // draw 2 at (0, 0)
+
+				0x61,
+				0x05, // V1 = 5 (move Y to avoid overlap)
+				0x6a,
+				0x01, // VA = 1
+				0xfa,
+				0x29, // I = sprite for 1
+				0xd0,
+				0x05, // draw 1 at (0, 5)
 			]);
 			chip8.loadROM(romD);
 			return;
@@ -58,6 +67,8 @@ export default function App() {
 			if (e.altKey || e.ctrlKey || e.metaKey) return;
 			const key = e.key.toLowerCase();
 			if (key in keyMap) {
+				// @ts-ignore
+				e.target?.blur?.();
 				e.preventDefault();
 				chip8.setKey(keyMap[key], true);
 			}
