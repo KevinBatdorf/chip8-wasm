@@ -1,14 +1,18 @@
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { type Chip8Engine, createChip8Engine } from "..";
+import { Chip8 } from "./components/Chip8";
 import { DebugScreen } from "./components/DebugScreen";
-import { Display } from "./components/Display";
 import { RomSelect } from "./components/RomSelect";
 import { getRom, getWasm } from "./helpers";
 import { keyMap } from "./lib/keys";
+import { useChip8Store } from "./state/chip8";
 
 export default function App() {
 	const [chip8, setChip8] = useState<Chip8Engine | null>(null);
 	const [rom, setRom] = useState<{ name: string; file: string } | null>(null);
+	const [hovering, setHovering] = useState(false);
+	const { scale, setScale } = useChip8Store();
 
 	useEffect(() => {
 		getWasm("/chip8.wasm").then((wasmBinary) => {
@@ -47,11 +51,20 @@ export default function App() {
 			chip8.loadROM(romD);
 			return;
 		}
+
 		getRom(`/roms/${rom.file}`).then((bytes) => {
 			chip8.loadROM(bytes);
 			chip8.start();
 		});
 	}, [chip8, rom]);
+
+	useEffect(() => {
+		if (!chip8 || !hovering) return;
+		const id = setTimeout(() => {
+			setHovering(false);
+		}, 5_000);
+		return () => clearTimeout(id);
+	}, [hovering, chip8]);
 
 	useEffect(() => {
 		if (!chip8) return;
@@ -83,14 +96,54 @@ export default function App() {
 
 	return (
 		<div className="flex">
-			<aside className="flex-shrink-0 p-0 text-sm">
+			<aside className="flex-shrink-0 p-0 text-sm max-w-46 w-full">
 				<RomSelect currentRom={rom?.file ?? null} onSelect={setRom} />
 			</aside>
 			<main className="font-mono flex-1 text-sm bg-stone-200 text-black">
 				<div className="sticky top-0 z-10 flex-grow min-h-screen w-full flex flex-col gap-16">
 					<h1 className="text-center mt-3">CHIP-8 Emulator</h1>
-					<div className="flex justify-center p-2 flex-grow">
-						<Display onFrame={chip8?.onFrame} />
+					<div
+						className="flex flex-col gap-1 items-center p-2"
+						onMouseEnter={() => setHovering(true)}
+						onMouseMove={() => setHovering(true)}
+					>
+						<div
+							className="flex justify-between w-full"
+							style={{ maxWidth: 64 * scale }}
+						>
+							<div>{rom ? rom.name : "Select a ROM"}</div>
+						</div>
+						<Chip8 scale={scale} chip8={chip8} onFrame={chip8?.onFrame} />
+						<div
+							className={clsx(
+								"flex justify-between w-full transition-opacity duration-300",
+								{
+									"opacity-0": !hovering,
+									"opacity-100": hovering,
+								},
+							)}
+							style={{ maxWidth: 64 * scale }}
+						>
+							<div>
+								<button
+									type="button"
+									onClick={() => {
+										chip8?.reset();
+										chip8?.start();
+									}}
+								>
+									Reset
+								</button>
+							</div>
+							<div className="flex gap-1">
+								<button
+									type="button"
+									onClick={() => setScale((i) => (i + 5 > 15 ? 5 : i + 5))}
+								>
+									{scale / 5}x
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</main>

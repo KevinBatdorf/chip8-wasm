@@ -66,8 +66,8 @@ test("8XY5 subtracts VY from VX and sets VF = NOT borrow", () => {
 	expect(mem[REGISTERS_OFFSET + 0xf]).toBe(1);
 });
 
-test("8XY6 sets VX = VY >> 1 and stores LSB of VY in VF", () => {
-	chip8.loadROM(new Uint8Array([0x6b, 0x07, 0x8a, 0xb6]));
+test("8XY6 sets VX = VY >> 1 and stores LSB of VX in VF", () => {
+	chip8.loadROM(new Uint8Array([0x6a, 0x07, 0x8a, 0xb6]));
 	chip8.step();
 	chip8.step();
 	const mem = new Uint8Array(chip8.getMemory().buffer);
@@ -85,7 +85,7 @@ test("8XY7 sets VX = VY - VX and VF = NOT borrow", () => {
 	expect(mem[REGISTERS_OFFSET + 0xf]).toBe(1);
 });
 
-test("8XYE shifts VX left and stores MSB in VF", () => {
+test("8XYE shifts VX left and stores MSB of VX in VF", () => {
 	chip8.loadROM(new Uint8Array([0x6a, 0x81, 0x8a, 0xae]));
 	chip8.step();
 	chip8.step();

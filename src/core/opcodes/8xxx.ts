@@ -87,18 +87,18 @@ export const eight5 = new Uint8Array([
 	...fn.return(),
 ]);
 
-// 8XY6	VX >>= 1, VF = LSB
+// 8XY6	VX >>= 1, VF = LSB of VX
 export const eight6 = new Uint8Array([
 	...i32.const(REGISTERS_OFFSET + 0xf), // address of VF
-	...local.get(3), // address of VY
-	...i32.load8_u(), // load current value of VY
+	...local.get(2), // address of VX
+	...i32.load8_u(), // load current value of VX
 	...i32.const(1),
 	...i32.and(), // isolate the LSB
 	...i32.store8(), // store LSB in VF
 
 	...local.get(2), // address of VX
-	...local.get(3), // address of VY
-	...i32.load8_u(), // load current value of VY
+	...local.get(2), // address of VX
+	...i32.load8_u(), // load current value of VX
 	...i32.const(1),
 	...i32.shr_u(), // shift right by 1
 	...i32.store8(), // store shifted value back to VX
@@ -126,11 +126,11 @@ export const eight7 = new Uint8Array([
 	...fn.return(),
 ]);
 
-// 8XYE	VX <<= 1, VF = MSB
+// 8XYE	VX <<= 1, VF = MSB of VX
 export const eightE = new Uint8Array([
 	...i32.const(REGISTERS_OFFSET + 0xf), // address of VF
-	...local.get(3), // address of VY
-	...i32.load8_u(), // load current value of VY
+	...local.get(2), // address of VX
+	...i32.load8_u(), // load current value of VX
 	...i32.const(7), // shift right by 7 to get the MSB
 	...i32.shr_u(),
 	...i32.const(1),
@@ -138,8 +138,8 @@ export const eightE = new Uint8Array([
 	...i32.store8(), // store MSB in VF
 
 	...local.get(2), // address of VX
-	...local.get(3), // address of VY
-	...i32.load8_u(), // load current value of VY
+	...local.get(2), // address of VX
+	...i32.load8_u(), // load current value of VX
 	...i32.const(1),
 	...i32.shl(), // shift left by 1
 	...i32.store8(), // store shifted value back to VX

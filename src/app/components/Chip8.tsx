@@ -1,21 +1,42 @@
 import { useEffect, useRef } from "react";
+import type { Chip8Engine } from "../../runtime/engine";
 
 type Props = {
+	chip8: Chip8Engine | null;
 	onFrame?: (callback: (frame: Uint8Array) => void) => void;
 	scale?: number;
 };
-export const Display = ({ onFrame, scale = 10 }: Props) => {
+export const Chip8 = ({ chip8, onFrame, scale = 10 }: Props) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	useEffect(() => {
+		if (!chip8) return;
 		if (!canvasRef.current) return;
 		const canvas = canvasRef.current;
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 		const imageData = ctx.createImageData(64, 32);
 		const buffer = new Uint8ClampedArray(imageData.data.length);
+		const audioCtx = new AudioContext();
+		let oscillator: OscillatorNode | null = null;
 
 		onFrame?.((frame) => {
+			const soundTimer = chip8.getSoundTimer();
+			if (soundTimer > 0) {
+				if (!oscillator) {
+					oscillator = audioCtx.createOscillator();
+					const gain = audioCtx.createGain();
+					gain.gain.value = 0.05;
+					oscillator.frequency.value = 440;
+					oscillator.type = "sawtooth";
+					oscillator.connect(gain).connect(audioCtx.destination);
+					oscillator.start();
+				}
+			} else if (oscillator) {
+				oscillator.stop();
+				oscillator.disconnect();
+				oscillator = null;
+			}
 			for (let i = 0; i < 256; i++) {
 				const byte = frame[i];
 				for (let bit = 0; bit < 8; bit++) {
@@ -33,7 +54,7 @@ export const Display = ({ onFrame, scale = 10 }: Props) => {
 			imageData.data.set(buffer);
 			ctx.putImageData(imageData, 0, 0);
 		});
-	}, [onFrame]);
+	}, [onFrame, chip8]);
 
 	return (
 		<div className="">

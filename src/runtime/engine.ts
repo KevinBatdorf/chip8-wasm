@@ -25,6 +25,7 @@ export type Chip8Engine = {
 	setKey(index: number, isDown: boolean): void;
 	getMemory(): WebAssembly.Memory;
 	getDebug(): Chip8Debug;
+	getSoundTimer(): number;
 };
 
 export type Chip8Debug = {
@@ -187,5 +188,7 @@ export const createChip8Engine = async (
 		setKey,
 		getMemory: () => memory,
 		getDebug: () => debug,
+		getSoundTimer: () =>
+			new DataView(memory.buffer).getUint8(SOUND_TIMER_OFFSET),
 	};
 };
