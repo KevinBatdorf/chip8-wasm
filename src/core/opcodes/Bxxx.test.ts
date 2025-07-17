@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, expect, test } from "vitest";
 import { createChip8Engine } from "../..";
-import { PC_OFFSET } from "../../core/constants";
+import { PC_ADDRESS } from "../../core/constants";
 
 let chip8: Awaited<ReturnType<typeof createChip8Engine>>;
 const wasmBinary = readFileSync("public/chip8.wasm");
@@ -16,7 +16,7 @@ test("BNNN jumps to NNN + V0", () => {
 	chip8.step();
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	const pc = mem[PC_OFFSET] | (mem[PC_OFFSET + 1] << 8);
+	const pc = mem[PC_ADDRESS] | (mem[PC_ADDRESS + 1] << 8);
 	expect(pc).toBe(0x301);
 });
 

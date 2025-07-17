@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { DISPLAY_OFFSET } from "../../../core/constants";
-import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
+import { DISPLAY_ADDRESS } from "../../../core/constants";
+import type { Chip8Debug, Chip8Engine } from "../../../types";
 
 type Props = {
 	chip8?: Chip8Engine | null;
@@ -19,7 +19,7 @@ export const DisplayBuffer = ({ chip8, debug, hideZeros }: Props) => {
 			const mem = new Uint8Array(chip8.getMemory().buffer);
 			for (let i = 0; i < 256; i++) {
 				if (!cellRefs.current[i]) continue;
-				let value = mem[DISPLAY_OFFSET + i]
+				let value = mem[DISPLAY_ADDRESS + i]
 					.toString(16)
 					.padStart(2, "0")
 					.toUpperCase();
@@ -37,7 +37,7 @@ export const DisplayBuffer = ({ chip8, debug, hideZeros }: Props) => {
 	return (
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
 			{Array.from({ length: 256 }).map((_, i) => {
-				const loc = (DISPLAY_OFFSET + i).toString(16).toUpperCase();
+				const loc = (DISPLAY_ADDRESS + i).toString(16).toUpperCase();
 				return (
 					<span
 						key={loc}

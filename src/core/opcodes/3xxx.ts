@@ -1,4 +1,4 @@
-import { PC_OFFSET, REGISTERS_OFFSET } from "../constants";
+import { PC_ADDRESS, REGISTERS_ADDRESS } from "../constants";
 import { fn, i32, if_, local } from "../wasm";
 
 // 3XNN Skip next instruction if VX === NN
@@ -7,7 +7,7 @@ export const three = () =>
 	new Uint8Array([
 		// params: high byte of opcode, low byte of opcode
 		...local.declare(),
-		...i32.const(REGISTERS_OFFSET),
+		...i32.const(REGISTERS_ADDRESS),
 		...local.get(0),
 		...i32.const(0x0f),
 		...i32.and(), // Get X
@@ -16,8 +16,8 @@ export const three = () =>
 		...local.get(1),
 		...i32.eq(), // compare VX and NN
 		...if_.start(),
-            ...i32.const(PC_OFFSET),
-            ...i32.const(PC_OFFSET),
+            ...i32.const(PC_ADDRESS),
+            ...i32.const(PC_ADDRESS),
             ...i32.load16_u(), // load current PC
             ...i32.const(2),
             ...i32.add(),

@@ -1,25 +1,25 @@
 import {
-	DISPLAY_OFFSET,
-	PC_OFFSET,
-	STACK_OFFSET,
-	STACK_PTR_OFFSET,
+	DISPLAY_ADDRESS,
+	PC_ADDRESS,
+	STACK_ADDRESS,
+	STACK_PTR_ADDRESS,
 } from "../constants";
 import { fn, i32, if_, local, memory } from "../wasm";
 
 // Return from a subroutine
 const ee = new Uint8Array([
 	// Decrement stack pointer
-	...i32.const(STACK_PTR_OFFSET),
-	...i32.const(STACK_PTR_OFFSET),
+	...i32.const(STACK_PTR_ADDRESS),
+	...i32.const(STACK_PTR_ADDRESS),
 	...i32.load8_u(),
 	...i32.const(2),
 	...i32.sub(),
 	...i32.store8(),
 
 	// Load the return address from the stack into PC
-	...i32.const(PC_OFFSET),
-	...i32.const(STACK_OFFSET),
-	...i32.const(STACK_PTR_OFFSET),
+	...i32.const(PC_ADDRESS),
+	...i32.const(STACK_ADDRESS),
+	...i32.const(STACK_PTR_ADDRESS),
 	...i32.load8_u(),
 	...i32.add(), // Get the current pos in stack
 	...i32.load16_u(), // Load PC from stack
@@ -28,9 +28,9 @@ const ee = new Uint8Array([
 
 // Clear the display
 const clearDisplay = new Uint8Array([
-	...i32.const(DISPLAY_OFFSET),
+	...i32.const(DISPLAY_ADDRESS),
 	...i32.const(0),
-	...i32.const(STACK_OFFSET - DISPLAY_OFFSET),
+	...i32.const(STACK_ADDRESS - DISPLAY_ADDRESS),
 	...memory.fill(),
 ]);
 

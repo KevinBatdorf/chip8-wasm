@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { KEY_BUFFER_OFFSET } from "../../../core/constants";
-import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
+import { KEY_BUFFER_ADDRESS } from "../../../core/constants";
+import type { Chip8Debug, Chip8Engine } from "../../../types";
 
 type Props = {
 	chip8?: Chip8Engine | null;
@@ -19,7 +19,7 @@ export const KeyBuffer = ({ chip8, debug, hideZeros }: Props) => {
 			const mem = new Uint8Array(chip8.getMemory().buffer);
 			for (let i = 0; i < 16; i++) {
 				if (!cellRefs.current[i]) continue;
-				let value = mem[KEY_BUFFER_OFFSET + i]
+				let value = mem[KEY_BUFFER_ADDRESS + i]
 					.toString(16)
 					.padStart(2, "0")
 					.toUpperCase();
@@ -37,7 +37,7 @@ export const KeyBuffer = ({ chip8, debug, hideZeros }: Props) => {
 	return (
 		<div ref={gridRef} className="font-mono text-xs flex flex-wrap gap-px">
 			{Array.from({ length: 16 }).map((_, i) => {
-				const loc = (KEY_BUFFER_OFFSET + i).toString(16).toUpperCase();
+				const loc = (KEY_BUFFER_ADDRESS + i).toString(16).toUpperCase();
 				return (
 					<span
 						key={loc}

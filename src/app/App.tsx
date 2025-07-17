@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { type Chip8Engine, createChip8Engine } from "..";
+import type { RomEntry } from "../types";
 import { Chip8 } from "./components/Chip8";
 import { DebugScreen } from "./components/DebugScreen";
 import { RomSelect } from "./components/RomSelect";
@@ -10,7 +11,7 @@ import { useChip8Store } from "./state/chip8";
 
 export default function App() {
 	const [chip8, setChip8] = useState<Chip8Engine | null>(null);
-	const [rom, setRom] = useState<{ name: string; file: string } | null>(null);
+	const [rom, setRom] = useState<RomEntry | null>(null);
 	const [hovering, setHovering] = useState(false);
 	const { scale, setScale } = useChip8Store();
 
@@ -21,38 +22,38 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
-		if (!chip8) return;
-		if (!rom) {
-			setRom({ name: "Test", file: "test.ch8" }); // for testing
-			return;
-		}
-		if (rom.file === "test.ch8") {
-			const romD = new Uint8Array([
-				0x60,
-				0x00, // V0 = 0
-				0x61,
-				0x00, // V1 = 0
-				0x6a,
-				0x02, // VA = 2 (digit 2)
-				0xfa,
-				0x29, // I = sprite for 2
-				0xd0,
-				0x05, // draw 2 at (0, 0)
+		if (!chip8 || !rom?.path) return;
+		// if (!rom) {
+		// 	setRom({ name: "Test", path: "roms/test.ch8" }); // for testing
+		// 	return;
+		// }
+		// if (rom.path === "roms/test.ch8") {
+		// 	const romD = new Uint8Array([
+		// 		0x60,
+		// 		0x00, // V0 = 0
+		// 		0x61,
+		// 		0x00, // V1 = 0
+		// 		0x6a,
+		// 		0x02, // VA = 2 (digit 2)
+		// 		0xfa,
+		// 		0x29, // I = sprite for 2
+		// 		0xd0,
+		// 		0x05, // draw 2 at (0, 0)
 
-				0x61,
-				0x05, // V1 = 5 (move Y to avoid overlap)
-				0x6a,
-				0x01, // VA = 1
-				0xfa,
-				0x29, // I = sprite for 1
-				0xd0,
-				0x05, // draw 1 at (0, 5)
-			]);
-			chip8.loadROM(romD);
-			return;
-		}
+		// 		0x61,
+		// 		0x05, // V1 = 5 (move Y to avoid overlap)
+		// 		0x6a,
+		// 		0x01, // VA = 1
+		// 		0xfa,
+		// 		0x29, // I = sprite for 1
+		// 		0xd0,
+		// 		0x05, // draw 1 at (0, 5)
+		// 	]);
+		// 	chip8.loadROM(romD);
+		// 	return;
+		// }
 
-		getRom(`/roms/${rom.file}`).then((bytes) => {
+		getRom(rom.path).then((bytes) => {
 			chip8.loadROM(bytes);
 			chip8.start();
 		});
@@ -97,7 +98,7 @@ export default function App() {
 	return (
 		<div className="flex">
 			<aside className="flex-shrink-0 p-0 text-sm max-w-46 w-full">
-				<RomSelect currentRom={rom?.file ?? null} onSelect={setRom} />
+				<RomSelect currentRom={rom} onSelect={setRom} />
 			</aside>
 			<main className="font-mono flex-1 text-sm bg-stone-200 text-black">
 				<div className="sticky top-0 z-10 flex-grow min-h-screen w-full flex flex-col gap-16">

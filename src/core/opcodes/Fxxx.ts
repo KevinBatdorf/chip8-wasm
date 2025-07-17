@@ -1,20 +1,20 @@
 import {
-	DELAY_TIMER_OFFSET,
-	FONT_OFFSET,
-	FX0A_VX_OFFSET,
-	I_OFFSET,
-	REGISTERS_OFFSET,
-	SOUND_TIMER_OFFSET,
+	DELAY_TIMER_ADDRESS,
+	FONT_ADDRESS,
+	FX0A_VX_ADDRESS,
+	I_ADDRESS,
+	REGISTERS_ADDRESS,
+	SOUND_TIMER_ADDRESS,
 } from "../constants";
 import { block, fn, i32, if_, local, loop } from "../wasm";
 
 // Delay timer = VX
 const putVXinDelayTimer = [
-	...i32.const(DELAY_TIMER_OFFSET),
+	...i32.const(DELAY_TIMER_ADDRESS),
 	...local.get(0), // high byte of opcode
 	...i32.const(0x0f),
 	...i32.and(), // isolate the second nibble (0x0X)
-	...i32.const(REGISTERS_OFFSET),
+	...i32.const(REGISTERS_ADDRESS),
 	...i32.add(), // address of VX
 	...i32.load8_u(), // load VX value
 	...i32.store8(), // store VX value into delay timer
@@ -23,12 +23,12 @@ const putVXinDelayTimer = [
 
 // VX = delay timer
 const putDelayTimerInVX = [
-	...i32.const(REGISTERS_OFFSET),
+	...i32.const(REGISTERS_ADDRESS),
 	...local.get(0), // high byte of opcode
 	...i32.const(0x0f),
 	...i32.and(),
 	...i32.add(), // address of VX
-	...i32.const(DELAY_TIMER_OFFSET),
+	...i32.const(DELAY_TIMER_ADDRESS),
 	...i32.load8_u(), // load delay timer value
 	...i32.store8(), // store delay timer value into VX
 	...fn.return(),
@@ -36,11 +36,11 @@ const putDelayTimerInVX = [
 
 // sound timer = VX
 const putVXInSoundTimer = [
-	...i32.const(SOUND_TIMER_OFFSET),
+	...i32.const(SOUND_TIMER_ADDRESS),
 	...local.get(0), // high byte of opcode
 	...i32.const(0x0f),
 	...i32.and(), // isolate the second nibble (0x0X)
-	...i32.const(REGISTERS_OFFSET),
+	...i32.const(REGISTERS_ADDRESS),
 	...i32.add(), // address of VX
 	...i32.load8_u(), // load VX value
 	...i32.store8(), // store VX value into sound timer
@@ -49,7 +49,7 @@ const putVXInSoundTimer = [
 
 // FX0A: Wait for key press, store in VX
 const putVXInKeyWait = [
-	...i32.const(FX0A_VX_OFFSET),
+	...i32.const(FX0A_VX_ADDRESS),
 	...local.get(0), // high byte of opcode
 	...i32.const(0x0f),
 	...i32.and(), // isolate the second nibble (0x0X)
@@ -59,13 +59,13 @@ const putVXInKeyWait = [
 
 // FX1E: Add VX to I
 const addVXToI = [
-	...i32.const(I_OFFSET),
-	...i32.const(I_OFFSET),
+	...i32.const(I_ADDRESS),
+	...i32.const(I_ADDRESS),
 	...i32.load16_u(), // load current I
 	...local.get(0), // high byte of opcode
 	...i32.const(0x0f),
 	...i32.and(), // isolate the second nibble (0x0X)
-	...i32.const(REGISTERS_OFFSET),
+	...i32.const(REGISTERS_ADDRESS),
 	...i32.add(), // address of VX
 	...i32.load8_u(), // load VX value
 	...i32.add(), // add VX value to I
@@ -75,16 +75,16 @@ const addVXToI = [
 
 // FX29: Set I to sprite address for digit in VX
 const putVXFontInI = [
-	...i32.const(I_OFFSET),
+	...i32.const(I_ADDRESS),
 	...local.get(0), // high byte of opcode
 	...i32.const(0x0f),
 	...i32.and(), // isolate the second nibble (0x0X)
-	...i32.const(REGISTERS_OFFSET),
+	...i32.const(REGISTERS_ADDRESS),
 	...i32.add(), // address of VX
 	...i32.load8_u(), // load VX value
 	...i32.const(5),
 	...i32.mul(),
-	...i32.const(FONT_OFFSET),
+	...i32.const(FONT_ADDRESS),
 	...i32.add(), // address of font sprite
 	...i32.store16(), // store new I value
 	...fn.return(),
@@ -93,12 +93,12 @@ const putVXFontInI = [
 // FX33: Store BCD of VX at I, I+1, I+2
 const BCDInI = [
 	// 100s place
-	...i32.const(I_OFFSET),
+	...i32.const(I_ADDRESS),
 	...i32.load16_u(), // load current I
 	...local.get(0), // high byte of opcode
 	...i32.const(0x0f),
 	...i32.and(), // isolate the second nibble (0x0X)
-	...i32.const(REGISTERS_OFFSET),
+	...i32.const(REGISTERS_ADDRESS),
 	...i32.add(), // address of VX
 	...i32.load8_u(), // load VX value
 	...local.tee(2), // store VX value in local scratch
@@ -107,7 +107,7 @@ const BCDInI = [
 	...i32.store8(), // store hundreds place at I
 
 	// 10s place
-	...i32.const(I_OFFSET),
+	...i32.const(I_ADDRESS),
 	...i32.load16_u(), // load current I
 	...i32.const(1),
 	...i32.add(), // I + 1
@@ -119,7 +119,7 @@ const BCDInI = [
 	...i32.store8(), // store tens place at I+1
 
 	// 1s place
-	...i32.const(I_OFFSET),
+	...i32.const(I_ADDRESS),
 	...i32.load16_u(), // load current I
 	...i32.const(2),
 	...i32.add(), // I + 2
@@ -149,11 +149,11 @@ const storeV0ToVXInMemory = [
             ...i32.gt_u(),
             ...loop.br_if(1), // if loop counter >= second nibble, exit loop
 
-            ...i32.const(I_OFFSET),
+            ...i32.const(I_ADDRESS),
             ...i32.load16_u(), // load current I
             ...local.get(3), // loop counter
             ...i32.add(), // address of I + loop counter
-            ...i32.const(REGISTERS_OFFSET),
+            ...i32.const(REGISTERS_ADDRESS),
             ...local.get(3), // loop counter
             ...i32.add(), // address of V0 to VX
             ...i32.load8_u(), // load V0 to VX value
@@ -166,15 +166,15 @@ const storeV0ToVXInMemory = [
             ...loop.br(0), // continue loop
         ...loop.end(),
     ...block.end(),
-    // I is set to I + X + 1 (TODO: add quirks mode for this?)
-    // ...i32.const(I_OFFSET),
-    // ...i32.const(I_OFFSET),
-    // ...i32.load16_u(), // load current I
-    // ...local.get(2), // second nibble (X)
-    // ...i32.add(), // add X + 1 to I
-    // ...i32.const(1),
-    // ...i32.add(), // new I = current I + X + 1
-    // ...i32.store16(), // store new I value
+    // I is set to I + X + 1
+    ...i32.const(I_ADDRESS),
+    ...i32.const(I_ADDRESS),
+    ...i32.load16_u(), // load current I
+    ...local.get(2), // second nibble (X)
+    ...i32.add(), // add X + 1 to I
+    ...i32.const(1),
+    ...i32.add(), // new I = current I + X + 1
+    ...i32.store16(), // store new I value
 	...fn.return(),
 ];
 
@@ -194,10 +194,10 @@ const loadV0ToVXFromMemory = [
             ...i32.gt_u(),
             ...loop.br_if(1), // if loop counter >= second nibble, exit loop
 
-            ...i32.const(REGISTERS_OFFSET),
+            ...i32.const(REGISTERS_ADDRESS),
             ...local.get(3), // loop counter
             ...i32.add(), // address of V0 to VX
-            ...i32.const(I_OFFSET),
+            ...i32.const(I_ADDRESS),
             ...i32.load16_u(), // load current I
             ...local.get(3), // loop counter
             ...i32.add(), // address of I + loop counter
@@ -211,15 +211,15 @@ const loadV0ToVXFromMemory = [
             ...loop.br(0), // continue loop
         ...loop.end(),
     ...block.end(),
-    // I is set to I + X + 1 (TODO: add quirks mode for this?)
-    // ...i32.const(I_OFFSET),
-    // ...i32.const(I_OFFSET),
-    // ...i32.load16_u(), // load current I
-    // ...local.get(2), // second nibble (X)
-    // ...i32.add(), // add X + 1 to I
-    // ...i32.const(1),
-    // ...i32.add(), // new I = current I + X + 1
-    // ...i32.store16(), // store new I value
+    // I is set to I + X + 1
+    ...i32.const(I_ADDRESS),
+    ...i32.const(I_ADDRESS),
+    ...i32.load16_u(), // load current I
+    ...local.get(2), // second nibble (X)
+    ...i32.add(), // add X + 1 to I
+    ...i32.const(1),
+    ...i32.add(), // new I = current I + X + 1
+    ...i32.store16(), // store new I value
 	...fn.return(),
 ]
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { REGISTERS_OFFSET } from "../../../core/constants";
-import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
+import { REGISTERS_ADDRESS } from "../../../core/constants";
+import type { Chip8Debug, Chip8Engine } from "../../../types";
 
 type Props = {
 	chip8?: Chip8Engine | null;
@@ -19,7 +19,7 @@ export const Registers = ({ chip8, debug, hideZeros }: Props) => {
 			const mem = new Uint8Array(chip8.getMemory().buffer);
 			for (let i = 0; i < 16; i++) {
 				if (!cellRefs.current[i]) continue;
-				let value = mem[REGISTERS_OFFSET + i]
+				let value = mem[REGISTERS_ADDRESS + i]
 					.toString(16)
 					.padStart(2, "0")
 					.toUpperCase();

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, expect, test } from "vitest";
-import { REGISTERS_OFFSET, createChip8Engine } from "../..";
+import { REGISTERS_ADDRESS, createChip8Engine } from "../..";
 
 let chip8: Awaited<ReturnType<typeof createChip8Engine>>;
 const wasmBinary = readFileSync("public/chip8.wasm");
@@ -22,12 +22,12 @@ test("4XNN skips next instruction if VX !== NN", () => {
 	chip8.step(); // 4A13: should skip next
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0xa]).toBe(0x12);
-	expect(mem[REGISTERS_OFFSET + 0xb]).not.toBe(0x99);
+	expect(mem[REGISTERS_ADDRESS + 0xa]).toBe(0x12);
+	expect(mem[REGISTERS_ADDRESS + 0xb]).not.toBe(0x99);
 
 	chip8.step();
 	// Next instruction should run
-	expect(mem[REGISTERS_OFFSET + 0xb]).toBe(0x34);
+	expect(mem[REGISTERS_ADDRESS + 0xb]).toBe(0x34);
 });
 test("4XNN does not skip if VX === NN", () => {
 	chip8.loadROM(
@@ -45,9 +45,9 @@ test("4XNN does not skip if VX === NN", () => {
 	chip8.step(); // 6B99 should run
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0xa]).toBe(0x12);
-	expect(mem[REGISTERS_OFFSET + 0xb]).toBe(0x99);
+	expect(mem[REGISTERS_ADDRESS + 0xa]).toBe(0x12);
+	expect(mem[REGISTERS_ADDRESS + 0xb]).toBe(0x99);
 
 	chip8.step(); // 6B34 should overwrite
-	expect(mem[REGISTERS_OFFSET + 0xb]).toBe(0x34);
+	expect(mem[REGISTERS_ADDRESS + 0xb]).toBe(0x34);
 });

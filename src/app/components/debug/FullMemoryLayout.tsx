@@ -1,18 +1,18 @@
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import {
-	DELAY_TIMER_OFFSET,
-	DISPLAY_OFFSET,
-	I_OFFSET,
-	KEY_BUFFER_OFFSET,
-	PC_OFFSET,
-	REGISTERS_OFFSET,
+	DELAY_TIMER_ADDRESS,
+	DISPLAY_ADDRESS,
+	I_ADDRESS,
+	KEY_BUFFER_ADDRESS,
+	PC_ADDRESS,
+	REGISTERS_ADDRESS,
 	ROM_LOAD_ADDRESS,
-	SOUND_TIMER_OFFSET,
-	STACK_OFFSET,
-	STACK_PTR_OFFSET,
+	SOUND_TIMER_ADDRESS,
+	STACK_ADDRESS,
+	STACK_PTR_ADDRESS,
 } from "../../../core/constants";
-import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
+import type { Chip8Debug, Chip8Engine } from "../../../types";
 
 type Props = {
 	chip8?: Chip8Engine | null;
@@ -20,7 +20,7 @@ type Props = {
 	hideZeros: boolean;
 };
 
-const END_OF_MEMORY = REGISTERS_OFFSET + 0x0f;
+const END_OF_MEMORY = REGISTERS_ADDRESS + 0x0f;
 
 export const FullMemoryLayout = ({ chip8, debug, hideZeros }: Props) => {
 	const cellRefs = useRef<HTMLSpanElement[]>([]);
@@ -68,16 +68,16 @@ export const FullMemoryLayout = ({ chip8, debug, hideZeros }: Props) => {
 			{Array.from({ length: END_OF_MEMORY })
 				.map((_, i) => {
 					const loc = `0x${i.toString(16).padStart(4, "0").toUpperCase()}`;
-					const isReg = i >= REGISTERS_OFFSET && i < END_OF_MEMORY;
-					const isDisplay = i >= DISPLAY_OFFSET && i < DISPLAY_OFFSET + 256;
+					const isReg = i >= REGISTERS_ADDRESS && i < END_OF_MEMORY;
+					const isDisplay = i >= DISPLAY_ADDRESS && i < DISPLAY_ADDRESS + 256;
 					const isKeyBuffer =
-						i >= KEY_BUFFER_OFFSET && i < KEY_BUFFER_OFFSET + 16;
-					const isStack = i >= STACK_OFFSET && i < STACK_OFFSET + 32;
-					const isStackPtr = i === STACK_PTR_OFFSET;
-					const isDelayTimer = i === DELAY_TIMER_OFFSET;
-					const isSoundTimer = i === SOUND_TIMER_OFFSET;
-					const isPC = i >= PC_OFFSET && i < PC_OFFSET + 2;
-					const isI = i >= I_OFFSET && i < I_OFFSET + 2;
+						i >= KEY_BUFFER_ADDRESS && i < KEY_BUFFER_ADDRESS + 16;
+					const isStack = i >= STACK_ADDRESS && i < STACK_ADDRESS + 32;
+					const isStackPtr = i === STACK_PTR_ADDRESS;
+					const isDelayTimer = i === DELAY_TIMER_ADDRESS;
+					const isSoundTimer = i === SOUND_TIMER_ADDRESS;
+					const isPC = i >= PC_ADDRESS && i < PC_ADDRESS + 2;
+					const isI = i >= I_ADDRESS && i < I_ADDRESS + 2;
 					return (
 						<span
 							key={loc}

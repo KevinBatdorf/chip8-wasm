@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, expect, test } from "vitest";
 import {
-	DELAY_TIMER_OFFSET,
-	I_OFFSET,
-	REGISTERS_OFFSET,
-	SOUND_TIMER_OFFSET,
+	DELAY_TIMER_ADDRESS,
+	I_ADDRESS,
+	REGISTERS_ADDRESS,
+	SOUND_TIMER_ADDRESS,
 	createChip8Engine,
 } from "../..";
 
@@ -31,7 +31,7 @@ test("FX07 sets VX to the delay timer", () => {
 	chip8.step(); // V0 = delay_timer (still 0x10 unless time passed)
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0x0]).toBe(0x10);
+	expect(mem[REGISTERS_ADDRESS + 0x0]).toBe(0x10);
 });
 
 test("FX15 sets the delay timer from VX", () => {
@@ -40,7 +40,7 @@ test("FX15 sets the delay timer from VX", () => {
 	chip8.step();
 	chip8.step();
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[DELAY_TIMER_OFFSET]).toBe(0x20);
+	expect(mem[DELAY_TIMER_ADDRESS]).toBe(0x20);
 });
 
 test("FX18 sets the sound timer from VX", () => {
@@ -49,7 +49,7 @@ test("FX18 sets the sound timer from VX", () => {
 	chip8.step();
 	chip8.step();
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[SOUND_TIMER_OFFSET]).toBe(0x30);
+	expect(mem[SOUND_TIMER_ADDRESS]).toBe(0x30);
 });
 
 test("FX0A waits for key and sets VX to key index (via setKey)", () => {
@@ -57,14 +57,14 @@ test("FX0A waits for key and sets VX to key index (via setKey)", () => {
 
 	chip8.step(); // F10A should start waiting
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0x1]).toBe(0x00); // V1 still 0
+	expect(mem[REGISTERS_ADDRESS + 0x1]).toBe(0x00); // V1 still 0
 
 	// Simulate key press through API
 	chip8.setKey(0x5, true);
 
 	// Next step should store the key index (0x5) into V1
 	chip8.step();
-	expect(mem[REGISTERS_OFFSET + 0x1]).toBe(0x5);
+	expect(mem[REGISTERS_ADDRESS + 0x1]).toBe(0x5);
 });
 
 test("FX1E adds VX to I", () => {
@@ -82,7 +82,7 @@ test("FX1E adds VX to I", () => {
 	chip8.step(); // I += V0 (5)
 
 	const view = new DataView(chip8.getMemory().buffer);
-	expect(view.getUint16(I_OFFSET, true)).toBe(0x205);
+	expect(view.getUint16(I_ADDRESS, true)).toBe(0x205);
 });
 
 test("FX29 sets I to location of font sprite for digit VX", async () => {
@@ -158,7 +158,7 @@ test("FX65 loads program bytes into V0–V2 from itself", () => {
 	chip8.step(); // A2 00
 	chip8.step(); // F2 65
 
-	expect(mem[REGISTERS_OFFSET + 0]).toBe(0xa2); // V0 = first byte of ROM
-	expect(mem[REGISTERS_OFFSET + 1]).toBe(0x00); // V1 = second byte
-	expect(mem[REGISTERS_OFFSET + 2]).toBe(0xf2); // V2 = third byte
+	expect(mem[REGISTERS_ADDRESS + 0]).toBe(0xa2); // V0 = first byte of ROM
+	expect(mem[REGISTERS_ADDRESS + 1]).toBe(0x00); // V1 = second byte
+	expect(mem[REGISTERS_ADDRESS + 2]).toBe(0xf2); // V2 = third byte
 });

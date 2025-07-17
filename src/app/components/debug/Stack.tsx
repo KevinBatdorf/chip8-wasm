@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { STACK_OFFSET } from "../../../core/constants";
-import type { Chip8Debug, Chip8Engine } from "../../../runtime/engine";
+import { STACK_ADDRESS } from "../../../core/constants";
+import type { Chip8Debug, Chip8Engine } from "../../../types";
 
 type Props = {
 	chip8?: Chip8Engine | null;
@@ -21,7 +21,7 @@ export const Stack = ({ chip8, debug, hideZeros }: Props) => {
 			for (let i = 0; i < 32; i++) {
 				const el = cellRefs.current[i];
 				if (!el) continue;
-				const addr = STACK_OFFSET + i;
+				const addr = STACK_ADDRESS + i;
 				const hasSPtrCls = el.classList.contains("stackPtr");
 				if ([stackPtr, stackPtr + 1].includes(i) && !hasSPtrCls)
 					el.classList.add("stackPtr");
@@ -44,8 +44,8 @@ export const Stack = ({ chip8, debug, hideZeros }: Props) => {
 			{Array.from({ length: 32 })
 				.reduce((acc: [number, number][], _, i) => {
 					if (i % 2 !== 0) return acc;
-					const hi = STACK_OFFSET + i;
-					const lo = STACK_OFFSET + i + 1;
+					const hi = STACK_ADDRESS + i;
+					const lo = STACK_ADDRESS + i + 1;
 					acc.push([lo, hi]);
 					return acc;
 				}, [])
@@ -56,10 +56,10 @@ export const Stack = ({ chip8, debug, hideZeros }: Props) => {
 							<span
 								key={loc}
 								title={`0x${loc}`}
-								data-index={addr - STACK_OFFSET}
+								data-index={addr - STACK_ADDRESS}
 								ref={(el) => {
 									if (!el) return;
-									cellRefs.current[addr - STACK_OFFSET] = el;
+									cellRefs.current[addr - STACK_ADDRESS] = el;
 								}}
 								className="cell stack"
 							/>

@@ -1,4 +1,4 @@
-import { REGISTERS_OFFSET } from "../constants";
+import { REGISTERS_ADDRESS } from "../constants";
 import { func } from "../functions";
 import { fn, i32, local } from "../wasm";
 
@@ -7,7 +7,7 @@ export const c = () =>
 	new Uint8Array([
 		// params: high byte of opcode, low byte of opcode
 		...local.declare(),
-		...i32.const(REGISTERS_OFFSET),
+		...i32.const(REGISTERS_ADDRESS),
 		...local.get(0),
 		...i32.const(0x0f),
 		...i32.and(), // Get X

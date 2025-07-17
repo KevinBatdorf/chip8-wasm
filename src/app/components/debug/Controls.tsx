@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import type { Chip8Engine } from "../../../runtime/engine";
 import { useDebugStore } from "../../state/debug";
+import type { Chip8Engine, RomEntry } from "../../../types";
 
 type Props = {
 	chip8: Chip8Engine | null;
-	rom?: { name: string; file: string } | null;
+	rom?: RomEntry | null;
 };
 
 export const Controls = ({ chip8, rom }: Props) => {

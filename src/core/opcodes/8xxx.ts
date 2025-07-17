@@ -1,4 +1,4 @@
-import { REGISTERS_OFFSET } from "../constants";
+import { QUIRK_VF_RESET_ADDRESS, REGISTERS_ADDRESS } from "../constants";
 import { fn, i32, if_, local } from "../wasm";
 
 // 8XY0	VX = VY
@@ -11,7 +11,15 @@ const eight0 = new Uint8Array([
 ]);
 
 // 8XY1	VX = VX OR VY
+// biome-ignore format: keep if structure
 const eight1 = new Uint8Array([
+    ...i32.const(QUIRK_VF_RESET_ADDRESS),
+    ...i32.load8_u(),
+    ...if_.start(),
+        ...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
+        ...i32.const(0), // set VF to 0
+        ...i32.store8(), // clear VF
+    ...if_.end(),
 	...local.get(2), // address of VX
 	...local.get(3), // address of VY
 	...i32.load8_u(), // load current value of VY
@@ -23,7 +31,15 @@ const eight1 = new Uint8Array([
 ]);
 
 // 8XY2	VX = VX AND VY
+// biome-ignore format: keep if structure
 const eight2 = new Uint8Array([
+    ...i32.const(QUIRK_VF_RESET_ADDRESS),
+    ...i32.load8_u(),
+    ...if_.start(),
+        ...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
+        ...i32.const(0), // set VF to 0
+        ...i32.store8(), // clear VF
+    ...if_.end(),
 	...local.get(2), // address of VX
 	...local.get(3), // address of VY
 	...i32.load8_u(), // load current value of VY
@@ -35,7 +51,15 @@ const eight2 = new Uint8Array([
 ]);
 
 // 8XY3	VX = VX XOR VY
+// biome-ignore format: keep if structure
 export const eight3 = new Uint8Array([
+    ...i32.const(QUIRK_VF_RESET_ADDRESS),
+    ...i32.load8_u(),
+    ...if_.start(),
+        ...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
+        ...i32.const(0), // set VF to 0
+        ...i32.store8(), // clear VF
+    ...if_.end(),
 	...local.get(2), // address of VX
 	...local.get(3), // address of VY
 	...i32.load8_u(), // load current value of VY
@@ -58,7 +82,7 @@ export const eight4 = new Uint8Array([
 	...i32.store8(), // store VY into VX
 
 	// Check for carry
-	...i32.const(REGISTERS_OFFSET + 0xf), // address of VF
+	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
 	...local.get(5), // result of VX += VY
 	...i32.const(0xff), // max value for 8-bit
 	...i32.gt_u(), // check if result > 255 (carry)
@@ -79,7 +103,7 @@ export const eight5 = new Uint8Array([
 	...i32.store8(), // store VY into VX
 
 	// Check for carry
-	...i32.const(REGISTERS_OFFSET + 0xf), // address of VF
+	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
 	...local.get(5), // VX value
 	...local.get(6), // VY value
 	...i32.ge_u(), // if VX >= VY borrow is 1
@@ -87,18 +111,18 @@ export const eight5 = new Uint8Array([
 	...fn.return(),
 ]);
 
-// 8XY6	VX >>= 1, VF = LSB of VX
+// 8XY6	VX >>= 1, VF = LSB
 export const eight6 = new Uint8Array([
-	...i32.const(REGISTERS_OFFSET + 0xf), // address of VF
-	...local.get(2), // address of VX
-	...i32.load8_u(), // load current value of VX
+	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
+	...local.get(3), // address of VY
+	...i32.load8_u(), // load current value of VY
 	...i32.const(1),
 	...i32.and(), // isolate the LSB
 	...i32.store8(), // store LSB in VF
 
 	...local.get(2), // address of VX
-	...local.get(2), // address of VX
-	...i32.load8_u(), // load current value of VX
+	...local.get(3), // address of VY
+	...i32.load8_u(), // load current value of VY
 	...i32.const(1),
 	...i32.shr_u(), // shift right by 1
 	...i32.store8(), // store shifted value back to VX
@@ -118,7 +142,7 @@ export const eight7 = new Uint8Array([
 	...i32.store8(), // store VY into VX
 
 	// Check for carry
-	...i32.const(REGISTERS_OFFSET + 0xf), // address of VF
+	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
 	...local.get(5), // VY value
 	...local.get(6), // VX value
 	...i32.ge_u(), // if VY >= VX borrow is 1
@@ -126,11 +150,11 @@ export const eight7 = new Uint8Array([
 	...fn.return(),
 ]);
 
-// 8XYE	VX <<= 1, VF = MSB of VX
+// 8XYE	VX <<= 1, VF = MSB
 export const eightE = new Uint8Array([
-	...i32.const(REGISTERS_OFFSET + 0xf), // address of VF
-	...local.get(2), // address of VX
-	...i32.load8_u(), // load current value of VX
+	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
+	...local.get(3), // address of VY
+	...i32.load8_u(), // load current value of VY
 	...i32.const(7), // shift right by 7 to get the MSB
 	...i32.shr_u(),
 	...i32.const(1),
@@ -138,8 +162,8 @@ export const eightE = new Uint8Array([
 	...i32.store8(), // store MSB in VF
 
 	...local.get(2), // address of VX
-	...local.get(2), // address of VX
-	...i32.load8_u(), // load current value of VX
+	...local.get(3), // address of VY
+	...i32.load8_u(), // load current value of VY
 	...i32.const(1),
 	...i32.shl(), // shift left by 1
 	...i32.store8(), // store shifted value back to VX
@@ -157,7 +181,7 @@ export const eight = () =>
 		...local.get(0), // high byte of opcode
 		...i32.const(0x0f),
 		...i32.and(), // isolate the second nibble (0x0X)
-		...i32.const(REGISTERS_OFFSET),
+		...i32.const(REGISTERS_ADDRESS),
 		...i32.add(), // address of VX
 		...local.set(2),
 
@@ -166,7 +190,7 @@ export const eight = () =>
 		...i32.and(), // isolate the first nibble (0xX0)
 		...i32.const(4),
 		...i32.shr_u(), // shift right to get the first nibble
-		...i32.const(REGISTERS_OFFSET),
+		...i32.const(REGISTERS_ADDRESS),
 		...i32.add(), // address of VY
 		...local.set(3),
 

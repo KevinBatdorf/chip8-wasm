@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, expect, test } from "vitest";
-import { DISPLAY_OFFSET, PC_OFFSET, createChip8Engine } from "../..";
+import { DISPLAY_ADDRESS, PC_ADDRESS, createChip8Engine } from "../..";
 
 let chip8: Awaited<ReturnType<typeof createChip8Engine>>;
 const wasmBinary = readFileSync("public/chip8.wasm");
@@ -13,7 +13,7 @@ test("0NNN is ignored (no-op)", () => {
 	chip8.step();
 	// PC should just move to the next instruction
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	const pc = mem[PC_OFFSET] | (mem[PC_OFFSET + 1] << 8);
+	const pc = mem[PC_ADDRESS] | (mem[PC_ADDRESS + 1] << 8);
 	expect(pc).toBe(0x202);
 });
 
@@ -38,11 +38,11 @@ test("00E0 clears the display", () => {
 
 	// Fill display with dummy data before stepping
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	mem.fill(0xff, DISPLAY_OFFSET, DISPLAY_OFFSET + 256);
+	mem.fill(0xff, DISPLAY_ADDRESS, DISPLAY_ADDRESS + 256);
 
 	chip8.step();
 
 	for (let i = 0; i < 256; i++) {
-		expect(mem[DISPLAY_OFFSET + i]).toBe(0);
+		expect(mem[DISPLAY_ADDRESS + i]).toBe(0);
 	}
 });

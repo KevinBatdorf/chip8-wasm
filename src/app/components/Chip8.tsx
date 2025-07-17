@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { Chip8Engine } from "../../runtime/engine";
+import type { Chip8Engine } from "../../types";
 
 type Props = {
 	chip8: Chip8Engine | null;
@@ -28,7 +28,7 @@ export const Chip8 = ({ chip8, onFrame, scale = 10 }: Props) => {
 					const gain = audioCtx.createGain();
 					gain.gain.value = 0.05;
 					oscillator.frequency.value = 440;
-					oscillator.type = "sawtooth";
+					oscillator.type = "square";
 					oscillator.connect(gain).connect(audioCtx.destination);
 					oscillator.start();
 				}

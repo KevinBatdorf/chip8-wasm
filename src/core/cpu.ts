@@ -1,76 +1,115 @@
 import {
-	DELAY_TIMER_OFFSET,
-	DISPLAY_OFFSET,
-	FX0A_VX_OFFSET,
-	I_OFFSET,
-	KEY_BUFFER_OFFSET,
-	PC_OFFSET,
-	REGISTERS_OFFSET,
+	DELAY_TIMER_ADDRESS,
+	DISPLAY_ADDRESS,
+	FX0A_VX_ADDRESS,
+	I_ADDRESS,
+	KEY_BUFFER_ADDRESS,
+	PC_ADDRESS,
+	QUIRK_CLIPPING_ADDRESS,
+	QUIRK_CLIPPING,
+	QUIRK_DISPLAY_WAIT_ADDRESS,
+	QUIRK_DISPLAY_WAIT,
+	QUIRK_JUMPING_ADDRESS,
+	QUIRK_JUMPING,
+	QUIRK_MEMORY_ADDRESS,
+	QUIRK_MEMORY,
+	QUIRK_SHIFTING_ADDRESS,
+	QUIRK_SHIFTING,
+	QUIRK_VF_RESET_ADDRESS,
+	QUIRK_VF_RESET,
+	REGISTERS_ADDRESS,
 	ROM_LOAD_ADDRESS,
-	SOUND_TIMER_OFFSET,
-	STACK_OFFSET,
-	STACK_PTR_OFFSET,
+	SOUND_TIMER_ADDRESS,
+	STACK_ADDRESS,
+	STACK_PTR_ADDRESS,
+	TICKS_PER_FRAME,
+	TICKS_PER_FRAME_ADDRESS,
 } from "./constants";
 import { fn, i32, if_, local, memory } from "./wasm";
 
 export const init = new Uint8Array([
 	...local.declare(),
 
+	// Setup quirks config
+	...i32.const(QUIRK_VF_RESET_ADDRESS),
+	...i32.const(QUIRK_VF_RESET),
+	...i32.store8(),
+	...i32.const(QUIRK_MEMORY_ADDRESS),
+	...i32.const(QUIRK_MEMORY),
+	...i32.store8(),
+	...i32.const(QUIRK_DISPLAY_WAIT_ADDRESS),
+	...i32.const(QUIRK_DISPLAY_WAIT),
+	...i32.store8(),
+	...i32.const(QUIRK_CLIPPING_ADDRESS),
+	...i32.const(QUIRK_CLIPPING),
+	...i32.store8(),
+	...i32.const(QUIRK_JUMPING_ADDRESS),
+	...i32.const(QUIRK_JUMPING),
+	...i32.store8(),
+	...i32.const(QUIRK_SHIFTING_ADDRESS),
+	...i32.const(QUIRK_SHIFTING),
+	...i32.store8(),
+
+	// Set ticks per frame
+	...i32.const(TICKS_PER_FRAME_ADDRESS),
+	...i32.const(TICKS_PER_FRAME), // Default to 8 ticks per frame
+	...i32.store8(),
+
 	// Clear rom
 	...i32.const(ROM_LOAD_ADDRESS),
 	...i32.const(0),
-	...i32.const(DISPLAY_OFFSET - ROM_LOAD_ADDRESS),
+	...i32.const(DISPLAY_ADDRESS - ROM_LOAD_ADDRESS),
 	...memory.fill(),
 
 	// Clear display
-	...i32.const(DISPLAY_OFFSET),
+	...i32.const(DISPLAY_ADDRESS),
 	...i32.const(0),
-	...i32.const(STACK_OFFSET - DISPLAY_OFFSET), // 256 bytes for display (64x32 = 2048 bits = 256 bytes)
+	...i32.const(STACK_ADDRESS - DISPLAY_ADDRESS), // 256 bytes for display (64x32 = 2048 bits = 256 bytes)
 	...memory.fill(),
 
 	// Clear key buffer
-	...i32.const(KEY_BUFFER_OFFSET),
+	...i32.const(KEY_BUFFER_ADDRESS),
 	...i32.const(0),
 	...i32.const(16), // 16 bytes for key buffer
 	...memory.fill(),
 
 	// Clear stack
-	...i32.const(STACK_OFFSET),
+	...i32.const(STACK_ADDRESS),
 	...i32.const(0),
 	...i32.const(32), // 32 bytes for stack (16 entries of 2 bytes each)
 	...memory.fill(),
 
 	// Clear registers
-	...i32.const(REGISTERS_OFFSET),
+	...i32.const(REGISTERS_ADDRESS),
 	...i32.const(0),
 	...i32.const(16), // 16 bytes for registers
 	...memory.fill(),
 
 	// Set PC
-	...i32.const(PC_OFFSET),
+	...i32.const(PC_ADDRESS),
 	...i32.const(ROM_LOAD_ADDRESS),
 	...i32.store16(),
 
 	// Set SP
-	...i32.const(STACK_PTR_OFFSET),
+	...i32.const(STACK_PTR_ADDRESS),
 	...i32.const(0),
 	...i32.store8(),
 
 	// Set timers
-	...i32.const(DELAY_TIMER_OFFSET),
+	...i32.const(DELAY_TIMER_ADDRESS),
 	...i32.const(0),
 	...i32.store8(),
-	...i32.const(SOUND_TIMER_OFFSET),
+	...i32.const(SOUND_TIMER_ADDRESS),
 	...i32.const(0),
 	...i32.store8(),
 
 	// Set I = 0
-	...i32.const(I_OFFSET),
+	...i32.const(I_ADDRESS),
 	...i32.const(0),
 	...i32.store16(),
 
-	// Set FX0A_VX_OFFSET to 0
-	...i32.const(FX0A_VX_OFFSET),
+	// Set FX0A_VX_ADDRESS to 0
+	...i32.const(FX0A_VX_ADDRESS),
 	...i32.const(0),
 	...i32.store8(),
 
@@ -81,7 +120,7 @@ export const tick = new Uint8Array([
 	...local.declare("i32", "i32", "i32"), // PC, high byte, low byte
 
 	// Load PC
-	...i32.const(PC_OFFSET),
+	...i32.const(PC_ADDRESS),
 	...i32.load16_u(),
 	...local.set(0),
 
@@ -96,7 +135,7 @@ export const tick = new Uint8Array([
 	...local.set(2), // store low byte in local 2
 
 	// increment PC
-	...i32.const(PC_OFFSET),
+	...i32.const(PC_ADDRESS),
 	...local.get(0),
 	...i32.const(2),
 	...i32.add(),
@@ -119,13 +158,13 @@ export const tick = new Uint8Array([
 export const updateTimers = new Uint8Array([
 	...local.declare(),
 	// Delay timer
-	...i32.const(DELAY_TIMER_OFFSET),
+	...i32.const(DELAY_TIMER_ADDRESS),
 	...i32.load8_u(), // load delay timer value
 	...i32.const(0),
     ...i32.gt_u(), // is it greater than 0?
     ...if_.start(),
-        ...i32.const(DELAY_TIMER_OFFSET),
-        ...i32.const(DELAY_TIMER_OFFSET),
+        ...i32.const(DELAY_TIMER_ADDRESS),
+        ...i32.const(DELAY_TIMER_ADDRESS),
         ...i32.load8_u(), // load delay timer value again
         ...i32.const(1),
         ...i32.sub(), // decrement delay timer
@@ -133,13 +172,13 @@ export const updateTimers = new Uint8Array([
     ...if_.end(),
 
     // Sound timer
-    ...i32.const(SOUND_TIMER_OFFSET),
+    ...i32.const(SOUND_TIMER_ADDRESS),
     ...i32.load8_u(), // load sound timer value
     ...i32.const(0),
     ...i32.gt_u(), // is it greater than 0?
     ...if_.start(),
-        ...i32.const(SOUND_TIMER_OFFSET),
-        ...i32.const(SOUND_TIMER_OFFSET),
+        ...i32.const(SOUND_TIMER_ADDRESS),
+        ...i32.const(SOUND_TIMER_ADDRESS),
         ...i32.load8_u(), // load sound timer value again
         ...i32.const(1),
         ...i32.sub(), // decrement sound timer

@@ -1,4 +1,4 @@
-import { PC_OFFSET, REGISTERS_OFFSET } from "../constants";
+import { PC_ADDRESS, REGISTERS_ADDRESS } from "../constants";
 import { fn, i32, if_, local } from "../wasm";
 
 // 9XY0 Skip next instruction if VX !== NN
@@ -18,7 +18,7 @@ export const nine = () =>
 		...if_.end(),
 
 		// VX
-		...i32.const(REGISTERS_OFFSET),
+		...i32.const(REGISTERS_ADDRESS),
 		...local.get(0),
 		...i32.const(0x0f),
 		...i32.and(), // Get X
@@ -26,7 +26,7 @@ export const nine = () =>
 		...i32.load8_u(), // load VX value
 
 		// VY
-		...i32.const(REGISTERS_OFFSET),
+		...i32.const(REGISTERS_ADDRESS),
 		...local.get(1),
 		...i32.const(4),
 		...i32.shr_u(), // extract the first nibble of low byte
@@ -34,8 +34,8 @@ export const nine = () =>
 		...i32.load8_u(), // load VY value
 		...i32.ne(), // compare VX and VY
 		...if_.start(),
-            ...i32.const(PC_OFFSET),
-            ...i32.const(PC_OFFSET),
+            ...i32.const(PC_ADDRESS),
+            ...i32.const(PC_ADDRESS),
             ...i32.load16_u(), // load current PC
             ...i32.const(2),
             ...i32.add(),

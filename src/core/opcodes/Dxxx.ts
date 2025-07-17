@@ -1,18 +1,24 @@
-import { DISPLAY_OFFSET, I_OFFSET, REGISTERS_OFFSET } from "../constants";
+import {
+	DISPLAY_ADDRESS,
+	I_ADDRESS,
+	QUIRK_DISPLAY_WAIT_ADDRESS,
+	REGISTERS_ADDRESS,
+	THROTTLE_DRAW_ADDRESS,
+} from "../constants";
 import { block, fn, i32, if_, local, loop } from "../wasm";
 
 // DXYN: Draw sprite at coordinate (VX, VY) with N bytes of sprite data
 // Set VF to 1 if any pixels are flipped, 0 otherwise
 // biome-ignore format: keep if structure
 const drawSprite = new Uint8Array([
-	...i32.const(I_OFFSET),
+	...i32.const(I_ADDRESS),
 	...i32.load16_u(), // Load I from memory
 	...local.get(6), // row (loop counter)
 	...i32.add(),
 	...i32.load8_u(), // Load font at address I
 	...local.set(9),
 
-	...i32.const(DISPLAY_OFFSET),
+	...i32.const(DISPLAY_ADDRESS),
 	// Find the Y byte to print at
 	...local.get(3), // Y
 	...local.get(6), // row (loop counter)
@@ -99,7 +105,7 @@ export const d = () =>
             "i32", "i32", "i32", "i32", "i32", "i32",
             "i32", "i32", "i32", "i32", "i32", "i32"
         ),
-        ...i32.const(REGISTERS_OFFSET),
+        ...i32.const(REGISTERS_ADDRESS),
         ...local.get(0), // high byte of opcode
         ...i32.const(0x0f),
         ...i32.and(), // isolate the second nibble (0x0X)
@@ -109,7 +115,7 @@ export const d = () =>
         ...i32.and(),
         ...local.set(2), // X
 
-        ...i32.const(REGISTERS_OFFSET),
+        ...i32.const(REGISTERS_ADDRESS),
         ...local.get(1), // low byte of opcode
         ...i32.const(4),
 		...i32.shr_u(), // extract the first nibble of low byte
@@ -119,7 +125,7 @@ export const d = () =>
         ...i32.and(),
         ...local.set(3), // Y
 
-        ...i32.const(I_OFFSET),
+        ...i32.const(I_ADDRESS),
         ...i32.load16_u(), // Load I from memory
         ...local.set(4), // I
 
@@ -149,7 +155,7 @@ export const d = () =>
             ...loop.end(),
         ...block.end(),
 
-        ...i32.const(REGISTERS_OFFSET + 0xf), // VF
+        ...i32.const(REGISTERS_ADDRESS + 0xf), // VF
         ...local.get(7), // collision
         ...i32.store8(),
 

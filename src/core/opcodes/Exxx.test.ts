@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, expect, test } from "vitest";
-import { REGISTERS_OFFSET, createChip8Engine } from "../..";
+import { REGISTERS_ADDRESS, createChip8Engine } from "../..";
 
 let chip8: Awaited<ReturnType<typeof createChip8Engine>>;
 const wasmBinary = readFileSync("public/chip8.wasm");
@@ -27,7 +27,7 @@ test("EX9E skips next instruction if key in VX is pressed", () => {
 	chip8.step(); // Execute whatever's next
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0x1]).toBe(0x00); // V1 should not be set
+	expect(mem[REGISTERS_ADDRESS + 0x1]).toBe(0x00); // V1 should not be set
 });
 
 test("EXA1 skips next instruction if key in VX is NOT pressed", () => {
@@ -47,7 +47,7 @@ test("EXA1 skips next instruction if key in VX is NOT pressed", () => {
 	chip8.step(); // Execute whatever's next
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0x1]).toBe(0x00); // V1 should not be set
+	expect(mem[REGISTERS_ADDRESS + 0x1]).toBe(0x00); // V1 should not be set
 });
 
 test("EX9E does not skip if key not pressed", () => {
@@ -65,7 +65,7 @@ test("EX9E does not skip if key not pressed", () => {
 	chip8.step(); // Execute V1 = 0x77
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0x1]).toBe(0x77); // V1 should be set
+	expect(mem[REGISTERS_ADDRESS + 0x1]).toBe(0x77); // V1 should be set
 });
 
 test("EXA1 does not skip if key IS pressed", () => {
@@ -85,5 +85,5 @@ test("EXA1 does not skip if key IS pressed", () => {
 	chip8.step(); // V1 = 0x88
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0x1]).toBe(0x88); // V1 should be set
+	expect(mem[REGISTERS_ADDRESS + 0x1]).toBe(0x88); // V1 should be set
 });

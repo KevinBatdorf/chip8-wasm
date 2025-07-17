@@ -1,22 +1,36 @@
 import { readdir, writeFile } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { extname, join } from "node:path";
+import type { RomEntry } from "../src/types";
 
-const ROMS_DIR = "public/roms";
+// check .com.com
+
 const OUTPUT_FILE = "src/roms-manifest.json";
 
-const getRoms = async (dir: string): Promise<Record<string, string[]>> => {
-	const result: Record<string, string[]> = {};
-	const categories = await readdir(dir, { withFileTypes: true });
+const getTestRoms = async (): Promise<RomEntry[]> => {
+	const result: RomEntry[] = [];
 
-	for (const cat of categories) {
-		if (!cat.isDirectory()) continue;
-		const path = join(dir, cat.name);
-		const files = await readdir(path);
-		result[cat.name] = files.filter((f) => extname(f) === ".ch8");
+	const files = await readdir("public/roms/tests");
+	for (const file of files) {
+		if (extname(file) !== ".ch8") continue;
+		const name = file
+			.replace(/\[.*?\]/g, "")
+			.replaceAll("-", " ")
+			.replace(/^\d+/, "")
+			.replace(".ch8", "")
+			.split(" ")
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(" ");
+		result.push({
+			name,
+			path: join("roms/tests", file),
+		});
 	}
 	return result;
 };
 
-const manifest = await getRoms(ROMS_DIR);
+const manifest = {
+	tests: await getTestRoms(),
+	roms: [],
+};
 await writeFile(OUTPUT_FILE, JSON.stringify(manifest, null, 2));
 console.log("✅ ROM manifest written to", OUTPUT_FILE);

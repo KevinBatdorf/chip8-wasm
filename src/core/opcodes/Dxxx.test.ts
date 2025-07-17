@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, expect, test } from "vitest";
 import {
-	DISPLAY_OFFSET,
-	FONT_OFFSET,
-	REGISTERS_OFFSET,
+	DISPLAY_ADDRESS,
+	FONT_ADDRESS,
+	REGISTERS_ADDRESS,
 	createChip8Engine,
 } from "../..";
 
@@ -28,13 +28,13 @@ test("DXYN draws the built-in font for digit A at position (0, 0)", () => {
 	chip8.step(); // V0 = 0
 	chip8.step(); // V1 = 0
 	chip8.step(); // VA = 0x0A
-	chip8.step(); // FX29 → I = FONT_OFFSET + 5 * VA
+	chip8.step(); // FX29 → I = FONT_ADDRESS + 5 * VA
 	chip8.step(); // DXYN
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	const fontAddr = FONT_OFFSET + 5 * 0x0a;
+	const fontAddr = FONT_ADDRESS + 5 * 0x0a;
 	for (let i = 0; i < 5; i++) {
-		expect(mem[DISPLAY_OFFSET + i * 8]).toBe(mem[fontAddr + i]);
+		expect(mem[DISPLAY_ADDRESS + i * 8]).toBe(mem[fontAddr + i]);
 	}
 });
 test("DXYN draws unaligned sprite with X=3 causing byte overflow", () => {
@@ -44,7 +44,7 @@ test("DXYN draws unaligned sprite with X=3 causing byte overflow", () => {
 			0x60, 0x06, // V0 = 6 (X)
 			0x61, 0x00, // V1 = 0 (Y)
 			0x6A, 0x00, // VA = 0x00 (digit 0)
-			0xFA, 0x29, // I = FONT_OFFSET + 5 * 0
+			0xFA, 0x29, // I = FONT_ADDRESS + 5 * 0
 			0xD0, 0x15, // draw sprite at (6, 0)
 		]),
 	);
@@ -55,8 +55,8 @@ test("DXYN draws unaligned sprite with X=3 causing byte overflow", () => {
 	chip8.step(); // FX29
 	chip8.step(); // DXYN
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[DISPLAY_OFFSET + 0]).toBe(0x03);
-	expect(mem[DISPLAY_OFFSET + 1]).toBe(0xc0);
+	expect(mem[DISPLAY_ADDRESS + 0]).toBe(0x03);
+	expect(mem[DISPLAY_ADDRESS + 1]).toBe(0xc0);
 });
 
 test("DXYN sets VF = 1 when pixels are unset (collision)", () => {
@@ -78,7 +78,7 @@ test("DXYN sets VF = 1 when pixels are unset (collision)", () => {
 	for (let i = 0; i < 8; i++) chip8.step();
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	const VF = mem[0xf + REGISTERS_OFFSET];
+	const VF = mem[0xf + REGISTERS_ADDRESS];
 	expect(VF).toBe(1);
 });
 
@@ -102,7 +102,7 @@ test("DXYN sets VF = 0 when no pixels are unset (no collision)", () => {
 	for (let i = 0; i < 10; i++) chip8.step();
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0xf]).toBe(0); // VF should be 0 — no collision
+	expect(mem[REGISTERS_ADDRESS + 0xf]).toBe(0); // VF should be 0 — no collision
 });
 
 test("DXYN sets VF = 1 when collision occurs in overflow byte", () => {
@@ -124,5 +124,5 @@ test("DXYN sets VF = 1 when collision occurs in overflow byte", () => {
 	for (let i = 0; i < 8; i++) chip8.step();
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
-	expect(mem[REGISTERS_OFFSET + 0xf]).toBe(1);
+	expect(mem[REGISTERS_ADDRESS + 0xf]).toBe(1);
 });
