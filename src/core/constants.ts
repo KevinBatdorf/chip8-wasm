@@ -5,6 +5,7 @@ export const TICKS_PER_FRAME = 500 / 60; // ~8 ticks per frame at 60 FPS
 export const FONT_ADDRESS = 0x000;
 // ROM (3584 bytes)
 export const ROM_LOAD_ADDRESS = 0x200;
+export const MAX_ROM_ADDRESS = 0xfff; // Maximum address for ROM
 // Display (64x32 = 2048 bits = 256 bytes)
 export const DISPLAY_ADDRESS = 0x1000; // 0x1000–0x10FF
 export const FRAME_BUFFER_ADDRESS = 0x1100; // 0x1100–0x11FF

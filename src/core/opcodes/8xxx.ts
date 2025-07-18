@@ -1,4 +1,8 @@
-import { QUIRK_VF_RESET_ADDRESS, REGISTERS_ADDRESS } from "../constants";
+import {
+	QUIRK_SHIFTING_ADDRESS,
+	QUIRK_VF_RESET_ADDRESS,
+	REGISTERS_ADDRESS,
+} from "../constants";
 import { fn, i32, if_, local } from "../wasm";
 
 // 8XY0	VX = VY
@@ -112,6 +116,7 @@ export const eight5 = new Uint8Array([
 ]);
 
 // 8XY6	VX >>= 1, VF = LSB
+// biome-ignore format: keep if structure
 export const eight6 = new Uint8Array([
 	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
 	...local.get(3), // address of VY
@@ -119,6 +124,13 @@ export const eight6 = new Uint8Array([
 	...i32.const(1),
 	...i32.and(), // isolate the LSB
 	...i32.store8(), // store LSB in VF
+
+    // Return early if shifting quirk is enabled
+	...i32.const(QUIRK_SHIFTING_ADDRESS),
+	...i32.load8_u(),
+	...if_.start(),
+	    ...fn.return(),
+	...if_.end(),
 
 	...local.get(2), // address of VX
 	...local.get(3), // address of VY
@@ -151,6 +163,7 @@ export const eight7 = new Uint8Array([
 ]);
 
 // 8XYE	VX <<= 1, VF = MSB
+// biome-ignore format: keep if structure
 export const eightE = new Uint8Array([
 	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
 	...local.get(3), // address of VY
@@ -160,6 +173,13 @@ export const eightE = new Uint8Array([
 	...i32.const(1),
 	...i32.and(), // isolate the MSB
 	...i32.store8(), // store MSB in VF
+
+	// Return early if shifting quirk is enabled
+	...i32.const(QUIRK_SHIFTING_ADDRESS),
+	...i32.load8_u(),
+	...if_.start(),
+	    ...fn.return(),
+	...if_.end(),
 
 	...local.get(2), // address of VX
 	...local.get(3), // address of VY

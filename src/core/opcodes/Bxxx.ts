@@ -1,10 +1,11 @@
 import {
-	DISPLAY_ADDRESS,
+	MAX_ROM_ADDRESS,
 	PC_ADDRESS,
+	QUIRK_JUMPING_ADDRESS,
 	REGISTERS_ADDRESS,
 	ROM_LOAD_ADDRESS,
 } from "../constants";
-import { fn, i32, if_, local, misc } from "../wasm";
+import { fn, i32, if_, local, misc, valType } from "../wasm";
 
 // Jump to address NNN + V0
 // biome-ignore format: keep if structure
@@ -19,8 +20,19 @@ export const b = () =>
 		...i32.or(), // combine high and low bytes into opcode
 		...i32.const(0x0fff), // mask to get the address
 		...i32.and(),
-		...i32.const(REGISTERS_ADDRESS), // V0
-		...i32.load8_u(), // load V0
+        // If jump quirk is enabled, use the first N instead of v0
+        ...i32.const(QUIRK_JUMPING_ADDRESS),
+        ...i32.load8_u(), // load quirk value
+        ...if_.start(valType("i32")),
+            ...i32.const(REGISTERS_ADDRESS), // V0
+            ...local.get(0), // high
+            ...i32.const(0x0f),
+		    ...i32.and(), // isolate the second nibble (0x0X)
+            ...i32.add(),
+        ...if_.else(),
+            ...i32.const(REGISTERS_ADDRESS), // V0
+        ...if_.end(),
+        ...i32.load8_u(), // load V0 (or first N if quirk is enabled)
 		...i32.add(), // NNN + V0
 		...local.tee(0), // store NNN in local 0
 
@@ -31,7 +43,7 @@ export const b = () =>
 		    ...misc.unreachable(),
 		...fn.end(),
 		...local.get(0), // NNN
-		...i32.const(DISPLAY_ADDRESS - 2), // max safe address
+		...i32.const(MAX_ROM_ADDRESS), // max safe address
 		...i32.gt_u(),
 		...if_.start(),
 		    ...misc.unreachable(),
