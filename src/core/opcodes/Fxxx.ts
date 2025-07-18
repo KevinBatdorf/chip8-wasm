@@ -3,6 +3,7 @@ import {
 	FONT_ADDRESS,
 	FX0A_VX_ADDRESS,
 	I_ADDRESS,
+	QUIRK_MEMORY_ADDRESS,
 	REGISTERS_ADDRESS,
 	SOUND_TIMER_ADDRESS,
 } from "../constants";
@@ -167,14 +168,18 @@ const storeV0ToVXInMemory = [
         ...loop.end(),
     ...block.end(),
     // I is set to I + X + 1
-    ...i32.const(I_ADDRESS),
-    ...i32.const(I_ADDRESS),
-    ...i32.load16_u(), // load current I
-    ...local.get(2), // second nibble (X)
-    ...i32.add(), // add X + 1 to I
-    ...i32.const(1),
-    ...i32.add(), // new I = current I + X + 1
-    ...i32.store16(), // store new I value
+    ...i32.const(QUIRK_MEMORY_ADDRESS),
+    ...i32.load8_u(),
+    ...if_.start(),
+        ...i32.const(I_ADDRESS),
+        ...i32.const(I_ADDRESS),
+        ...i32.load16_u(), // load current I
+        ...local.get(2), // second nibble (X)
+        ...i32.add(), // add X + 1 to I
+        ...i32.const(1),
+        ...i32.add(), // new I = current I + X + 1
+        ...i32.store16(), // store new I value
+    ...if_.end(),
 	...fn.return(),
 ];
 
@@ -212,14 +217,18 @@ const loadV0ToVXFromMemory = [
         ...loop.end(),
     ...block.end(),
     // I is set to I + X + 1
-    ...i32.const(I_ADDRESS),
-    ...i32.const(I_ADDRESS),
-    ...i32.load16_u(), // load current I
-    ...local.get(2), // second nibble (X)
-    ...i32.add(), // add X + 1 to I
-    ...i32.const(1),
-    ...i32.add(), // new I = current I + X + 1
-    ...i32.store16(), // store new I value
+    ...i32.const(QUIRK_MEMORY_ADDRESS),
+    ...i32.load8_u(),
+    ...if_.start(),
+        ...i32.const(I_ADDRESS),
+        ...i32.const(I_ADDRESS),
+        ...i32.load16_u(), // load current I
+        ...local.get(2), // second nibble (X)
+        ...i32.add(), // add X + 1 to I
+        ...i32.const(1),
+        ...i32.add(), // new I = current I + X + 1
+        ...i32.store16(), // store new I value
+    ...if_.end(),
 	...fn.return(),
 ]
 
