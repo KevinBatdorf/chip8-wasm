@@ -1,9 +1,9 @@
 import {
-	DISPLAY_ADDRESS,
+	DRAW_HAPPENED_ADDRESS,
+	FRAME_BUFFER_ADDRESS,
 	I_ADDRESS,
 	QUIRK_DISPLAY_WAIT_ADDRESS,
 	REGISTERS_ADDRESS,
-	THROTTLE_DRAW_ADDRESS,
 } from "../constants";
 import { block, fn, i32, if_, local, loop } from "../wasm";
 
@@ -18,7 +18,7 @@ const drawSprite = new Uint8Array([
 	...i32.load8_u(), // Load font at address I
 	...local.set(9),
 
-	...i32.const(DISPLAY_ADDRESS),
+	...i32.const(FRAME_BUFFER_ADDRESS),
 	// Find the Y byte to print at
 	...local.get(3), // Y
 	...local.get(6), // row (loop counter)
@@ -105,6 +105,16 @@ export const d = () =>
             "i32", "i32", "i32", "i32", "i32", "i32",
             "i32", "i32", "i32", "i32", "i32", "i32"
         ),
+
+        // If quirk is enabled break out of the loop later
+        ...i32.const(QUIRK_DISPLAY_WAIT_ADDRESS),
+        ...i32.load8_u(),
+        ...if_.start(),
+            ...i32.const(DRAW_HAPPENED_ADDRESS),
+            ...i32.const(1),
+            ...i32.store8(), // Set draw happened flag
+        ...if_.end(),
+
         ...i32.const(REGISTERS_ADDRESS),
         ...local.get(0), // high byte of opcode
         ...i32.const(0x0f),

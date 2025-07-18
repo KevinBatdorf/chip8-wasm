@@ -2,6 +2,8 @@ import type { Chip8Engine } from "..";
 import {
 	DELAY_TIMER_ADDRESS,
 	DISPLAY_ADDRESS,
+	DRAW_HAPPENED_ADDRESS,
+	FRAME_BUFFER_ADDRESS,
 	FX0A_VX_ADDRESS,
 	I_ADDRESS,
 	KEY_BUFFER_ADDRESS,
@@ -22,7 +24,6 @@ import {
 	ROM_LOAD_ADDRESS,
 	SOUND_TIMER_ADDRESS,
 	STACK_PTR_ADDRESS,
-	THROTTLE_DRAW_ADDRESS,
 	TICKS_PER_FRAME,
 	TICKS_PER_FRAME_ADDRESS,
 	TIMER_INTERVAL,
@@ -55,7 +56,7 @@ export const createChip8Engine = async (
 		timerAccumulator += delta;
 
 		// Run the CHIP-8 tick
-		const mem = new Uint8Array(memory.buffer);
+		let mem = new Uint8Array(memory.buffer);
 		for (let i = 0; i < mem[TICKS_PER_FRAME_ADDRESS]; i++) {
 			const mem = new Uint8Array(memory.buffer);
 			waitingForKey = mem[FX0A_VX_ADDRESS] !== 0;
@@ -63,13 +64,19 @@ export const createChip8Engine = async (
 				return requestAnimationFrame(frame);
 			}
 			exports.tick();
-			// TODO: if throttle draw is enabled then write to a frame buffer
 		}
+		updateFrameBuffer();
 
 		// Handle timers
 		while (timerAccumulator >= TIMER_INTERVAL) {
 			exports.update_timers();
 			timerAccumulator -= TIMER_INTERVAL;
+		}
+
+		mem = new Uint8Array(memory.buffer);
+		// If the display wait quirk is enabled, this might be 1
+		if (mem[DRAW_HAPPENED_ADDRESS]) {
+			mem[DRAW_HAPPENED_ADDRESS] = 0; // Reset draw happened flag
 		}
 
 		// Notify callback renderer
@@ -78,6 +85,15 @@ export const createChip8Engine = async (
 			frameCallback(displayBuffer);
 		}
 		requestAnimationFrame(frame);
+	};
+
+	const updateFrameBuffer = () => {
+		const mem = new Uint8Array(memory.buffer);
+		mem.copyWithin(
+			DISPLAY_ADDRESS,
+			FRAME_BUFFER_ADDRESS,
+			FRAME_BUFFER_ADDRESS + 256,
+		);
 	};
 
 	const start = () => {
@@ -97,7 +113,7 @@ export const createChip8Engine = async (
 		exports.tick();
 		const mem = new Uint8Array(memory.buffer);
 		waitingForKey = mem[FX0A_VX_ADDRESS] !== 0;
-		mem[THROTTLE_DRAW_ADDRESS] = 0;
+		updateFrameBuffer();
 		if (frameCallback) {
 			const displayBuffer = new Uint8Array(
 				memory.buffer,

@@ -5,7 +5,7 @@ export type Chip8Engine = {
 	pause(): void;
 	reset(): void;
 	isRunning(): boolean;
-	loadROM(bytes: Uint8Array, options: RomOptions): void;
+	loadROM(bytes: Uint8Array, options?: RomOptions): void;
 	onFrame(callback: (frame: Uint8Array) => void): void;
 	setKey(index: number, isDown: boolean): void;
 	getMemory(): WebAssembly.Memory;

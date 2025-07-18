@@ -23,6 +23,7 @@ test("DXYN draws the built-in font for digit A at position (0, 0)", () => {
             0xFA, 0x29, // I = address of sprite for digit in VA
             0xD0, 0x05, // draw sprite at (V0, V1), 5 bytes tall
         ]),
+		{ vBlankQuirks: false },
 	);
 
 	chip8.step(); // V0 = 0
@@ -47,6 +48,7 @@ test("DXYN draws unaligned sprite with X=3 causing byte overflow", () => {
 			0xFA, 0x29, // I = FONT_ADDRESS + 5 * 0
 			0xD0, 0x15, // draw sprite at (6, 0)
 		]),
+		{ vBlankQuirks: false },
 	);
 
 	chip8.step(); // V0
@@ -73,6 +75,7 @@ test("DXYN sets VF = 1 when pixels are unset (collision)", () => {
 			0xFA, 0x29, // I = font addr for 1
 			0xD0, 0x05, // draw 1 at (0, 0)
 		]),
+		{ vBlankQuirks: false },
 	);
 
 	for (let i = 0; i < 8; i++) chip8.step();
@@ -97,6 +100,7 @@ test("DXYN sets VF = 0 when no pixels are unset (no collision)", () => {
 			0xFA, 0x29, // I = sprite for 1
 			0xD0, 0x15, // draw 1 at (0, 5)
 		]),
+		{ vBlankQuirks: false },
 	);
 
 	for (let i = 0; i < 10; i++) chip8.step();
@@ -119,6 +123,7 @@ test("DXYN sets VF = 1 when collision occurs in overflow byte", () => {
 			0xFA, 0x29, // I = sprite for 1
 			0xD0, 0x05, // draw 1 at (3, 0)
 		]),
+		{ vBlankQuirks: false },
 	);
 
 	for (let i = 0; i < 8; i++) chip8.step();

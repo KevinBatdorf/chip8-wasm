@@ -1,22 +1,23 @@
 import {
 	DELAY_TIMER_ADDRESS,
 	DISPLAY_ADDRESS,
+	DRAW_HAPPENED_ADDRESS,
 	FX0A_VX_ADDRESS,
 	I_ADDRESS,
 	KEY_BUFFER_ADDRESS,
 	PC_ADDRESS,
-	QUIRK_CLIPPING_ADDRESS,
 	QUIRK_CLIPPING,
-	QUIRK_DISPLAY_WAIT_ADDRESS,
+	QUIRK_CLIPPING_ADDRESS,
 	QUIRK_DISPLAY_WAIT,
-	QUIRK_JUMPING_ADDRESS,
+	QUIRK_DISPLAY_WAIT_ADDRESS,
 	QUIRK_JUMPING,
-	QUIRK_MEMORY_ADDRESS,
+	QUIRK_JUMPING_ADDRESS,
 	QUIRK_MEMORY,
-	QUIRK_SHIFTING_ADDRESS,
+	QUIRK_MEMORY_ADDRESS,
 	QUIRK_SHIFTING,
-	QUIRK_VF_RESET_ADDRESS,
+	QUIRK_SHIFTING_ADDRESS,
 	QUIRK_VF_RESET,
+	QUIRK_VF_RESET_ADDRESS,
 	REGISTERS_ADDRESS,
 	ROM_LOAD_ADDRESS,
 	SOUND_TIMER_ADDRESS,
@@ -116,8 +117,16 @@ export const init = new Uint8Array([
 	...fn.end(),
 ]);
 
+// biome-ignore format: keep if structure
 export const tick = new Uint8Array([
 	...local.declare("i32", "i32", "i32"), // PC, high byte, low byte
+
+	// Exit early if draw happened (display quirk is enabled)
+	...i32.const(DRAW_HAPPENED_ADDRESS),
+	...i32.load8_u(),
+	...if_.start(),
+	    ...fn.return(),
+	...if_.end(),
 
 	// Load PC
 	...i32.const(PC_ADDRESS),
