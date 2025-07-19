@@ -22,36 +22,32 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
-		if (!chip8 || !rom?.path) return;
-		// if (!rom) {
-		// 	setRom({ name: "Test", path: "roms/test.ch8" }); // for testing
-		// 	return;
-		// }
-		// if (rom.path === "roms/test.ch8") {
-		// 	const romD = new Uint8Array([
-		// 		0x60,
-		// 		0x00, // V0 = 0
-		// 		0x61,
-		// 		0x00, // V1 = 0
-		// 		0x6a,
-		// 		0x02, // VA = 2 (digit 2)
-		// 		0xfa,
-		// 		0x29, // I = sprite for 2
-		// 		0xd0,
-		// 		0x05, // draw 2 at (0, 0)
-
-		// 		0x61,
-		// 		0x05, // V1 = 5 (move Y to avoid overlap)
-		// 		0x6a,
-		// 		0x01, // VA = 1
-		// 		0xfa,
-		// 		0x29, // I = sprite for 1
-		// 		0xd0,
-		// 		0x05, // draw 1 at (0, 5)
-		// 	]);
-		// 	chip8.loadROM(romD);
-		// 	return;
-		// }
+		if (!chip8) return;
+		if (!rom) {
+			setRom({ name: "Test", path: "roms/test.ch8" }); // for testing
+			return;
+		}
+		if (rom.path === "roms/test.ch8") {
+			const romD = new Uint8Array([
+				0x60,
+				0xfe, // V0 = 0
+				0x61,
+				0x1e, // V1 = 0
+				0x6a,
+				0x02, // VA = 2 (digit 2)
+				0xfa,
+				0x29, // I = sprite for 2
+				0xd0,
+				0x15, // draw 2 at (0, 0)
+			]);
+			chip8.loadROM(romD);
+			chip8.step();
+			chip8.step();
+			chip8.step();
+			chip8.step();
+			chip8.step();
+			return;
+		}
 
 		getRom(rom.path).then((bytes) => {
 			chip8.loadROM(bytes);

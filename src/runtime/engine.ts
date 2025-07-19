@@ -113,6 +113,7 @@ export const createChip8Engine = async (
 		exports.tick();
 		const mem = new Uint8Array(memory.buffer);
 		waitingForKey = mem[FX0A_VX_ADDRESS] !== 0;
+		mem[DRAW_HAPPENED_ADDRESS] = 0;
 		updateFrameBuffer();
 		if (frameCallback) {
 			const displayBuffer = new Uint8Array(

@@ -1,6 +1,6 @@
 export const TIMER_INTERVAL = 1000 / 60; // 1000Hz @ 60 FPS
 // Overridable ticks per frame
-export const TICKS_PER_FRAME = 500 / 60; // ~8 ticks per frame at 60 FPS
+export const TICKS_PER_FRAME = 10;
 
 export const FONT_ADDRESS = 0x000;
 // ROM (3584 bytes)

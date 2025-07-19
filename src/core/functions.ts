@@ -18,7 +18,7 @@ import {
 	zero,
 } from "./opcodes";
 import { d } from "./opcodes/Dxxx";
-import { fn, misc, valType } from "./wasm";
+import { valType } from "./wasm";
 
 type FuncSignature = {
 	name: string;

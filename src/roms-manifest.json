@@ -27,6 +27,10 @@
     {
       "name": " Beep",
       "path": "roms/tests/7-beep.ch8"
+    },
+    {
+      "name": " G Corax+",
+      "path": "roms/tests/8-g-corax+.ch8"
     }
   ],
   "roms": []

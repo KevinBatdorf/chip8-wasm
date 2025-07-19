@@ -16,7 +16,7 @@ const drawSprite = new Uint8Array([
 	...local.get(6), // row (loop counter)
 	...i32.add(),
 	...i32.load8_u(), // Load font at address I
-	...local.set(9),
+	...local.set(8),
 
 	...i32.const(FRAME_BUFFER_ADDRESS),
 	// Find the Y byte to print at
@@ -31,46 +31,78 @@ const drawSprite = new Uint8Array([
 	...i32.const(3),
 	...i32.shr_u(), // X >> 3
 	...i32.add(), // row * 8 + (X >> 3)
-	...local.tee(10), // byte index
+	...local.tee(9), // byte index
 
-	...local.get(10), // load again to xor
+	...local.get(9), // load again to xor
 	...i32.load8_u(), // Load the current byte at (X, Y)
-	...local.tee(11), // store previous display byte
-	...local.get(9), // sprite byte
+	...local.tee(10), // store previous display byte
+	...local.get(8), // sprite byte
 	// calculate X offset
 	...local.get(2), // X
 	...i32.const(7),
 	...i32.and(),
 	...i32.shr_u(), // shift right to get the X offset
-	...local.tee(12), // store next display byte
+	...local.tee(11), // store next display byte
 	...i32.xor(),
 	...i32.store8(),
 
 	// was there a collision?
-	...local.get(11), // previous display byte
-	...local.get(12), // next display byte
+	...local.get(10), // previous display byte
+	...local.get(11), // next display byte
     ...i32.and(), // check if both previous and next are 0
     ...i32.const(0),
     ...i32.ne(),
     ...local.set(7), // store collision flag
 
+    // If X is byte aligned, we can stop here
+    // ...local.get(2), // X
+    // ...i32.const(7),
+    // ...i32.and(), // X & 0x07
+    // ...i32.eqz(),
+    // ...if_.start(),
+    //     ...loop.br(0),
+    // ...if_.end(),
+
 	// Handle byte overflow
-	...local.get(10), // byte index
+	...local.get(9), // byte index
 	...i32.const(1),
 	...i32.add(), // byte index + 1
-	...local.get(10), // byte index again to XOR
+    // ...i32.const(7),
+    // ...i32.and(), // check if we are wrapping around
+    // ...i32.eqz(),
+    // ...if_.start(valType("i32")),
+    //     ...i32.const(QUIRK_CLIPPING_ADDRESS),
+    //     ...i32.load8_u(),
+    //     ...if_.start(valType("i32")),
+    //         ...i32.const(0),
+    //         ...loop.br(0), // If clipping, return early
+    //     ...if_.else(),
+    //         // If not clipping, wrap around
+    //         ...local.get(9),
+    //         ...i32.const(7),
+    //         ...i32.const(-1),
+    //         ...i32.xor(), // ~7
+    //         ...i32.and(), // row base
+    //     ...if_.end(),
+    // ...if_.else(),
+    //     // If not at the edge, then use the next index
+    //     ...local.get(9), // byte index
+    //     ...i32.const(1),
+    //     ...i32.add(), // byte index + 1
+    // ...if_.end(),
+	...local.get(9), // byte index again to XOR
 	...i32.const(1),
 	...i32.add(), // byte index + 1
 	...i32.load8_u(), // Load the next byte at (X + 1, Y)
-	...local.tee(11), // store sibling display byte
-	...local.get(9), // sprite byte
+	...local.tee(10), // store sibling display byte
+	...local.get(8), // sprite byte
 	...i32.const(8),
 	...local.get(2), // X
 	...i32.const(7),
 	...i32.and(), // X & 0x07
 	...i32.sub(), // byte index - (X & 0x07)
 	...i32.shl(), // shift left to get the bit offset
-	...local.tee(12), // store next (sibling) display byte
+	...local.tee(11), // store next (sibling) display byte
 	...i32.xor(),
 	...i32.store8(),
 
@@ -78,8 +110,8 @@ const drawSprite = new Uint8Array([
     ...local.get(7), // collision flag
     ...i32.eqz(),
     ...if_.start(),
-        ...local.get(11), // previous display byte
-        ...local.get(12), // next display byte
+        ...local.get(10), // previous display byte
+        ...local.get(11), // next display byte
         ...i32.and(), // check if both previous and next are 0
         ...i32.const(0),
         ...i32.ne(),
@@ -96,14 +128,13 @@ export const d = () =>
         // 5: N
         // 6: row (loop counter)
         // 7: collision flag
-        // 8: y row
-        // 9: sprite byte
-        // 10: display byte index
-        // 11: previous display byte
-        // 12: next display byte
+        // 8: sprite byte
+        // 9: display byte index
+        // 10: previous display byte
+        // 11: next display byte
         ...local.declare(
             "i32", "i32", "i32", "i32", "i32", "i32",
-            "i32", "i32", "i32", "i32", "i32", "i32"
+            "i32", "i32", "i32", "i32", "i32",
         ),
 
         // If quirk is enabled break out of the loop later
@@ -152,10 +183,30 @@ export const d = () =>
 
         ...block.start(),
             ...loop.start(),
+                // ...local.get(6), // row
+                // ...i32.const(32), // 32 rows in total
+                // ...i32.ge_u(),
+                // ...if_.start(), // Are we about to wrap around?
+                //     ...i32.const(QUIRK_CLIPPING_ADDRESS),
+                //     ...i32.load8_u(),
+                //     ...if_.start(),
+                //         ...loop.br(1), // break if clipping
+                //     ...if_.end(),
+                //     // Wrapping: set row to 0, adjust N
+                //     ...local.get(5), // N
+                //     ...local.get(6), // row
+                //     ...i32.sub(),    // N - row
+                //     ...local.set(5), // set N to remaining rows
+                //     ...i32.const(0),
+                //     ...local.set(6), // set row to 0
+                // ...if_.end(),
+
                 ...local.get(6), // row
                 ...local.get(5), // N
                 ...i32.eq(),
                 ...loop.br_if(1), // row === N
+                // Check Y clipping/wrapping
+                // if row is out of bounds, either break (clipping), or otherwise set the row to 0 (wrapping)
                 ...drawSprite,
                 ...local.get(6), // row
                 ...i32.const(1),
