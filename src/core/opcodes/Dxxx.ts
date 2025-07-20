@@ -83,16 +83,6 @@ const drawSprite = new Uint8Array([
         ...loop.br(1),
     ...if_.end(),
 
-
-    // ...i32.const(REGISTERS_ADDRESS + 0xe),
-    // ...local.get(12), // byte column index
-	// ...i32.const(1),
-	// ...i32.add(), // byte index + 1
-    // ...i32.const(7),
-    // ...i32.and(), // check if we are wrapping around
-    // ...i32.eqz(),
-    // ...i32.store8(), // store the byte at (X + 1, Y)
-
 	// Handle byte overflow
     ...local.get(12), // byte column index
 	...i32.const(1),
