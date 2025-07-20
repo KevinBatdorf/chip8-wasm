@@ -3,7 +3,7 @@ export type Chip8Engine = {
 	stop(): void;
 	step(): void;
 	pause(): void;
-	reset(): void;
+	reset(opts?: RomOptions): void;
 	isRunning(): boolean;
 	loadROM(bytes: Uint8Array, options?: RomOptions): void;
 	onFrame(callback: (frame: Uint8Array) => void): void;

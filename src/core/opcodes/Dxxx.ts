@@ -27,6 +27,14 @@ const drawSprite = new Uint8Array([
         ...local.get(3), // Y
         ...local.get(6), // row (loop counter)
         ...i32.add(),
+        ...i32.const(32), // 32 rows in total
+        ...i32.ge_u(), // Y + row >= 32
+        ...if_.start(),
+            ...loop.br(2), // If clipping, return early
+        ...if_.end(),
+        ...local.get(3), // Y
+        ...local.get(6), // row (loop counter)
+        ...i32.add(),
     ...if_.else(),
         ...local.get(3), // Y
         ...local.get(6), // row (loop counter)
@@ -75,6 +83,16 @@ const drawSprite = new Uint8Array([
         ...loop.br(1),
     ...if_.end(),
 
+
+    // ...i32.const(REGISTERS_ADDRESS + 0xe),
+    // ...local.get(12), // byte column index
+	// ...i32.const(1),
+	// ...i32.add(), // byte index + 1
+    // ...i32.const(7),
+    // ...i32.and(), // check if we are wrapping around
+    // ...i32.eqz(),
+    // ...i32.store8(), // store the byte at (X + 1, Y)
+
 	// Handle byte overflow
     ...local.get(12), // byte column index
 	...i32.const(1),
@@ -90,23 +108,27 @@ const drawSprite = new Uint8Array([
             ...loop.br(2), // If clipping, return early
         ...if_.else(),
             // If not clipping, wrap around
-            ...local.get(9),
-            ...i32.const(7),
-            ...i32.const(-1),
-            ...i32.xor(), // ~7
-            ...i32.and(), // row base
-            ...i32.const(1),
-            ...i32.sub(), // since we are overflow, move back 1
+            ...local.get(9), // byte index
+            ...i32.const(7), // back to column 0
+            ...i32.sub(),
+            ...local.tee(9), // store new byte index
         ...if_.end(),
     ...if_.else(),
         // If not at the edge, then use the next index
         ...local.get(9), // byte index
         ...i32.const(1),
         ...i32.add(), // byte index + 1
+        ...local.tee(9), // store new byte index
+    ...if_.end(),
+    ...local.get(9),
+    ...i32.const(FRAME_BUFFER_ADDRESS),
+    ...i32.sub(),
+    ...i32.const(256),
+    ...i32.ge_u(),
+    ...if_.start(),
+        ...misc.unreachable(), // Out of bounds access
     ...if_.end(),
 	...local.get(9), // byte index again to XOR
-	...i32.const(1),
-	...i32.add(), // byte index + 1
 	...i32.load8_u(), // Load the next byte at (X + 1, Y)
 	...local.tee(10), // store sibling display byte
 	...local.get(8), // sprite byte

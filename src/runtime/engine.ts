@@ -48,6 +48,7 @@ export const createChip8Engine = async (
 	let options: RomOptions = {};
 	let lastUpdate = performance.now();
 	let timerAccumulator = 0;
+	let rafId = 0;
 
 	const frame = (now: number) => {
 		if (!running) return;
@@ -70,7 +71,8 @@ export const createChip8Engine = async (
 			const mem = new Uint8Array(memory.buffer);
 			waitingForKey = mem[FX0A_VX_ADDRESS] !== 0;
 			if (waitingForKey) {
-				return requestAnimationFrame(frame);
+				rafId = requestAnimationFrame(frame);
+				return; // Wait for key input
 			}
 			try {
 				exports.tick();
@@ -93,7 +95,7 @@ export const createChip8Engine = async (
 			const displayBuffer = new Uint8Array(memory.buffer, DISPLAY_ADDRESS, 256);
 			frameCallback(displayBuffer);
 		}
-		requestAnimationFrame(frame);
+		rafId = requestAnimationFrame(frame);
 	};
 
 	const updateFrameBuffer = () => {
@@ -112,11 +114,13 @@ export const createChip8Engine = async (
 		waitingForKey = false;
 		lastUpdate = performance.now();
 		timerAccumulator = 0;
-		requestAnimationFrame(frame);
+		rafId = requestAnimationFrame(frame);
 	};
 	const stop = () => {
 		running = false;
 		waitingForKey = false;
+		timerAccumulator = 0;
+		cancelAnimationFrame(rafId);
 	};
 	const step = () => {
 		if (waitingForKey || errorMsg) return;
@@ -141,13 +145,15 @@ export const createChip8Engine = async (
 		}
 	};
 
-	const reset = () => {
+	const reset = (opts: RomOptions) => {
+		const run = running;
 		exports.init();
-		loadROM(romBytes || new Uint8Array(), options);
+		loadROM(romBytes || new Uint8Array(), opts ?? options);
 		if (frameCallback) {
 			const displayBuffer = new Uint8Array(memory.buffer, DISPLAY_ADDRESS, 256);
 			frameCallback(displayBuffer);
 		}
+		if (run) start(); // Restart if it was running
 	};
 
 	const loadROM = (bytes: Uint8Array, options: RomOptions = {}) => {
@@ -165,24 +171,22 @@ export const createChip8Engine = async (
 
 	const setOptions = (romOpts: RomOptions) => {
 		const opts = {
-			tickrate: TICKS_PER_FRAME,
-			vfOrderQuirks: QUIRK_VF_RESET,
-			loadStoreQuirks: QUIRK_MEMORY,
-			vBlankQuirks: QUIRK_DISPLAY_WAIT,
-			clipQuirks: QUIRK_CLIPPING,
-			shiftQuirks: QUIRK_SHIFTING,
-			jumpQuirks: QUIRK_JUMPING,
-			...romOpts,
+			tickrate: Number(romOpts.tickrate ?? TICKS_PER_FRAME),
+			vfOrderQuirks: Number(romOpts.vfOrderQuirks ?? QUIRK_VF_RESET),
+			loadStoreQuirks: Number(romOpts.loadStoreQuirks ?? QUIRK_MEMORY),
+			vBlankQuirks: Number(romOpts.vBlankQuirks ?? QUIRK_DISPLAY_WAIT),
+			clipQuirks: Number(romOpts.clipQuirks ?? QUIRK_CLIPPING),
+			shiftQuirks: Number(romOpts.shiftQuirks ?? QUIRK_SHIFTING),
+			jumpQuirks: Number(romOpts.jumpQuirks ?? QUIRK_JUMPING),
 		};
 		const mem = new Uint8Array(memory.buffer);
-		mem[TICKS_PER_FRAME_ADDRESS] = Math.max(1, Number(opts.tickrate));
-		// Set quirks
-		mem[QUIRK_VF_RESET_ADDRESS] = Number(opts.vfOrderQuirks);
-		mem[QUIRK_MEMORY_ADDRESS] = Number(opts.loadStoreQuirks);
-		mem[QUIRK_DISPLAY_WAIT_ADDRESS] = Number(opts.vBlankQuirks);
-		mem[QUIRK_CLIPPING_ADDRESS] = Number(opts.clipQuirks);
-		mem[QUIRK_SHIFTING_ADDRESS] = Number(opts.shiftQuirks);
-		mem[QUIRK_JUMPING_ADDRESS] = Number(opts.jumpQuirks);
+		mem[TICKS_PER_FRAME_ADDRESS] = Math.max(1, opts.tickrate);
+		mem[QUIRK_VF_RESET_ADDRESS] = opts.vfOrderQuirks;
+		mem[QUIRK_MEMORY_ADDRESS] = opts.loadStoreQuirks;
+		mem[QUIRK_DISPLAY_WAIT_ADDRESS] = opts.vBlankQuirks;
+		mem[QUIRK_CLIPPING_ADDRESS] = opts.clipQuirks;
+		mem[QUIRK_SHIFTING_ADDRESS] = opts.shiftQuirks;
+		mem[QUIRK_JUMPING_ADDRESS] = opts.jumpQuirks;
 		options = opts;
 	};
 
@@ -221,7 +225,7 @@ export const createChip8Engine = async (
 		getSoundTimer: () =>
 			new DataView(memory.buffer).getUint8(SOUND_TIMER_ADDRESS),
 		getROM: () => (romBytes ? new Uint8Array(romBytes) : null),
-		setOptions,
+		setOptions: (options: RomOptions) => reset(options),
 	};
 
 	return {

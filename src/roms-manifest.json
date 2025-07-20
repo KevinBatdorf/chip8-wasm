@@ -31,6 +31,10 @@
     {
       "name": " G Corax+",
       "path": "roms/tests/8-g-corax+.ch8"
+    },
+    {
+      "name": " Minimal_lores_8xN",
+      "path": "roms/tests/9-minimal_lores_8xN.ch8"
     }
   ],
   "roms": []

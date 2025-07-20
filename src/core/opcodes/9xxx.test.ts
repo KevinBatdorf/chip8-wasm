@@ -6,6 +6,9 @@ let chip8: Awaited<ReturnType<typeof createChip8Engine>>;
 const wasmBinary = readFileSync("public/chip8.wasm");
 
 beforeEach(async () => {
+	globalThis.requestAnimationFrame = (cb) =>
+		setTimeout(() => cb(Date.now()), 16) as unknown as number;
+	globalThis.cancelAnimationFrame = (id) => clearTimeout(id);
 	chip8 = await createChip8Engine(wasmBinary);
 });
 test("9XY0 skips next instruction if VX !== VY", () => {

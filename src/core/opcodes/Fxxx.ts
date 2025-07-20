@@ -7,7 +7,7 @@ import {
 	REGISTERS_ADDRESS,
 	SOUND_TIMER_ADDRESS,
 } from "../constants";
-import { block, fn, i32, if_, local, loop, misc } from "../wasm";
+import { block, fn, i32, if_, local, loop } from "../wasm";
 
 // Delay timer = VX
 const putVXinDelayTimer = [
