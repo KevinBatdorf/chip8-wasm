@@ -1,41 +1,1378 @@
 {
   "tests": [
     {
-      "name": " Chip8 Logo",
+      "name": "Chip8 Logo",
       "path": "roms/tests/1-chip8-logo.ch8"
     },
     {
-      "name": " Ibm Logo",
+      "name": "Ibm Logo",
       "path": "roms/tests/2-ibm-logo.ch8"
     },
     {
-      "name": " Corax+",
+      "name": "Corax+",
       "path": "roms/tests/3-corax+.ch8"
     },
     {
-      "name": " Flags",
+      "name": "Flags",
       "path": "roms/tests/4-flags.ch8"
     },
     {
-      "name": " Quirks",
+      "name": "Quirks",
       "path": "roms/tests/5-quirks.ch8"
     },
     {
-      "name": " Keypad",
+      "name": "Keypad",
       "path": "roms/tests/6-keypad.ch8"
     },
     {
-      "name": " Beep",
+      "name": "Beep",
       "path": "roms/tests/7-beep.ch8"
     },
     {
-      "name": " G Corax+",
+      "name": "G Corax+",
       "path": "roms/tests/8-g-corax+.ch8"
     },
     {
-      "name": " Minimal_lores_8xN",
+      "name": "Minimal_lores_8xN",
       "path": "roms/tests/9-minimal_lores_8xN.ch8"
     }
   ],
-  "roms": []
+  "roms": [
+    {
+      "name": "Knumber Knower",
+      "path": "roms/roms/knumberknower.ch8",
+      "description": "A game of bad typography.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2023-10-28",
+      "event": "Octojam10",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 15,
+        "fillColor": "black",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "white",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": 0,
+        "loadStoreQuirks": 0,
+        "vfOrderQuirks": false,
+        "clipQuirks": 1,
+        "vBlankQuirks": 1,
+        "jumpQuirks": 0,
+        "screenRotation": 0,
+        "maxSize": 3232,
+        "touchInputMode": "none",
+        "logicQuirks": 1,
+        "fontStyle": "octo"
+      }
+    },
+    {
+      "name": "Octojam 10 Title",
+      "path": "roms/roms/octojam10title.ch8",
+      "description": "Greetings program for the tenth annual 2023 Octojam.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2023-10-01",
+      "event": "Octojam10",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 7,
+        "fillColor": "#FFAA00",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#662200",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "vBlankQuirks": false,
+        "jumpQuirks": false,
+        "screenRotation": 0,
+        "maxSize": 3584,
+        "touchInputMode": "none",
+        "logicQuirks": false,
+        "fontStyle": "octo"
+      }
+    },
+    {
+      "name": "WDL",
+      "path": "roms/roms/wdl.ch8",
+      "description": "That word game, but shorter.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2022-10-10",
+      "event": "Octojam9",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 15,
+        "fillColor": "gray",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "lightgray",
+        "buzzColor": "red",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": true,
+        "vBlankQuirks": true,
+        "jumpQuirks": false,
+        "screenRotation": 0,
+        "maxSize": 3215,
+        "touchInputMode": "swipe",
+        "logicQuirks": true,
+        "fontStyle": "octo"
+      }
+    },
+    {
+      "name": "Octojam 9 Title",
+      "path": "roms/roms/octojam9title.ch8",
+      "description": "Greetings program for the ninth annual 2022 Octojam.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2022-10-01",
+      "event": "Octojam9",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 15,
+        "fillColor": "#FFCC00",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#996600",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "vBlankQuirks": true,
+        "jumpQuirks": false,
+        "logicQuirks": false,
+        "screenRotation": 0,
+        "maxSize": 3584,
+        "touchInputMode": "none",
+        "fontStyle": "octo"
+      }
+    },
+    {
+      "name": "Super Pong",
+      "path": "roms/roms/superpong.ch8",
+      "description": "A fast pong-like.",
+      "authors": [
+        {
+          "name": "offstatic",
+          "url": "https://github.com/offstatic"
+        }
+      ],
+      "releaseDate": "2021-10-15",
+      "event": "Octojam8",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 30,
+        "fillColor": "#43523d",
+        "fillColor2": "#ff6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#c7f0d8",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "vBlankQuirks": false,
+        "jumpQuirks": false,
+        "logicQuirks": false,
+        "screenRotation": 0,
+        "maxSize": 3584,
+        "touchInputMode": "none",
+        "fontStyle": "octo"
+      }
+    },
+    {
+      "name": "Octojam 8 Title",
+      "path": "roms/roms/octojam8title.ch8",
+      "description": "Greeting program for the eighth annual 2021 Octojam.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2021-10-01",
+      "event": "Octojam8",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 7,
+        "fillColor": "#FFAA00",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#AA4400",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "vBlankQuirks": false,
+        "jumpQuirks": false,
+        "logicQuirks": false,
+        "screenRotation": 0,
+        "maxSize": 65024,
+        "touchInputMode": "none",
+        "fontStyle": "fish"
+      }
+    },
+    {
+      "name": "Snek",
+      "path": "roms/roms/snek.ch8",
+      "description": "Minimalist Snake in 65 bytes.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2021-10-01",
+      "event": "Octojam8",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 1000,
+        "fillColor": "#FFCC00",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#996600",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "vBlankQuirks": false,
+        "jumpQuirks": false,
+        "screenRotation": 0,
+        "maxSize": 65024,
+        "touchInputMode": "swipe",
+        "logicQuirks": false,
+        "fontStyle": "octo",
+        "displayScale": "4"
+      }
+    },
+    {
+      "name": "Spock Paper Scissors",
+      "path": "roms/roms/spockpaperscissors.ch8",
+      "description": "Intergalactic Rock Paper Scissors.",
+      "authors": [
+        {
+          "name": "fontz",
+          "url": "https://github.com/fontz"
+        }
+      ],
+      "releaseDate": "2020-11-01",
+      "event": "Octojam7",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 15,
+        "fillColor": "#B4B4B4",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#323232",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "vBlankQuirks": false,
+        "jumpQuirks": false,
+        "logicQuirks": false,
+        "screenRotation": 0,
+        "maxSize": 3584,
+        "touchInputMode": "none",
+        "fontStyle": "octo"
+      }
+    },
+    {
+      "name": "Octojam 7 Title",
+      "path": "roms/roms/octojam7title.ch8",
+      "description": "Greeting program for the seventh annual 2020 Octojam.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2020-08-07",
+      "event": "Octojam7",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 30,
+        "fillColor": "#ff8c1f",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#662200",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "vBlankQuirks": false,
+        "jumpQuirks": false,
+        "logicQuirks": false,
+        "screenRotation": 0,
+        "maxSize": 65024,
+        "touchInputMode": "none",
+        "fontStyle": "octo"
+      }
+    },
+    {
+      "name": "Mini Lights Out",
+      "path": "roms/roms/mini-lights-out.ch8",
+      "description": "Turn the lights out",
+      "authors": [
+        {
+          "name": "tobiasvl",
+          "email": "tobias@langhoff.no",
+          "url": "https://tobiasvl.itch.io"
+        }
+      ],
+      "releaseDate": "2019-10-04",
+      "event": "Octojam6",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "touchInputMode": "seg16"
+      }
+    },
+    {
+      "name": "Octojam 6 Title",
+      "path": "roms/roms/octojam6title.ch8",
+      "description": "Greeting program for the sixth annual 2019 Octojam.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2019-09-07",
+      "event": "Octojam6",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 7,
+        "fillColor": "#330033",
+        "fillColor2": "#00FFFF",
+        "blendColor": "#FFFFFF",
+        "backgroundColor": "#AAAAFF",
+        "buzzColor": "#990099",
+        "quietColor": "#330033",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Carbon8",
+      "path": "roms/roms/carbon8.ch8",
+      "description": "A period correct movie tie in game for a popular 1980s franchise.",
+      "authors": [
+        {
+          "name": "Chromatophore",
+          "url": "https://github.com/Chromatophore"
+        }
+      ],
+      "releaseDate": "2018-11-01",
+      "event": "Octojam5",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "15",
+        "fillColor": "#FFCC00",
+        "backgroundColor": "#0000FF",
+        "buzzColor": "#FFFFFF",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Slippery Slope",
+      "path": "roms/roms/slipperyslope.ch8",
+      "description": "The ice we skate is getting pretty thin. The water's getting warm so you might as well swim.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2018-10-31",
+      "event": "Octojam5",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 30,
+        "fillColor": "navy",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "powderblue",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Tank!",
+      "path": "roms/roms/tank.ch8",
+      "description": "A two player artillery game.",
+      "authors": [
+        {
+          "name": "Rectus",
+          "email": "rectus.sa@gmail.com",
+          "url": "https://github.com/Rectus/"
+        }
+      ],
+      "releaseDate": "2018-10-31",
+      "event": "Octojam5",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "200"
+      }
+    },
+    {
+      "name": "Octo Rancher",
+      "path": "roms/roms/octorancher.ch8",
+      "description": "Train monsters and become a real ranching champion. Read the manual at https://systemlogoff.com/share/Octo-Rancher-Manual.pdf",
+      "authors": [
+        {
+          "name": "SystemLogoff",
+          "email": "systemlogoffsa@gmail.com",
+          "url": "https://systemlogoff.com"
+        }
+      ],
+      "releaseDate": "2018-10-30",
+      "event": "Octojam5",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#f1f1f1",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#0f0f0f",
+        "buzzColor": "#aaff55",
+        "quietColor": "#777777",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "TOMB STON TIPP",
+      "path": "roms/roms/tombstontipp.ch8",
+      "description": "Take turns pressing buttons to see who wins.",
+      "authors": [
+        {
+          "name": "TomRintjema",
+          "email": "ThomasRintjema@gmail.com",
+          "url": "https://github.com/TomRintjema/"
+        }
+      ],
+      "releaseDate": "2018-10-12",
+      "event": "Octojam5",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 7,
+        "fillColor": "#FFFFFF",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#000000",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0,
+        "touchInputMode": "seg16"
+      }
+    },
+    {
+      "name": "Octojam 5 Title",
+      "path": "roms/roms/octojam5title.ch8",
+      "description": "Greeting program for the fifth annual 2018 Octojam.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2018-09-24",
+      "event": "Octojam5",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 7,
+        "fillColor": "navy",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "hotpink",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Space Racer",
+      "path": "roms/roms/spaceracer.ch8",
+      "description": "Based on the classic 2-player 'Space Race' video game.",
+      "authors": [
+        {
+          "name": "WilliamDonnelly",
+          "url": "http://www.MDCCCII.com"
+        }
+      ],
+      "releaseDate": "2017-10-30",
+      "event": "Octojam4",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 20,
+        "fillColor": "#FCFCFC",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#111111",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Octojam 4 Title",
+      "path": "roms/roms/octojam4title.ch8",
+      "description": "This title card demonstrates the new :macro and :calc directives.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2017-09-23",
+      "event": "Octojam4",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "30",
+        "fillColor": "#FFAA00",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#AA4400",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Piper",
+      "path": "roms/roms/piper.ch8",
+      "description": "Play as a small bird to collect goodies and avoid waves.",
+      "authors": [
+        {
+          "name": "Aeris",
+          "email": "alicewang54@gmail.com",
+          "url": "https://github.com/microaeris"
+        },
+        {
+          "name": "JordanMecom",
+          "url": "https://github.com/jmecom"
+        },
+        {
+          "name": "LillianWang",
+          "url": "https://github.com/lillworkspace"
+        }
+      ],
+      "releaseDate": "2017-01-23",
+      "event": "GlobalGameJam2017",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "200",
+        "fillColor": "#FFCC00",
+        "backgroundColor": "#0000FF",
+        "buzzColor": "#FFFFFF",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Chipquarium",
+      "path": "roms/roms/chipquarium.ch8",
+      "description": "A CHIP-8 fish tank simulator.",
+      "authors": [
+        {
+          "name": "mattmik",
+          "url": "http://mattmik.com/"
+        }
+      ],
+      "releaseDate": "2016-10-31",
+      "event": "Octojam3",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 15,
+        "fillColor": "#FFFFFF",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#0072ff",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#0000FF",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": true,
+        "vBlankQuirks": true,
+        "jumpQuirks": false,
+        "logicQuirks": true,
+        "screenRotation": 0,
+        "maxSize": 3215,
+        "touchInputMode": "none"
+      }
+    },
+    {
+      "name": "8CE Attourny - Disc 1",
+      "path": "roms/roms/8ceattourny_d1.ch8",
+      "description": "Exciting court battles in Chip8! Disc 1/3 of an exciting multi-tape game.",
+      "authors": [
+        {
+          "name": "SystemLogoff",
+          "email": "systemlogoffsa@gmail.com",
+          "url": "https://systemlogoff.com"
+        }
+      ],
+      "releaseDate": "2016-10-30",
+      "event": "Octojam3",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#f1f1f1",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#0f0f0f",
+        "buzzColor": "#aaff55",
+        "quietColor": "#777777",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "8CE Attourny - Disc 2",
+      "path": "roms/roms/8ceattourny_d2.ch8",
+      "description": "Exciting court battles in Chip8! Disc 2/3 of an exciting multi-tape game.",
+      "authors": [
+        {
+          "name": "SystemLogoff",
+          "email": "systemlogoffsa@gmail.com",
+          "url": "https://systemlogoff.com"
+        }
+      ],
+      "releaseDate": "2016-10-30",
+      "event": "Octojam3",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#f1f1f1",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#0f0f0f",
+        "buzzColor": "#aaff55",
+        "quietColor": "#777777",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "8CE Attourny - Disc 3",
+      "path": "roms/roms/8ceattourny_d3.ch8",
+      "description": "Exciting court battles in Chip8! Disc 3/3 of an exciting multi-tape game.",
+      "authors": [
+        {
+          "name": "SystemLogoff",
+          "email": "systemlogoffsa@gmail.com",
+          "url": "https://systemlogoff.com"
+        }
+      ],
+      "releaseDate": "2016-10-30",
+      "event": "Octojam3",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#f1f1f1",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#0f0f0f",
+        "buzzColor": "#aaff55",
+        "quietColor": "#777777",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Ghost Escape",
+      "path": "roms/roms/ghostEscape.ch8",
+      "description": "Seek revenge on mortal men in this exciting adventure!",
+      "authors": [
+        {
+          "name": "TomRintjema",
+          "email": "ThomasRintjema@gmail.com",
+          "url": "https://github.com/TomRintjema/"
+        }
+      ],
+      "releaseDate": "2016-10-29",
+      "event": "Octojam3",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 7,
+        "fillColor": "#FF00FF",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#00FFFF",
+        "buzzColor": "#990099",
+        "quietColor": "#330033",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Fuse",
+      "path": "roms/roms/fuse.ch8",
+      "description": "A minimalist reinterpretation of the classic Pipe Dream.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2016-10-27",
+      "event": "Octojam3",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "15",
+        "fillColor": "#306230",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#8BAC0F",
+        "buzzColor": "#333333",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Octojam 3 Title",
+      "path": "roms/roms/octojam3title.ch8",
+      "description": "This title card disambiguates at runtime between a COSMAC VIP, SCHIP, and Octo.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2016-09-25",
+      "event": "Octojam3",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#FFAA00",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#AA4400",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "clipQuirks": false,
+        "jumpQuirks": false,
+        "enableXO": false,
+        "screenRotation": 0
+      }
+    },
+    {
+      "name": "Mastermind",
+      "path": "roms/roms/mastermind.ch8",
+      "description": "The classic puzzle game of deduction.",
+      "authors": [
+        {
+          "name": "WilliamDonnelly",
+          "url": "http://www.MDCCCII.com"
+        }
+      ],
+      "releaseDate": "2015-11-08",
+      "event": "Octojam3",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 20,
+        "fillColor": "#FCFCFC",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#005E20",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "enableXO": false
+      }
+    },
+    {
+      "name": "Pumpkin \"Dreess\" Up",
+      "path": "roms/roms/pumpkindressup.ch8",
+      "description": "Classic Adobe Flash games, now in Chip8.",
+      "authors": [
+        {
+          "name": "SystemLogoff",
+          "email": "systemlogoffsa@gmail.com",
+          "url": "https://systemlogoff.com"
+        }
+      ],
+      "releaseDate": "2015-11-01",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "backgroundColor": "#FFA500",
+        "fillColor": "#111122",
+        "buzzColor": "FFFF00",
+        "quietColor": "#222222",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false
+      }
+    },
+    {
+      "name": "Pet Dog",
+      "path": "roms/roms/petdog.ch8",
+      "description": "Undertale fangame made in Chip8.",
+      "authors": [
+        {
+          "name": "SystemLogoff",
+          "email": "systemlogoffsa@gmail.com",
+          "url": "https://systemlogoff.com"
+        }
+      ],
+      "releaseDate": "2015-10-31",
+      "event": "Octojam2",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#fafafa",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#0c0c0c",
+        "buzzColor": "#fafafa",
+        "quietColor": "1a1a1a",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "enableXO": false
+      }
+    },
+    {
+      "name": "Danm8ku",
+      "path": "roms/roms/danm8ku.ch8",
+      "description": "Bullet hell for the Chip-8! Survive 8 waves of exciting bullet patterns!",
+      "authors": [
+        {
+          "name": "buffi",
+          "url": "https://github.com/buffis"
+        }
+      ],
+      "releaseDate": "2015-10-31",
+      "event": "Octojam2",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 1000,
+        "fillColor": "#00FF00",
+        "fillColor2": "#FF0000",
+        "blendColor": "#FFFF00",
+        "backgroundColor": "#000000",
+        "buzzColor": "#999900",
+        "quietColor": "#333300",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "enableXO": true
+      }
+    },
+    {
+      "name": "Masquer8",
+      "path": "roms/roms/masquer8.ch8",
+      "description": "Cuttlefish pattern matching game for chip8.",
+      "authors": [
+        {
+          "name": "Chromatophore",
+          "url": "https://github.com/Chromatophore"
+        }
+      ],
+      "releaseDate": "2015-10-30",
+      "event": "Octojam2",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "15",
+        "fillColor": "#FF6666",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#1a3674",
+        "buzzColor": "#3b6c83",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "enableXO": false
+      }
+    },
+    {
+      "name": "Spacejam!",
+      "path": "roms/roms/spacejam.ch8",
+      "description": "An extended and enhanced version loosely based on ShipTunnel from the 2014 OctoJam.",
+      "authors": [
+        {
+          "name": "WilliamDonnelly",
+          "url": "http://www.MDCCCII.com"
+        }
+      ],
+      "releaseDate": "2015-10-30",
+      "event": "Octojam2",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 100,
+        "fillColor": "#fcfcfc",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#111111",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "enableXO": false
+      }
+    },
+    {
+      "name": "Octo: a Chip 8 Story",
+      "path": "roms/roms/octoachip8story.ch8",
+      "description": "A visual novel game for the Chip8.",
+      "authors": [
+        {
+          "name": "SystemLogoff",
+          "email": "systemlogoffsa@gmail.com",
+          "url": "https://systemlogoff.com"
+        }
+      ],
+      "releaseDate": "2015-10-29",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "backgroundColor": "#111111",
+        "fillColor": "#EEEEEE",
+        "buzzColor": "FFFF00",
+        "quietColor": "#222222",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false
+      }
+    },
+    {
+      "name": "down8",
+      "path": "roms/roms/down8.ch8",
+      "description": "you fall down an endless hole and then you die!",
+      "authors": [
+        {
+          "name": "tinaun",
+          "url": "http://tinaun.net"
+        }
+      ],
+      "releaseDate": "2015-10-28",
+      "event": "Octojam2",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 15,
+        "fillColor": "#27130F",
+        "backgroundColor": "#3DBDFA",
+        "buzzColor": "#FF6600",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false
+      }
+    },
+    {
+      "name": "RPS",
+      "path": "roms/roms/RPS.ch8",
+      "description": "Classic \"Rock Paper Scissors\" game for the Chip8.",
+      "authors": [
+        {
+          "name": "SystemLogoff",
+          "email": "systemlogoffsa@gmail.com",
+          "url": "https://systemlogoff.com"
+        }
+      ],
+      "releaseDate": "2015-10-25",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "backgroundColor": "#AA9999",
+        "fillColor": "#220000",
+        "buzzColor": "FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false
+      }
+    },
+    {
+      "name": "Octojam 2 Title",
+      "path": "roms/roms/octojam2title.ch8",
+      "description": "This title card draws a nearly full screen 64x30 animation with very low flicker.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2015-09-21",
+      "event": "Octojam2",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#FFAA00",
+        "fillColor2": "#FF6600",
+        "blendColor": "#662200",
+        "backgroundColor": "#AA4400",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false,
+        "enableXO": false
+      }
+    },
+    {
+      "name": "Bad Kaiju Ju",
+      "path": "roms/roms/BadKaiJuJu.ch8",
+      "description": "The year is 1977. 90% of the world's landmass is now underwater and the world is at war...",
+      "authors": [
+        {
+          "name": "MattBooth",
+          "email": "synchingfeeling@gmail.com",
+          "url": "https://github.com/Mattpbooth/"
+        }
+      ],
+      "releaseDate": "2015-08-24",
+      "event": "Ludum Dare",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#330033",
+        "backgroundColor": "#AAAAFF"
+      }
+    },
+    {
+      "name": "Flight Runner",
+      "path": "roms/roms/flightrunner.ch8",
+      "description": "A simple flight runner for the Chip8.",
+      "authors": [
+        {
+          "name": "TodPunk",
+          "email": "chip8archive@todandlorna.com.com",
+          "url": "https://github.com/TodPunk/"
+        }
+      ],
+      "releaseDate": "2014-11-01",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "15",
+        "fillColor": "#FFCC00",
+        "backgroundColor": "#0000FF",
+        "buzzColor": "#FFFFFF",
+        "quietColor": "#000000"
+      }
+    },
+    {
+      "name": "Glitch Ghost",
+      "path": "roms/roms/glitchGhost.ch8",
+      "description": "glitch ghost is all alone in the cemetery, please help them make some friends by turning the trespassing humans into new ghosts!",
+      "authors": [
+        {
+          "name": "JackieKircher",
+          "url": "http://jackiekircher.com"
+        }
+      ],
+      "releaseDate": "2014-10-29",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 200,
+        "fillColor": "#FFFFFF",
+        "backgroundColor": "#555555",
+        "buzzColor": "#FFFFFF",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false
+      }
+    },
+    {
+      "name": "Horse World Online",
+      "path": "roms/roms/horseWorldOnline.ch8",
+      "description": "An online horse breeding game.",
+      "authors": [
+        {
+          "name": "TomRintjema",
+          "email": "ThomasRintjema@gmail.com",
+          "url": "https://github.com/TomRintjema/"
+        }
+      ],
+      "releaseDate": "2014-10-28",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 30,
+        "fillColor": "#783809",
+        "backgroundColor": "#a0cb6d",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false
+      }
+    },
+    {
+      "name": "1D Cellular Automata",
+      "path": "roms/roms/1dcell.ch8",
+      "description": "An implementation of 1D Cellular Automata.",
+      "authors": [
+        {
+          "name": "SharpenedSpoon"
+        }
+      ],
+      "releaseDate": "2014-10-26",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 1000,
+        "fillColor": "#00f80a",
+        "backgroundColor": "#274a17",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#142a12",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false
+      }
+    },
+    {
+      "name": "Octojam 1 Title",
+      "path": "roms/roms/octojam1title.ch8",
+      "description": "Greeting program for the Octo-ber 2014 Chip8 Game Jam.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2014-09-29",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "7",
+        "fillColor": "#FFAA00",
+        "backgroundColor": "#AA4400",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false
+      }
+    },
+    {
+      "name": "Br8kout",
+      "path": "roms/roms/br8kout.ch8",
+      "description": "You can't even imagine how amazing this breakout clone is!",
+      "authors": [
+        {
+          "name": "SharpenedSpoon"
+        }
+      ],
+      "releaseDate": "2014-09-01",
+      "event": "Octojam1",
+      "platform": "chip8",
+      "options": {
+        "tickrate": 7,
+        "fillColor": "#ff84fe",
+        "backgroundColor": "#ca2553",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#f090e4",
+        "shiftQuirks": false,
+        "loadStoreQuirks": false,
+        "vfOrderQuirks": false
+      }
+    },
+    {
+      "name": "Outlaw",
+      "path": "roms/roms/outlaw.ch8",
+      "description": "An adaptation of the Atari 2600 game \"Outlaw\" for the Chip8.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2014-07-17",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "15",
+        "backgroundColor": "#664400",
+        "fillColor": "#AA4400",
+        "buzzColor": "coral",
+        "quietColor": "#000000"
+      }
+    },
+    {
+      "name": "Cave Explorer",
+      "path": "roms/roms/caveexplorer.ch8",
+      "description": "Do you have what it takes to be a Cave Explorer?",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2014-06-22",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "20",
+        "backgroundColor": "#996600",
+        "fillColor": "#FFCC00",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000"
+      }
+    },
+    {
+      "name": "ChipWar",
+      "path": "roms/roms/chipwar.ch8",
+      "description": "A (loose) adaptation of the classic DiceWars.",
+      "authors": [
+        {
+          "name": "JohnEarnest",
+          "email": "JohnEarnest@gmail.com",
+          "url": "https://github.com/JohnEarnest"
+        }
+      ],
+      "releaseDate": "2014-06-06",
+      "platform": "chip8",
+      "options": {
+        "tickrate": "15",
+        "backgroundColor": "#6699FF",
+        "fillColor": "#000066",
+        "buzzColor": "#FFAA00",
+        "quietColor": "#000000"
+      }
+    }
+  ]
 }

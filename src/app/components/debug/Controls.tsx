@@ -30,6 +30,7 @@ export const Controls = ({ chip8, rom }: Props) => {
 		if (!chip8 || !rom) return;
 		chip8?.step();
 		setRunning(chip8.isRunning());
+		setRunning(chip8.isRunning());
 	};
 	useEffect(() => {
 		const id = setTimeout(() => {

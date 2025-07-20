@@ -79,7 +79,6 @@ export const createChip8Engine = async (
 			} catch (error) {
 				console.error("Error during CHIP-8 tick:", error);
 				errorMsg = error instanceof Error ? error.message : String(error);
-				// TODO: surface this error in the UI
 			}
 		}
 		updateFrameBuffer();
@@ -129,7 +128,6 @@ export const createChip8Engine = async (
 		} catch (error) {
 			console.error("Error during CHIP-8 step:", error);
 			errorMsg = error instanceof Error ? error.message : String(error);
-			// TODO: surface this error in the UI
 		}
 		const mem = new Uint8Array(memory.buffer);
 		waitingForKey = mem[FX0A_VX_ADDRESS] !== 0;
@@ -243,6 +241,7 @@ export const createChip8Engine = async (
 		getOptions: () => options,
 		getSoundTimer: () =>
 			new DataView(memory.buffer).getUint8(SOUND_TIMER_ADDRESS),
+		getKeyBuffer: () => new Uint8Array(memory.buffer, KEY_BUFFER_ADDRESS, 16),
 		getError: () => errorMsg,
 	};
 };

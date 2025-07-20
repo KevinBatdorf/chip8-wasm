@@ -12,6 +12,7 @@ export type Chip8Engine = {
 	getDebug(): Chip8Debug;
 	getSoundTimer(): number;
 	getOptions(): RomOptions;
+	getKeyBuffer(): Uint8Array; // 16 bytes
 	getError(): string | null;
 };
 

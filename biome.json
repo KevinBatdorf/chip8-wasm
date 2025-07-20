@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
 	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
@@ -7,15 +7,16 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": [
-			"**/node_modules/**",
-			"**/dist/**",
-			"**/build/**",
-			"**/coverage/**",
-			"**/.cache/**",
-			"**/.next/**",
-			"**/.vercel/**",
-			"**/.output/**"
+		"includes": [
+			"**",
+			"!**/node_modules/**",
+			"!**/dist/**",
+			"!**/build/**",
+			"!**/coverage/**",
+			"!**/.cache/**",
+			"!**/.next/**",
+			"!**/.vercel/**",
+			"!**/.output/**"
 		]
 	},
 	"formatter": {
@@ -23,13 +24,18 @@
 		"indentStyle": "tab",
 		"indentWidth": 2
 	},
-	"organizeImports": {
-		"enabled": true
-	},
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"security": {
+				"noBlankTarget": {
+					"level": "error",
+					"options": {
+						"allowNoReferrer": true
+					}
+				}
+			}
 		}
 	},
 	"javascript": {

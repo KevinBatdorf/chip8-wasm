@@ -1,13 +1,16 @@
 import { useEffect, useRef } from "react";
-import type { Chip8Engine } from "../../types";
+import type { Chip8Engine, RomEntry } from "../../types";
+import { useChip8Store } from "../state/chip8";
 
 type Props = {
 	chip8: Chip8Engine | null;
+	rom: RomEntry | null;
 	onFrame?: (callback: (frame: Uint8Array) => void) => void;
 	scale?: number;
 };
-export const Chip8 = ({ chip8, onFrame, scale = 10 }: Props) => {
+export const Chip8 = ({ rom, chip8, onFrame, scale = 10 }: Props) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const { sound } = useChip8Store();
 
 	useEffect(() => {
 		if (!chip8) return;
@@ -20,10 +23,21 @@ export const Chip8 = ({ chip8, onFrame, scale = 10 }: Props) => {
 		const audioCtx = new AudioContext();
 		let oscillator: OscillatorNode | null = null;
 
+		const { fillColor, backgroundColor } = rom?.options ?? {};
+		const onColor = hexToNum(fillColor) ?? 0xf5f5f4;
+		const offColor = hexToNum(backgroundColor) ?? 0x1c1917;
+
 		onFrame?.((frame) => {
 			const soundTimer = chip8.getSoundTimer();
 			if (soundTimer > 0) {
+				if (!sound) {
+					oscillator?.stop();
+					oscillator?.disconnect();
+					oscillator = null;
+					return;
+				}
 				if (!oscillator) {
+					if (!sound) return;
 					oscillator = audioCtx.createOscillator();
 					const gain = audioCtx.createGain();
 					gain.gain.value = 0.05;
@@ -44,7 +58,7 @@ export const Chip8 = ({ chip8, onFrame, scale = 10 }: Props) => {
 					const y = i >> 3;
 					const on = (byte & (0b10000000 >> bit)) !== 0;
 					const index = (y * 64 + x) * 4;
-					const color = on ? 0xf5f5f4 : 0x1c1917;
+					const color = on ? onColor : offColor;
 					buffer[index + 0] = (color >> 16) & 0xff; // R
 					buffer[index + 1] = (color >> 8) & 0xff; // G
 					buffer[index + 2] = color & 0xff; // B
@@ -54,7 +68,7 @@ export const Chip8 = ({ chip8, onFrame, scale = 10 }: Props) => {
 			imageData.data.set(buffer);
 			ctx.putImageData(imageData, 0, 0);
 		});
-	}, [onFrame, chip8]);
+	}, [onFrame, chip8, rom, sound]);
 
 	return (
 		<div className="">
@@ -73,3 +87,10 @@ export const Chip8 = ({ chip8, onFrame, scale = 10 }: Props) => {
 		</div>
 	);
 };
+
+const hexToNum = (val: string | number | undefined) =>
+	val && typeof val === "string" && val.startsWith("#")
+		? parseInt(val.slice(1), 16)
+		: typeof val === "number"
+			? val
+			: undefined;
