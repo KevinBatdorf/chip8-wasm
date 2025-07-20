@@ -76,7 +76,17 @@ export default function App() {
 			</aside>
 			<main className="font-mono flex-1 text-sm bg-stone-200 text-black">
 				<div className="sticky top-0 z-10 flex-grow min-h-screen w-full flex flex-col gap-16">
-					<h1 className="text-center mt-3">CHIP-8 Emulator</h1>
+					<div className="flex flex-col items-center gap-2">
+						<h1 className="text-center mt-3">CHIP-8 Emulator</h1>
+						<a
+							target="_blank"
+							rel="noopener noreferrer"
+							href="https://github.com/KevinBatdorf/chip8-wasm"
+							className="text-xs text-gray-500 hover:text-fuchsia-500 transition-colors duration-200"
+						>
+							(GitHub)
+						</a>
+					</div>
 					<pre
 						className="flex flex-col gap-1 items-center p-2"
 						onFocus={() => setHovering(true)}
