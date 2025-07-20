@@ -1,22 +1,44 @@
 import { useEffect, useRef, useState } from "react";
 import type { Chip8Engine } from "../../types";
 
-// biome-ignore format: disable
+// biome-ignore format: keep structure
 const defaultLayout = {
-  Key1: "1", Key2: "2", Key3: "3", Key4: "4",
-  KeyQ: "Q", KeyW: "W", KeyE: "E", KeyR: "R",
-  KeyA: "A", KeyS: "S", KeyD: "D", KeyF: "F",
-  KeyZ: "Z", KeyX: "X", KeyC: "C", KeyV: "V",
+    Key1: "1", Key2: "2", Key3: "3", Key4: "4",
+    KeyQ: "Q", KeyW: "W", KeyE: "E", KeyR: "R",
+    KeyA: "A", KeyS: "S", KeyD: "D", KeyF: "F",
+    KeyZ: "Z", KeyX: "X", KeyC: "C", KeyV: "V",
 } as const;
 
 type KeyCode = keyof typeof defaultLayout;
 
+// CHIP-8 index: 0 1 2 3 4 5 6 7 8 9 A B C D E F
+// CHIP-8 hex:   1 2 3 C 4 5 6 D 7 8 9 E A 0 B F
+const chip8IndexToKeyCode: Record<number, KeyCode> = {
+	0: "KeyX", // 0
+	1: "Key1", // 1
+	2: "Key2", // 2
+	3: "Key3", // 3
+	4: "KeyQ", // 4
+	5: "KeyW", // 5
+	6: "KeyE", // 6
+	7: "KeyA", // 7
+	8: "KeyS", // 8
+	9: "KeyD", // 9
+	10: "KeyZ", // A
+	11: "KeyC", // B
+	12: "Key4", // C
+	13: "KeyR", // D
+	14: "KeyF", // E
+	15: "KeyV", // F
+};
+
+// Visual layout matches CHIP-8 keypad
 // biome-ignore format: keep structure
 const rows: KeyCode[][] = [
-  ["Key1", "Key2", "Key3", "Key4"],
-  ["KeyQ", "KeyW", "KeyE", "KeyR"],
-  ["KeyA", "KeyS", "KeyD", "KeyF"],
-  ["KeyZ", "KeyX", "KeyC", "KeyV"],
+    ["Key1", "Key2", "Key3", "Key4"], // 1 2 3 C
+    ["KeyQ", "KeyW", "KeyE", "KeyR"], // 4 5 6 D
+    ["KeyA", "KeyS", "KeyD", "KeyF"], // 7 8 9 E
+    ["KeyZ", "KeyX", "KeyC", "KeyV"], // A 0 B F
 ];
 
 type Props = {
@@ -27,11 +49,11 @@ export const Keyboard = ({ chip8 }: Props) => {
 	const [layout, setLayout] = useState<Record<KeyCode, string>>(defaultLayout);
 	// biome-ignore format: keep structure
 	const keyRefs = useRef<Record<KeyCode, HTMLSpanElement | null>>({
-    Key1: null, Key2: null, Key3: null, Key4: null,
-    KeyQ: null, KeyW: null, KeyE: null, KeyR: null,
-    KeyA: null, KeyS: null, KeyD: null, KeyF: null,
-    KeyZ: null, KeyX: null, KeyC: null, KeyV: null,
-  });
+        Key1: null, Key2: null, Key3: null, Key4: null,
+        KeyQ: null, KeyW: null, KeyE: null, KeyR: null,
+        KeyA: null, KeyS: null, KeyD: null, KeyF: null,
+        KeyZ: null, KeyX: null, KeyC: null, KeyV: null,
+    });
 
 	useEffect(() => {
 		const nav = navigator as any;
@@ -52,18 +74,26 @@ export const Keyboard = ({ chip8 }: Props) => {
 		if (!chip8) return;
 		let rafId: number;
 		const frame = () => {
-			const keyBuffer = chip8.getKeyBuffer();
-			(Object.keys(defaultLayout) as KeyCode[]).forEach((code, i) => {
+			const keyBuffer = chip8.getKeyBuffer(); // Array of 16 booleans
+			// Clear all highlights first
+			(Object.keys(defaultLayout) as KeyCode[]).forEach((code) => {
 				const el = keyRefs.current[code];
-				if (!el) return;
-				if (keyBuffer[i]) {
-					el.style.background = "#1c1917";
-					el.style.color = "#f5f5f4";
-				} else {
+				if (el) {
 					el.style.background = "";
 					el.style.color = "";
 				}
 			});
+			// Highlight based on buffer and lookup
+			for (let i = 0; i < 16; i++) {
+				if (keyBuffer[i]) {
+					const code = chip8IndexToKeyCode[i];
+					const el = keyRefs.current[code];
+					if (el) {
+						el.style.background = "#1c1917";
+						el.style.color = "#f5f5f4";
+					}
+				}
+			}
 			rafId = requestAnimationFrame(frame);
 		};
 		rafId = requestAnimationFrame(frame);
