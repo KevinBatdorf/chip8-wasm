@@ -1,5 +1,6 @@
 import {
 	DISPLAY_ADDRESS,
+	FRAME_BUFFER_ADDRESS,
 	PC_ADDRESS,
 	STACK_ADDRESS,
 	STACK_PTR_ADDRESS,
@@ -28,9 +29,9 @@ const ee = new Uint8Array([
 
 // Clear the display
 const clearDisplay = new Uint8Array([
-	...i32.const(DISPLAY_ADDRESS),
+	...i32.const(FRAME_BUFFER_ADDRESS),
 	...i32.const(0),
-	...i32.const(STACK_ADDRESS - DISPLAY_ADDRESS),
+	...i32.const(256), // 256 bytes for frame buffer
 	...memory.fill(),
 ]);
 

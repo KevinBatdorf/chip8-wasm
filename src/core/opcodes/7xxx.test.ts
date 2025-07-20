@@ -12,11 +12,10 @@ beforeEach(async () => {
 
 test("7xNN wraps on overflow", () => {
 	chip8.loadROM(
+		// biome-ignore format: keep structure
 		new Uint8Array([
-			0x6a,
-			0xff, // 6A = 0xFF (set V[A] = 255)
-			0x7a,
-			0x02, // 7A += 0x02 → should wrap to 1
+			0x6a, 0xff, // 6A = 0xFF (set V[A] = 255)
+			0x7a, 0x02, // 7A += 0x02 → should wrap to 1
 		]),
 	);
 	chip8.step(); // 6A FF

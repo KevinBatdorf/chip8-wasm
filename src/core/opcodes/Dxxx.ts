@@ -2,10 +2,11 @@ import {
 	DRAW_HAPPENED_ADDRESS,
 	FRAME_BUFFER_ADDRESS,
 	I_ADDRESS,
+	QUIRK_CLIPPING_ADDRESS,
 	QUIRK_DISPLAY_WAIT_ADDRESS,
 	REGISTERS_ADDRESS,
 } from "../constants";
-import { block, fn, i32, if_, local, loop } from "../wasm";
+import { block, fn, i32, if_, local, loop, misc, valType } from "../wasm";
 
 // DXYN: Draw sprite at coordinate (VX, VY) with N bytes of sprite data
 // Set VF to 1 if any pixels are flipped, 0 otherwise
@@ -20,9 +21,19 @@ const drawSprite = new Uint8Array([
 
 	...i32.const(FRAME_BUFFER_ADDRESS),
 	// Find the Y byte to print at
-	...local.get(3), // Y
-	...local.get(6), // row (loop counter)
-	...i32.add(),
+    ...i32.const(QUIRK_CLIPPING_ADDRESS),
+    ...i32.load8_u(),
+    ...if_.start(valType("i32")),
+        ...local.get(3), // Y
+        ...local.get(6), // row (loop counter)
+        ...i32.add(),
+    ...if_.else(),
+        ...local.get(3), // Y
+        ...local.get(6), // row (loop counter)
+        ...i32.add(),
+        ...i32.const(32), // 32 rows in total
+        ...i32.rem_u(), // Y % 32
+    ...if_.end(),
 	...i32.const(8), // 8 bytes per row
 	...i32.mul(),
 	...i32.add(),
@@ -30,6 +41,7 @@ const drawSprite = new Uint8Array([
 	...local.get(2), // X
 	...i32.const(3),
 	...i32.shr_u(), // X >> 3
+    ...local.tee(12), // store byte column index
 	...i32.add(), // row * 8 + (X >> 3)
 	...local.tee(9), // byte index
 
@@ -55,41 +67,43 @@ const drawSprite = new Uint8Array([
     ...local.set(7), // store collision flag
 
     // If X is byte aligned, we can stop here
-    // ...local.get(2), // X
-    // ...i32.const(7),
-    // ...i32.and(), // X & 0x07
-    // ...i32.eqz(),
-    // ...if_.start(),
-    //     ...loop.br(0),
-    // ...if_.end(),
+    ...local.get(2), // X
+    ...i32.const(7),
+    ...i32.and(), // X & 0x07
+    ...i32.eqz(),
+    ...if_.start(),
+        ...loop.br(1),
+    ...if_.end(),
 
 	// Handle byte overflow
-	...local.get(9), // byte index
+    ...local.get(12), // byte column index
 	...i32.const(1),
 	...i32.add(), // byte index + 1
-    // ...i32.const(7),
-    // ...i32.and(), // check if we are wrapping around
-    // ...i32.eqz(),
-    // ...if_.start(valType("i32")),
-    //     ...i32.const(QUIRK_CLIPPING_ADDRESS),
-    //     ...i32.load8_u(),
-    //     ...if_.start(valType("i32")),
-    //         ...i32.const(0),
-    //         ...loop.br(0), // If clipping, return early
-    //     ...if_.else(),
-    //         // If not clipping, wrap around
-    //         ...local.get(9),
-    //         ...i32.const(7),
-    //         ...i32.const(-1),
-    //         ...i32.xor(), // ~7
-    //         ...i32.and(), // row base
-    //     ...if_.end(),
-    // ...if_.else(),
-    //     // If not at the edge, then use the next index
-    //     ...local.get(9), // byte index
-    //     ...i32.const(1),
-    //     ...i32.add(), // byte index + 1
-    // ...if_.end(),
+    ...i32.const(7),
+    ...i32.and(), // check if we are wrapping around
+    ...i32.eqz(),
+    ...if_.start(valType("i32")),
+        ...i32.const(QUIRK_CLIPPING_ADDRESS),
+        ...i32.load8_u(),
+        ...if_.start(valType("i32")),
+            ...i32.const(0),
+            ...loop.br(2), // If clipping, return early
+        ...if_.else(),
+            // If not clipping, wrap around
+            ...local.get(9),
+            ...i32.const(7),
+            ...i32.const(-1),
+            ...i32.xor(), // ~7
+            ...i32.and(), // row base
+            ...i32.const(1),
+            ...i32.sub(), // since we are overflow, move back 1
+        ...if_.end(),
+    ...if_.else(),
+        // If not at the edge, then use the next index
+        ...local.get(9), // byte index
+        ...i32.const(1),
+        ...i32.add(), // byte index + 1
+    ...if_.end(),
 	...local.get(9), // byte index again to XOR
 	...i32.const(1),
 	...i32.add(), // byte index + 1
@@ -132,9 +146,10 @@ export const d = () =>
         // 9: display byte index
         // 10: previous display byte
         // 11: next display byte
+        // 12: byte column index
         ...local.declare(
             "i32", "i32", "i32", "i32", "i32", "i32",
-            "i32", "i32", "i32", "i32", "i32",
+            "i32", "i32", "i32", "i32", "i32", "i32"
         ),
 
         // If quirk is enabled break out of the loop later
@@ -183,31 +198,16 @@ export const d = () =>
 
         ...block.start(),
             ...loop.start(),
-                // ...local.get(6), // row
-                // ...i32.const(32), // 32 rows in total
-                // ...i32.ge_u(),
-                // ...if_.start(), // Are we about to wrap around?
-                //     ...i32.const(QUIRK_CLIPPING_ADDRESS),
-                //     ...i32.load8_u(),
-                //     ...if_.start(),
-                //         ...loop.br(1), // break if clipping
-                //     ...if_.end(),
-                //     // Wrapping: set row to 0, adjust N
-                //     ...local.get(5), // N
-                //     ...local.get(6), // row
-                //     ...i32.sub(),    // N - row
-                //     ...local.set(5), // set N to remaining rows
-                //     ...i32.const(0),
-                //     ...local.set(6), // set row to 0
-                // ...if_.end(),
-
+                // break if at the end of the loop
                 ...local.get(6), // row
                 ...local.get(5), // N
                 ...i32.eq(),
                 ...loop.br_if(1), // row === N
-                // Check Y clipping/wrapping
-                // if row is out of bounds, either break (clipping), or otherwise set the row to 0 (wrapping)
-                ...drawSprite,
+
+                ...block.start(),
+                    ...drawSprite,
+                ...block.end(),
+
                 ...local.get(6), // row
                 ...i32.const(1),
                 ...i32.add(),

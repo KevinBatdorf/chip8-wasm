@@ -2,9 +2,11 @@ import {
 	DELAY_TIMER_ADDRESS,
 	DISPLAY_ADDRESS,
 	DRAW_HAPPENED_ADDRESS,
+	FRAME_BUFFER_ADDRESS,
 	FX0A_VX_ADDRESS,
 	I_ADDRESS,
 	KEY_BUFFER_ADDRESS,
+	MAX_ROM_ADDRESS,
 	PC_ADDRESS,
 	QUIRK_CLIPPING,
 	QUIRK_CLIPPING_ADDRESS,
@@ -26,7 +28,7 @@ import {
 	TICKS_PER_FRAME,
 	TICKS_PER_FRAME_ADDRESS,
 } from "./constants";
-import { fn, i32, if_, local, memory } from "./wasm";
+import { fn, i32, if_, local, memory, misc } from "./wasm";
 
 export const init = new Uint8Array([
 	...local.declare(),
@@ -59,13 +61,17 @@ export const init = new Uint8Array([
 	// Clear rom
 	...i32.const(ROM_LOAD_ADDRESS),
 	...i32.const(0),
-	...i32.const(DISPLAY_ADDRESS - ROM_LOAD_ADDRESS),
+	...i32.const(MAX_ROM_ADDRESS - ROM_LOAD_ADDRESS + 1), // 3584 bytes for ROM
 	...memory.fill(),
 
 	// Clear display
 	...i32.const(DISPLAY_ADDRESS),
 	...i32.const(0),
-	...i32.const(STACK_ADDRESS - DISPLAY_ADDRESS), // 256 bytes for display (64x32 = 2048 bits = 256 bytes)
+	...i32.const(256), // 256 bytes for display (64x32 = 2048 bits = 256 bytes)
+	...memory.fill(),
+	...i32.const(FRAME_BUFFER_ADDRESS),
+	...i32.const(0),
+	...i32.const(256), // 256 bytes for frame buffer
 	...memory.fill(),
 
 	// Clear key buffer
@@ -131,7 +137,21 @@ export const tick = new Uint8Array([
 	// Load PC
 	...i32.const(PC_ADDRESS),
 	...i32.load16_u(),
-	...local.set(0),
+	...local.tee(0),
+
+    // Check if PC is out of bounds (lower)
+    ...i32.const(ROM_LOAD_ADDRESS),
+    ...i32.lt_u(), // check if PC < ROM_LOAD_ADDRESS
+    ...if_.start(),
+        ...misc.unreachable(),
+    ...fn.end(),
+    // (upper)
+    ...local.get(0), // PC
+    ...i32.const(MAX_ROM_ADDRESS),
+    ...i32.gt_u(), // check if PC > MAX_ROM_ADDRESS
+    ...if_.start(),
+        ...misc.unreachable(),
+    ...fn.end(),
 
 	...local.get(0), // PC
 	...i32.load8_u(), // load high byte

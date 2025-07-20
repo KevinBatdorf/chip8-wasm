@@ -12,6 +12,7 @@ export type Chip8Engine = {
 	getDebug(): Chip8Debug;
 	getSoundTimer(): number;
 	getOptions(): RomOptions;
+	getError(): string | null;
 };
 
 export type Chip8Debug = {

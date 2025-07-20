@@ -7,7 +7,7 @@ import {
 	REGISTERS_ADDRESS,
 	SOUND_TIMER_ADDRESS,
 } from "../constants";
-import { block, fn, i32, if_, local, loop } from "../wasm";
+import { block, fn, i32, if_, local, loop, misc } from "../wasm";
 
 // Delay timer = VX
 const putVXinDelayTimer = [
@@ -54,6 +54,8 @@ const putVXInKeyWait = [
 	...local.get(0), // high byte of opcode
 	...i32.const(0x0f),
 	...i32.and(), // isolate the second nibble (0x0X)
+	...i32.const(0xf0),
+	...i32.or(), // sentinel value to indicate waiting for key press
 	...i32.store8(), // JS will watch for this
 	...fn.return(),
 ];

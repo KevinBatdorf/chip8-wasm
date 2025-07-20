@@ -29,7 +29,7 @@
 		@apply bg-emerald-500 text-stone-900 rounded;
 	}
 	.keyBuffer {
-		@apply bg-zinc-500 text-stone-900 rounded;
+		@apply bg-zinc-500 text-stone-100 rounded;
 	}
 	.stack {
 		@apply bg-pink-400 text-stone-900 rounded;

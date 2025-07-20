@@ -20,8 +20,8 @@ test("1NNN jumps to address NNN", () => {
 });
 
 test("1NNN jumps out of bounds and traps", () => {
-	chip8.loadROM(new Uint8Array([0x1f, 0xff]));
-	expect(() => chip8.step()).toThrow();
-	chip8.loadROM(new Uint8Array([0x11, 0xff]));
-	expect(() => chip8.step()).toThrow();
+	chip8.loadROM(new Uint8Array([0x11, 0x00]));
+	expect(chip8.getError()).toBeNull();
+	chip8.step();
+	expect(chip8.getError()).not.toBeNull();
 });

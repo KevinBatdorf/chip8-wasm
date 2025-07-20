@@ -1,5 +1,5 @@
 import {
-	DISPLAY_ADDRESS,
+	MAX_ROM_ADDRESS,
 	PC_ADDRESS,
 	ROM_LOAD_ADDRESS,
 	STACK_ADDRESS,
@@ -29,7 +29,7 @@ export const two = () =>
 		    ...misc.unreachable(),
 		...fn.end(),
 		...local.get(2), // NNN
-		...i32.const(DISPLAY_ADDRESS - 2), // max safe address
+		...i32.const(MAX_ROM_ADDRESS),
 		...i32.gt_u(),
 		...if_.start(),
 		    ...misc.unreachable(),

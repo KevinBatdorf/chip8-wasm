@@ -3,7 +3,7 @@ import {
 	QUIRK_VF_RESET_ADDRESS,
 	REGISTERS_ADDRESS,
 } from "../constants";
-import { fn, i32, if_, local } from "../wasm";
+import { fn, i32, if_, local, valType } from "../wasm";
 
 // 8XY0	VX = VY
 const eight0 = new Uint8Array([
@@ -17,26 +17,13 @@ const eight0 = new Uint8Array([
 // 8XY1	VX = VX OR VY
 // biome-ignore format: keep if structure
 const eight1 = new Uint8Array([
-    ...i32.const(QUIRK_VF_RESET_ADDRESS),
-    ...i32.load8_u(),
-    ...if_.start(),
-        ...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
-        ...i32.const(0), // set VF to 0
-        ...i32.store8(), // clear VF
-    ...if_.end(),
-	...local.get(2), // address of VX
+    ...local.get(2), // address of VX
 	...local.get(3), // address of VY
 	...i32.load8_u(), // load current value of VY
 	...local.get(2), // address of VX
 	...i32.load8_u(), // load current value of VX
 	...i32.or(), // VX = VX OR VY
 	...i32.store8(), // store VY into VX
-	...fn.return(),
-]);
-
-// 8XY2	VX = VX AND VY
-// biome-ignore format: keep if structure
-const eight2 = new Uint8Array([
     ...i32.const(QUIRK_VF_RESET_ADDRESS),
     ...i32.load8_u(),
     ...if_.start(),
@@ -44,6 +31,12 @@ const eight2 = new Uint8Array([
         ...i32.const(0), // set VF to 0
         ...i32.store8(), // clear VF
     ...if_.end(),
+	...fn.return(),
+]);
+
+// 8XY2	VX = VX AND VY
+// biome-ignore format: keep if structure
+const eight2 = new Uint8Array([
 	...local.get(2), // address of VX
 	...local.get(3), // address of VY
 	...i32.load8_u(), // load current value of VY
@@ -51,12 +44,6 @@ const eight2 = new Uint8Array([
 	...i32.load8_u(), // load current value of VX
 	...i32.and(), // VX = VX AND VY
 	...i32.store8(), // store VY into VX
-	...fn.return(),
-]);
-
-// 8XY3	VX = VX XOR VY
-// biome-ignore format: keep if structure
-export const eight3 = new Uint8Array([
     ...i32.const(QUIRK_VF_RESET_ADDRESS),
     ...i32.load8_u(),
     ...if_.start(),
@@ -64,6 +51,12 @@ export const eight3 = new Uint8Array([
         ...i32.const(0), // set VF to 0
         ...i32.store8(), // clear VF
     ...if_.end(),
+	...fn.return(),
+]);
+
+// 8XY3	VX = VX XOR VY
+// biome-ignore format: keep if structure
+export const eight3 = new Uint8Array([
 	...local.get(2), // address of VX
 	...local.get(3), // address of VY
 	...i32.load8_u(), // load current value of VY
@@ -71,6 +64,13 @@ export const eight3 = new Uint8Array([
 	...i32.load8_u(), // load current value of VX
 	...i32.xor(), // VX = VX XOR VY
 	...i32.store8(), // store VY into VX
+    ...i32.const(QUIRK_VF_RESET_ADDRESS),
+    ...i32.load8_u(),
+    ...if_.start(),
+        ...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
+        ...i32.const(0), // set VF to 0
+        ...i32.store8(), // clear VF
+    ...if_.end(),
 	...fn.return(),
 ]);
 
@@ -115,29 +115,32 @@ export const eight5 = new Uint8Array([
 	...fn.return(),
 ]);
 
-// 8XY6	VX >>= 1, VF = LSB
+// 8XY6	VX = VY >> 1, VF = LSB of VY
+// quirk on: VX >>= 1, VF = LSB of VX
 // biome-ignore format: keep if structure
 export const eight6 = new Uint8Array([
-	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
-	...local.get(3), // address of VY
-	...i32.load8_u(), // load current value of VY
-	...i32.const(1),
-	...i32.and(), // isolate the LSB
-	...i32.store8(), // store LSB in VF
-
-    // Return early if shifting quirk is enabled
 	...i32.const(QUIRK_SHIFTING_ADDRESS),
 	...i32.load8_u(),
-	...if_.start(),
-	    ...fn.return(),
+	...if_.start(valType("i32")),
+        ...local.get(2), // address of VX
+    ...if_.else(),
+        ...local.get(3), // address of VY
 	...if_.end(),
+	...i32.load8_u(), // load current value of VY/VX
+    ...local.set(5), // store in scratch
 
 	...local.get(2), // address of VX
-	...local.get(3), // address of VY
-	...i32.load8_u(), // load current value of VY
+    ...local.get(5), // load current value of VY/VX
 	...i32.const(1),
 	...i32.shr_u(), // shift right by 1
 	...i32.store8(), // store shifted value back to VX
+
+    // Store LSB in VF
+    ...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
+    ...local.get(5), // value of VY/VX
+    ...i32.const(1),
+	...i32.and(), // isolate the LSB
+    ...i32.store8(), // store LSB in VF
 	...fn.return(),
 ]);
 
@@ -162,31 +165,34 @@ export const eight7 = new Uint8Array([
 	...fn.return(),
 ]);
 
-// 8XYE	VX <<= 1, VF = MSB
+// 8XYE VX = VY << 1, VF = MSB
+// quirk on: VX <<= 1, VF = MSB
 // biome-ignore format: keep if structure
 export const eightE = new Uint8Array([
-	...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
-	...local.get(3), // address of VY
-	...i32.load8_u(), // load current value of VY
+    ...i32.const(QUIRK_SHIFTING_ADDRESS),
+	...i32.load8_u(),
+	...if_.start(valType("i32")),
+        ...local.get(2), // address of VX
+    ...if_.else(),
+        ...local.get(3), // address of VY
+	...if_.end(),
+	...i32.load8_u(), // load current value of VY/VX
+    ...local.set(5),
+
+	...local.get(2), // address of VX
+    ...local.get(5), // load current value of VY/VX
+	...i32.const(1),
+	...i32.shl(), // shift left by 1
+	...i32.store8(), // store shifted value back to VX
+
+    // Store MSB in VF
+    ...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
+    ...local.get(5), // value of VY/VX
 	...i32.const(7), // shift right by 7 to get the MSB
 	...i32.shr_u(),
 	...i32.const(1),
 	...i32.and(), // isolate the MSB
-	...i32.store8(), // store MSB in VF
-
-	// Return early if shifting quirk is enabled
-	...i32.const(QUIRK_SHIFTING_ADDRESS),
-	...i32.load8_u(),
-	...if_.start(),
-	    ...fn.return(),
-	...if_.end(),
-
-	...local.get(2), // address of VX
-	...local.get(3), // address of VY
-	...i32.load8_u(), // load current value of VY
-	...i32.const(1),
-	...i32.shl(), // shift left by 1
-	...i32.store8(), // store shifted value back to VX
+    ...i32.store8(), // store MSB in VF
 	...fn.return(),
 ]);
 

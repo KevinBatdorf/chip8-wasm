@@ -20,7 +20,7 @@ type Props = {
 	hideZeros: boolean;
 };
 
-const END_OF_MEMORY = REGISTERS_ADDRESS + 0x0f;
+const END_OF_MEMORY = REGISTERS_ADDRESS + 16;
 
 export const FullMemoryLayout = ({ chip8, debug, hideZeros }: Props) => {
 	const cellRefs = useRef<HTMLSpanElement[]>([]);
@@ -34,7 +34,7 @@ export const FullMemoryLayout = ({ chip8, debug, hideZeros }: Props) => {
 			// remove pc class
 			const rom = debug?.getROM();
 			const pc = debug.getPC();
-			for (let i = 0x000; i < END_OF_MEMORY; i++) {
+			for (let i = 0x200; i <= END_OF_MEMORY; i++) {
 				if (!cellRefs.current[i]) continue;
 				// Check for rom
 				const isRom =

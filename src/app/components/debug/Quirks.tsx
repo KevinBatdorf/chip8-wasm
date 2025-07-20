@@ -12,7 +12,7 @@ const qrks = {
 	vfOrderQuirks: "VF",
 	loadStoreQuirks: "MEM",
 	vBlankQuirks: "DSP",
-	clipQuirks: "CLP",
+	clipQuirks: "CLIP",
 	shiftQuirks: "SHFT",
 	jumpQuirks: "JMP",
 };

@@ -28,19 +28,18 @@ export default function App() {
 			return;
 		}
 		if (rom.path === "roms/test.ch8") {
+			// biome-ignore format: keep structure
 			const romD = new Uint8Array([
-				0x60,
-				0xfe, // V0 = 0
-				0x61,
-				0x1e, // V1 = 0
-				0x6a,
-				0x02, // VA = 2 (digit 2)
-				0xfa,
-				0x29, // I = sprite for 2
-				0xd0,
-				0x15, // draw 2 at (0, 0)
-			]);
-			chip8.loadROM(romD);
+  0x60, 0x3E, // V0 = 62 (X)
+  0x61, 0x00, // V1 = 0 (Y)
+  0x6A, 0x00, // VA = 0 (font 0)
+  0xFA, 0x29, // I = FONT + 5*0
+  0xD0, 0x15, // Draw at (62, 0), height 5
+]);
+			chip8.loadROM(romD, {
+				clipQuirks: false,
+				vBlankQuirks: false,
+			});
 			chip8.step();
 			chip8.step();
 			chip8.step();

@@ -6,9 +6,6 @@ export const seven = () =>
 	new Uint8Array([
 		// params: high, low byte of opcode
 		...local.declare("i32"), // address of VX
-		...i32.const(REGISTERS_ADDRESS + 0xf), // address of VF
-		...i32.const(0), // set VF to 0
-		...i32.store8(), // clear VF
 		...local.get(0), // high
 		...i32.const(0x0f),
 		...i32.and(), // isolate the second nibble (0x0X)

@@ -30,9 +30,8 @@ test("2NNN calls subroutine at NNN", () => {
 });
 
 test("2NNN call out of bounds traps", () => {
-	chip8.loadROM(new Uint8Array([0x2f, 0xff]));
-	expect(() => chip8.step()).toThrow();
-
-	chip8.loadROM(new Uint8Array([0x21, 0xff]));
-	expect(() => chip8.step()).toThrow();
+	chip8.loadROM(new Uint8Array([0x21, 0x0]));
+	expect(chip8.getError()).toBeNull(); // No error yet
+	chip8.step();
+	expect(chip8.getError()).not.toBeNull(); // Now we should have an error
 });

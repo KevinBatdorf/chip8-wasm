@@ -60,7 +60,7 @@ test("FX0A waits for key and sets VX to key index (via setKey)", () => {
 	expect(mem[REGISTERS_ADDRESS + 0x1]).toBe(0x00); // V1 still 0
 
 	// Simulate key press through API
-	chip8.setKey(0x5, true);
+	chip8.setKey(0x5, false);
 
 	// Next step should store the key index (0x5) into V1
 	chip8.step();
@@ -144,7 +144,7 @@ test("FX55 stores V0 to VX in memory starting at I", () => {
 	expect(mem[0x302]).toBe(0x03); // V2
 });
 
-test("FX65 loads program bytes into V0–V2 from itself", () => {
+test("FX65 loads program bytes into V0-V2 from itself", () => {
 	chip8.loadROM(
 		// biome-ignore format: keep structure
 		new Uint8Array([

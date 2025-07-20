@@ -1,4 +1,4 @@
-import { DISPLAY_ADDRESS, PC_ADDRESS, ROM_LOAD_ADDRESS } from "../constants";
+import { MAX_ROM_ADDRESS, PC_ADDRESS, ROM_LOAD_ADDRESS } from "../constants";
 import { fn, i32, if_, local, misc } from "../wasm";
 
 // Jump to address NNN
@@ -23,7 +23,7 @@ export const one = () =>
 		    ...misc.unreachable(),
 		...fn.end(),
 		...local.get(0), // NNN
-		...i32.const(DISPLAY_ADDRESS - 2), // max safe address
+		...i32.const(MAX_ROM_ADDRESS),
 		...i32.gt_u(),
 		...if_.start(),
 		    ...misc.unreachable(),

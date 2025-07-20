@@ -7,6 +7,7 @@ import {
 	FX0A_VX_ADDRESS,
 	I_ADDRESS,
 	KEY_BUFFER_ADDRESS,
+	MAX_ROM_ADDRESS,
 	PC_ADDRESS,
 	QUIRK_CLIPPING,
 	QUIRK_CLIPPING_ADDRESS,
@@ -41,6 +42,7 @@ export const createChip8Engine = async (
 	const exports = instance.exports as Chip8Exports;
 	let frameCallback: ((frame: Uint8Array) => void) | null = null;
 	let running = false;
+	let errorMsg: string | null = null;
 	let waitingForKey = false;
 	let romBytes: Uint8Array | null = null;
 	let options: RomOptions = {};
@@ -55,23 +57,30 @@ export const createChip8Engine = async (
 		lastUpdate = now;
 		timerAccumulator += delta;
 
-		// Run the CHIP-8 tick
-		let mem = new Uint8Array(memory.buffer);
-		for (let i = 0; i < mem[TICKS_PER_FRAME_ADDRESS]; i++) {
-			const mem = new Uint8Array(memory.buffer);
-			waitingForKey = mem[FX0A_VX_ADDRESS] !== 0;
-			if (waitingForKey) {
-				return requestAnimationFrame(frame);
-			}
-			exports.tick();
-		}
-		updateFrameBuffer();
-
 		// Handle timers
 		while (timerAccumulator >= TIMER_INTERVAL) {
 			exports.update_timers();
 			timerAccumulator -= TIMER_INTERVAL;
 		}
+
+		// Run the CHIP-8 tick
+		let mem = new Uint8Array(memory.buffer);
+		for (let i = 0; i < mem[TICKS_PER_FRAME_ADDRESS]; i++) {
+			if (!running || errorMsg) return;
+			const mem = new Uint8Array(memory.buffer);
+			waitingForKey = mem[FX0A_VX_ADDRESS] !== 0;
+			if (waitingForKey) {
+				return requestAnimationFrame(frame);
+			}
+			try {
+				exports.tick();
+			} catch (error) {
+				console.error("Error during CHIP-8 tick:", error);
+				errorMsg = error instanceof Error ? error.message : String(error);
+				// TODO: surface this error in the UI
+			}
+		}
+		updateFrameBuffer();
 
 		mem = new Uint8Array(memory.buffer);
 		// If the display wait quirk is enabled, this might be 1
@@ -99,6 +108,7 @@ export const createChip8Engine = async (
 	const start = () => {
 		if (running) return;
 		running = true;
+		errorMsg = null;
 		waitingForKey = false;
 		lastUpdate = performance.now();
 		timerAccumulator = 0;
@@ -109,8 +119,14 @@ export const createChip8Engine = async (
 		waitingForKey = false;
 	};
 	const step = () => {
-		if (waitingForKey) return;
-		exports.tick();
+		if (waitingForKey || errorMsg) return;
+		try {
+			exports.tick();
+		} catch (error) {
+			console.error("Error during CHIP-8 step:", error);
+			errorMsg = error instanceof Error ? error.message : String(error);
+			// TODO: surface this error in the UI
+		}
 		const mem = new Uint8Array(memory.buffer);
 		waitingForKey = mem[FX0A_VX_ADDRESS] !== 0;
 		mem[DRAW_HAPPENED_ADDRESS] = 0;
@@ -136,8 +152,9 @@ export const createChip8Engine = async (
 
 	const loadROM = (bytes: Uint8Array, options: RomOptions = {}) => {
 		stop();
+		errorMsg = null;
 		exports.init(); // Reset CHIP-8 state before loading ROM
-		if (bytes.length > 3584) {
+		if (bytes.length > MAX_ROM_ADDRESS - ROM_LOAD_ADDRESS + 1) {
 			throw new Error("ROM too large for CHIP-8 memory");
 		}
 		setOptions(options);
@@ -181,9 +198,9 @@ export const createChip8Engine = async (
 			throw new Error("Key index must be between 0 and 15");
 		}
 		const memoryBuffer = new Uint8Array(memory.buffer);
-		if (waitingForKey && isDown) {
+		if (waitingForKey && !isDown) {
 			// If waiting for a key press, set the FX0A_VX_ADDRESS to 0
-			const VX = memoryBuffer[FX0A_VX_ADDRESS];
+			const VX = memoryBuffer[FX0A_VX_ADDRESS] & 0x0f; // Get the low nibble
 			// Put the key index in VX
 			memoryBuffer[REGISTERS_ADDRESS + VX] = index;
 			// Clear the waiting state
@@ -222,5 +239,6 @@ export const createChip8Engine = async (
 		getOptions: () => options,
 		getSoundTimer: () =>
 			new DataView(memory.buffer).getUint8(SOUND_TIMER_ADDRESS),
+		getError: () => errorMsg,
 	};
 };

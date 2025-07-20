@@ -23,11 +23,15 @@ test("BNNN jumps to NNN + V0", () => {
 test("BNNN jumps out of bounds and traps (edge)", () => {
 	chip8.loadROM(new Uint8Array([0x60, 0x01, 0xbf, 0xff]));
 	chip8.step();
-	expect(() => chip8.step()).toThrow();
+	expect(chip8.getError()).toBeNull(); // No error yet
+	chip8.step(); // This should cause an out-of-bounds error
+	expect(chip8.getError()).not.toBeNull(); // Now we should have an error
 });
 
 test("BNNN jumps out of bounds and traps (near end)", () => {
 	chip8.loadROM(new Uint8Array([0x60, 0x05, 0xbf, 0xfc]));
 	chip8.step();
-	expect(() => chip8.step()).toThrow();
+	expect(chip8.getError()).toBeNull(); // No error yet
+	chip8.step(); // This should cause an out-of-bounds error
+	expect(chip8.getError()).not.toBeNull(); // Now we should have an error
 });
