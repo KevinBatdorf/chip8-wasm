@@ -139,9 +139,9 @@ const BCDInI = [
 // FX55: Store V0 to VX in memory starting at I
 // biome-ignore format: keep if structure
 const storeV0ToVXInMemory = [
-	...local.get(0), // high byte of opcode
-	...i32.const(0x0f),
-	...i32.and(), // isolate the second nibble (0x0X)
+    ...local.get(0), // high byte of opcode
+    ...i32.const(0x0f),
+    ...i32.and(), // isolate the second nibble (0x0X)
     ...local.set(2), // store second nibble in local scratch
     ...i32.const(0),
     ...local.set(3), // loop counter
@@ -182,15 +182,15 @@ const storeV0ToVXInMemory = [
         ...i32.add(), // new I = current I + X + 1
         ...i32.store16(), // store new I value
     ...if_.end(),
-	...fn.return(),
+    ...fn.return(),
 ];
 
 // FX65: Fill V0 to VX from memory starting at I
 // biome-ignore format: keep if structure
 const loadV0ToVXFromMemory = [
     ...local.get(0), // high byte of opcode
-	...i32.const(0x0f),
-	...i32.and(), // isolate the second nibble (0x0X)
+    ...i32.const(0x0f),
+    ...i32.and(), // isolate the second nibble (0x0X)
     ...local.set(2), // store second nibble in local scratch
     ...i32.const(0),
     ...local.set(3), // loop counter
@@ -231,55 +231,55 @@ const loadV0ToVXFromMemory = [
         ...i32.add(), // new I = current I + X + 1
         ...i32.store16(), // store new I value
     ...if_.end(),
-	...fn.return(),
+    ...fn.return(),
 ]
 
 // Timers
 // biome-ignore format: keep if structure
 export const f = () =>
-	new Uint8Array([
-		// params: high byte of opcode, low byte of opcode
-		...local.declare("i32", "i32"), // scratch, scratch
+    new Uint8Array([
+        // params: high byte of opcode, low byte of opcode
+        ...local.declare("i32", "i32"), // scratch, scratch
 
-		// Delay timer = VX
-		...local.get(1), // low byte
-		...i32.const(0x15),
-		...i32.eq(),
-		...if_.start(),
-		    ...putVXinDelayTimer,
-		...if_.end(),
+        // Delay timer = VX
+        ...local.get(1), // low byte
+        ...i32.const(0x15),
+        ...i32.eq(),
+        ...if_.start(),
+            ...putVXinDelayTimer,
+        ...if_.end(),
 
-		// VX = delay timer
-		...local.get(1), // low byte
-		...i32.const(0x07),
-		...i32.eq(),
-		...if_.start(),
-		    ...putDelayTimerInVX,
-		...if_.end(),
+        // VX = delay timer
+        ...local.get(1), // low byte
+        ...i32.const(0x07),
+        ...i32.eq(),
+        ...if_.start(),
+            ...putDelayTimerInVX,
+        ...if_.end(),
 
-		// sound timer = VX
-		...local.get(1), // low byte
-		...i32.const(0x18),
-		...i32.eq(),
-		...if_.start(),
-		    ...putVXInSoundTimer,
-		...if_.end(),
+        // sound timer = VX
+        ...local.get(1), // low byte
+        ...i32.const(0x18),
+        ...i32.eq(),
+        ...if_.start(),
+            ...putVXInSoundTimer,
+        ...if_.end(),
 
-		// FX0A: Wait for key press, store in VX
-		...local.get(1), // low byte
-		...i32.const(0x0a),
-		...i32.eq(),
-		...if_.start(),
-		    ...putVXInKeyWait,
-		...if_.end(),
+        // FX0A: Wait for key press, store in VX
+        ...local.get(1), // low byte
+        ...i32.const(0x0a),
+        ...i32.eq(),
+        ...if_.start(),
+            ...putVXInKeyWait,
+        ...if_.end(),
 
-		// FX1E: Add VX to I
-		...local.get(1), // low byte
-		...i32.const(0x1e),
-		...i32.eq(),
-		...if_.start(),
-		    ...addVXToI,
-		...if_.end(),
+        // FX1E: Add VX to I
+        ...local.get(1), // low byte
+        ...i32.const(0x1e),
+        ...i32.eq(),
+        ...if_.start(),
+            ...addVXToI,
+        ...if_.end(),
 
         // FX29: Set I to sprite address for digit in VX
         ...local.get(1), // low byte
@@ -313,5 +313,5 @@ export const f = () =>
             ...loadV0ToVXFromMemory,
         ...if_.end(),
 
-		...fn.end(),
-	]);
+        ...fn.end(),
+    ]);
