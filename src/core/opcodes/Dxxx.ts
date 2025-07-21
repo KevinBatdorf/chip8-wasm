@@ -72,6 +72,8 @@ const drawSprite = wat(
 	i32.and(), // check if both previous and next are 0
 	i32.const(0),
 	i32.ne(),
+    local.get(7), // collision flag
+    i32.or(), // set collision flag if any pixel was flipped
 	local.set(7), // store collision flag
 
 	// If X is byte aligned, we can stop here
@@ -84,12 +86,9 @@ const drawSprite = wat(
 	if_.end(),
 
 	// Handle byte overflow
-	local.get(12), // byte column index
-	i32.const(1),
-	i32.add(), // byte index + 1
-	i32.const(7),
-	i32.and(), // check if we are wrapping around
-	i32.eqz(),
+    local.get(12), // byte column index
+    i32.const(7),
+    i32.eq(),
 	if_.start(valType("i32")),
 		i32.const(QUIRK_CLIPPING_ADDRESS),
 		i32.load8_u(),
@@ -99,7 +98,7 @@ const drawSprite = wat(
 		if_.else(),
 			// If not clipping, wrap around
 			local.get(9), // byte index
-			i32.const(7), // back to column 0
+			local.get(12), // byte column index
 			i32.sub(),
 			local.tee(9), // store new byte index
 		if_.end(),
@@ -120,7 +119,7 @@ const drawSprite = wat(
 	if_.end(),
 	local.get(9), // byte index again to XOR
 	i32.load8_u(), // Load the next byte at (X + 1, Y)
-	local.tee(10), // store sibling display byte
+	local.tee(10), // store prev display byte
 	local.get(8), // sprite byte
 	i32.const(8),
 	local.get(2), // X
@@ -141,6 +140,8 @@ const drawSprite = wat(
 		i32.and(), // check if both previous and next are 0
 		i32.const(0),
 		i32.ne(),
+        local.get(7), // collision flag
+        i32.or(), // set collision flag if any pixel was flipped
 		local.set(7), // store collision flag
 	if_.end(),
 );

@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, expect, test } from "vitest";
 import {
+	createChip8Engine,
 	DISPLAY_ADDRESS,
 	FONT_ADDRESS,
 	REGISTERS_ADDRESS,
-	createChip8Engine,
 } from "../..";
 
 let chip8: Awaited<ReturnType<typeof createChip8Engine>>;
@@ -133,4 +133,81 @@ test("DXYN sets VF = 1 when collision occurs in overflow byte", () => {
 
 	const mem = new Uint8Array(chip8.getMemory().buffer);
 	expect(mem[REGISTERS_ADDRESS + 0xf]).toBe(1);
+});
+
+test("Drawing two 0 digits at same location sets VF", async () => {
+	// biome-ignore format: keep structure
+	const rom = new Uint8Array([
+		0x60, 0x00, // V0 = 0
+		0x61, 0x00, // V1 = 0
+		0x60, 0x00, // V0 = 0 (digit)
+		0xF0, 0x29, // I = FONT + 5*V0
+		0xD0, 0x05, // draw first digit
+
+		// draw same digit again at same location
+		0x60, 0x00,
+		0x61, 0x00,
+		0x60, 0x00,
+		0xF0, 0x29,
+		0xD0, 0x05,
+	]);
+
+	chip8.loadROM(rom, { vBlankQuirks: false });
+
+	const mem = new Uint8Array(chip8.getMemory().buffer);
+	for (let i = 0; i < rom.length / 2; i++) chip8.step();
+
+	expect(mem[REGISTERS_ADDRESS + 0x0f]).toBe(1); // VF must be 1 (collision)
+});
+
+test("Collision occurs on wrapped sprite overflow", async () => {
+	// biome-ignore format: keep structure
+	const rom = new Uint8Array([
+		0x60, 0x3C, // V0 = 60
+		0x61, 0x00, // V1 = 0
+		0x60, 0x00, // V0 = 0 (digit)
+		0xF0, 0x29, // I = FONT + 5 * V0
+		0xD0, 0x05, // draw digit 0 at (60, 0) — wraps overflow to X=0
+
+		// Now draw another 0 at (0, 0), which collides with wrapped pixels
+		0x60, 0x00,
+		0x61, 0x00,
+		0x60, 0x00,
+		0xF0, 0x29,
+		0xD0, 0x05,
+	]);
+
+	chip8.loadROM(rom, { vBlankQuirks: false });
+
+	const mem = new Uint8Array(chip8.getMemory().buffer);
+	for (let i = 0; i < rom.length / 2; i++) chip8.step();
+
+	expect(mem[REGISTERS_ADDRESS + 0x0f]).toBe(1); // VF = 1 → collision on wrapped bits
+});
+
+test("Font '0' causes collision when wrapping and drawn again", async () => {
+	// biome-ignore format: keep structure
+	const rom = new Uint8Array([
+		// Draw font 0 at (62, 30) → wraps right (X) and bottom (Y)
+		0x60, 0x3E,       // V0 = 62 (X)
+		0x61, 0x1E,       // V1 = 30 (Y)
+		0x60, 0x00,       // V0 = 0 (digit)
+		0xF0, 0x29,       // I = FONT + 5 * V0
+		0xD0, 0x05,       // draw 5-byte sprite
+
+		// Draw same font at wrapped position (X=62+0 wrap, Y=30+0 wrap)
+		0x60, 0x3E,       // V0 = 62
+		0x61, 0x1E,       // V1 = 30
+		0x60, 0x00,
+		0xF0, 0x29,
+		0xD0, 0x05,       // second draw → should collide on wrapped pixels
+	]);
+
+	chip8.loadROM(rom, { vBlankQuirks: false });
+
+	// Run all steps
+	for (let i = 0; i < rom.length / 2; i++) chip8.step();
+
+	const mem = new Uint8Array(chip8.getMemory().buffer);
+	expect(mem[REGISTERS_ADDRESS + 0x0f]).toBe(1); // VF = 1
 });
