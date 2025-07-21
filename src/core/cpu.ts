@@ -131,7 +131,7 @@ export const tick = wat(
 	i32.const(DRAW_HAPPENED_ADDRESS),
 	i32.load8_u(),
 	if_.start(),
-	    fn.return(),
+		fn.return(),
 	if_.end(),
 
 	// Load PC
@@ -139,19 +139,19 @@ export const tick = wat(
 	i32.load16_u(),
 	local.tee(0),
 
-    // Check if PC is out of bounds (lower)
-    i32.const(ROM_LOAD_ADDRESS),
-    i32.lt_u(), // check if PC < ROM_LOAD_ADDRESS
-    if_.start(),
-        misc.unreachable(),
-    fn.end(),
-    // (upper)
-    local.get(0), // PC
-    i32.const(MAX_ROM_ADDRESS),
-    i32.gt_u(), // check if PC > MAX_ROM_ADDRESS
-    if_.start(),
-        misc.unreachable(),
-    fn.end(),
+	// Check if PC is out of bounds (lower)
+	i32.const(ROM_LOAD_ADDRESS),
+	i32.lt_u(), // check if PC < ROM_LOAD_ADDRESS
+	if_.start(),
+		misc.unreachable(),
+	fn.end(),
+	// (upper)
+	local.get(0), // PC
+	i32.const(MAX_ROM_ADDRESS),
+	i32.gt_u(), // check if PC > MAX_ROM_ADDRESS
+	if_.start(),
+		misc.unreachable(),
+	fn.end(),
 
 	local.get(0), // PC
 	i32.load8_u(), // load high byte
@@ -190,29 +190,29 @@ export const updateTimers = wat(
 	i32.const(DELAY_TIMER_ADDRESS),
 	i32.load8_u(), // load delay timer value
 	i32.const(0),
-    i32.gt_u(), // is it greater than 0?
-    if_.start(),
-        i32.const(DELAY_TIMER_ADDRESS),
-        i32.const(DELAY_TIMER_ADDRESS),
-        i32.load8_u(), // load delay timer value again
-        i32.const(1),
-        i32.sub(), // decrement delay timer
-        i32.store8(),
-    if_.end(),
+	i32.gt_u(), // is it greater than 0?
+	if_.start(),
+		i32.const(DELAY_TIMER_ADDRESS),
+		i32.const(DELAY_TIMER_ADDRESS),
+		i32.load8_u(), // load delay timer value again
+		i32.const(1),
+		i32.sub(), // decrement delay timer
+		i32.store8(),
+	if_.end(),
 
-    // Sound timer
-    i32.const(SOUND_TIMER_ADDRESS),
-    i32.load8_u(), // load sound timer value
-    i32.const(0),
-    i32.gt_u(), // is it greater than 0?
-    if_.start(),
-        i32.const(SOUND_TIMER_ADDRESS),
-        i32.const(SOUND_TIMER_ADDRESS),
-        i32.load8_u(), // load sound timer value again
-        i32.const(1),
-        i32.sub(), // decrement sound timer
-        i32.store8(),
-    if_.end(),
+	// Sound timer
+	i32.const(SOUND_TIMER_ADDRESS),
+	i32.load8_u(), // load sound timer value
+	i32.const(0),
+	i32.gt_u(), // is it greater than 0?
+	if_.start(),
+		i32.const(SOUND_TIMER_ADDRESS),
+		i32.const(SOUND_TIMER_ADDRESS),
+		i32.load8_u(), // load sound timer value again
+		i32.const(1),
+		i32.sub(), // decrement sound timer
+		i32.store8(),
+	if_.end(),
 
 	fn.end(),
 );

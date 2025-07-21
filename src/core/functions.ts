@@ -4,6 +4,7 @@ import {
 	a,
 	b,
 	c,
+	d,
 	e,
 	eight,
 	f,
@@ -17,7 +18,6 @@ import {
 	two,
 	zero,
 } from "./opcodes";
-import { d } from "./opcodes/Dxxx";
 import { valType } from "./wasm";
 
 type FuncSignature = {
