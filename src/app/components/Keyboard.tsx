@@ -1,4 +1,10 @@
-import { type PointerEvent, useEffect, useRef, useState } from "react";
+import {
+	type PointerEvent,
+	type TouchEvent,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import type { Chip8Engine } from "../../types";
 import { keyMap } from "../lib/keys";
 
@@ -55,6 +61,16 @@ export const Keyboard = ({ chip8 }: Props) => {
         KeyA: null, KeyS: null, KeyD: null, KeyF: null,
         KeyZ: null, KeyX: null, KeyC: null, KeyV: null,
     });
+	const handleTouchUp = (e: TouchEvent<HTMLButtonElement>) => {
+		if (!chip8) return;
+		const button = e.currentTarget as HTMLButtonElement;
+		chip8.setKey(keyMap[button.dataset.key as string], false);
+	};
+	const handleTouchDown = (e: TouchEvent<HTMLButtonElement>) => {
+		if (!chip8) return;
+		const button = e.currentTarget as HTMLButtonElement;
+		chip8.setKey(keyMap[button.dataset.key as string], true);
+	};
 	const handlePointerUp = (e: PointerEvent) => {
 		if (!chip8) return;
 		e.preventDefault();
@@ -126,6 +142,10 @@ export const Keyboard = ({ chip8 }: Props) => {
 							onPointerUp={handlePointerUp}
 							onPointerLeave={handlePointerUp}
 							onPointerCancel={handlePointerUp}
+							onTouchStart={handleTouchDown}
+							onTouchEnd={handleTouchUp}
+							onTouchCancel={handleTouchUp}
+							onTouchMove={(e) => e.preventDefault()} // Prevent scrolling
 							ref={(el) => {
 								keyRefs.current[code] = el;
 							}}
