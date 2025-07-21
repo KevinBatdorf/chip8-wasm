@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { type PointerEvent, useEffect, useRef, useState } from "react";
 import type { Chip8Engine } from "../../types";
+import { keyMap } from "../lib/keys";
 
 // biome-ignore format: keep structure
 const defaultLayout = {
@@ -54,6 +55,18 @@ export const Keyboard = ({ chip8 }: Props) => {
         KeyA: null, KeyS: null, KeyD: null, KeyF: null,
         KeyZ: null, KeyX: null, KeyC: null, KeyV: null,
     });
+	const handlePointerUp = (e: PointerEvent) => {
+		if (!chip8) return;
+		e.preventDefault();
+		const button = e.currentTarget as HTMLButtonElement;
+		chip8.setKey(keyMap[button.dataset.key as string], false);
+	};
+	const handlePointerDown = (e: PointerEvent) => {
+		if (!chip8) return;
+		e.preventDefault();
+		const button = e.currentTarget as HTMLButtonElement;
+		chip8.setKey(keyMap[button.dataset.key as string], true);
+	};
 
 	useEffect(() => {
 		const nav = navigator as any;
@@ -101,19 +114,25 @@ export const Keyboard = ({ chip8 }: Props) => {
 	}, [chip8]);
 
 	return (
-		<pre style={{ fontFamily: "inherit" }}>
+		<pre className="flex flex-col gap-1 p-2 text-2xl font-mono md:text-sm">
 			{rows.map((row) => (
 				<div key={row.join(",")} className="flex gap-1">
 					{row.map((code) => (
-						<span
+						<button
 							key={code}
+							data-key={layout[code].toLowerCase()}
+							type="button"
+							onPointerDown={handlePointerDown}
+							onPointerUp={handlePointerUp}
+							onPointerLeave={handlePointerUp}
+							onPointerCancel={handlePointerUp}
 							ref={(el) => {
 								keyRefs.current[code] = el;
 							}}
 							className="inline-block min-w-[1.5em] text-center rounded transition-colors duration-100"
 						>
 							{layout[code].toUpperCase()}
-						</span>
+						</button>
 					))}
 				</div>
 			))}
