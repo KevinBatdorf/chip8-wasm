@@ -105,3 +105,12 @@ export const memory = {
 	grow: () => [0x40, 0x00],
 	fill: (memIndex = 0) => [0xfc, 0x0b, ...unsignedLEB(memIndex)],
 };
+
+export const wat = (
+	...params: (number | number[] | Uint8Array)[]
+): Uint8Array =>
+	new Uint8Array(
+		params.flatMap((p) =>
+			p instanceof Uint8Array ? Array.from(p) : Array.isArray(p) ? p : [p],
+		),
+	);

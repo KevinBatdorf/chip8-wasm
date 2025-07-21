@@ -1,6 +1,9 @@
 // Encode a number as LEB128 (Little Endian Base 128)
 // This is used for encoding integers in WebAssembly
 // LEB128 is a variable-length encoding scheme that uses 7 bits for each byte
+
+import { wat } from "./wasm";
+
 // and the 8th bit as a continuation flag
 export const unsignedLEB = (value: number): number[] => {
 	const bytes: number[] = [];
@@ -66,7 +69,7 @@ export const emitSection = (
 	payload: Uint8Array,
 ): Uint8Array => {
 	const size = unsignedLEB(payload.length);
-	return new Uint8Array([sectionId, ...size, ...payload]);
+	return wat(sectionId, size, ...payload);
 };
 
 export const emitFunctionType = (type: {
@@ -75,11 +78,11 @@ export const emitFunctionType = (type: {
 }): Uint8Array => {
 	const params = type.params.map((p) => p & 0x7f);
 	const results = type.results.map((r) => r & 0x7f);
-	return new Uint8Array([
+	return wat(
 		0x60, // function type
-		...unsignedLEB(params.length),
-		...params,
-		...unsignedLEB(results.length),
-		...results,
-	]);
+		unsignedLEB(params.length),
+		params,
+		unsignedLEB(results.length),
+		results,
+	);
 };
