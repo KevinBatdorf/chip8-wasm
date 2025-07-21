@@ -149,7 +149,7 @@ export default function App() {
 							<div>Game Description:</div>
 							<div>{rom?.description || "No description available"}</div>
 						</div>
-						<div className="flex flex-col items-center gap-2 touch-manipulation">
+						<div className="flex flex-col items-center gap-2 touch-manipulation select-none">
 							<Keyboard chip8={chip8} />
 							<p className="text-xs">
 								Chip-8 Uses these keys, but each game has their own controls.
